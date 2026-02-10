@@ -1,0 +1,42 @@
+[
+	{
+		"file": "/home/garrett/Desktop/Capstone/mecha-maker/Source/MechaMaker/GenericCodeBlock.cpp",
+		"arguments": [
+			"/home/garrett/Unreal/Unreal_Engine_5.7.1/Engine/Extras/ThirdPartyNotUE/SDKs/HostLinux/Linux_x64/v26_clang-20.1.8-rockylinux8/x86_64-unknown-linux-gnu/bin/clang++",
+			"@/home/garrett/Desktop/Capstone/mecha-maker/.vscode/compileCommands_MechaMaker/MechaMaker.1.rsp"
+		],
+		"directory": "/home/garrett/Unreal/Unreal_Engine_5.7.1/Engine/Source"
+	},
+	{
+		"file": "/home/garrett/Desktop/Capstone/mecha-maker/Source/MechaMaker/GenericCodeBlock.h",
+		"arguments": [
+			"/home/garrett/Unreal/Unreal_Engine_5.7.1/Engine/Extras/ThirdPartyNotUE/SDKs/HostLinux/Linux_x64/v26_clang-20.1.8-rockylinux8/x86_64-unknown-linux-gnu/bin/clang++",
+			"@/home/garrett/Desktop/Capstone/mecha-maker/.vscode/compileCommands_MechaMaker/MechaMaker.1.rsp"
+		],
+		"directory": "/home/garrett/Unreal/Unreal_Engine_5.7.1/Engine/Source"
+	},
+	{
+		"file": "/home/garrett/Desktop/Capstone/mecha-maker/Source/MechaMaker/MechaMaker.Build.cs",
+		"arguments": [
+			"/home/garrett/Unreal/Unreal_Engine_5.7.1/Engine/Extras/ThirdPartyNotUE/SDKs/HostLinux/Linux_x64/v26_clang-20.1.8-rockylinux8/x86_64-unknown-linux-gnu/bin/clang++",
+			"@/home/garrett/Desktop/Capstone/mecha-maker/.vscode/compileCommands_MechaMaker/MechaMaker.1.rsp"
+		],
+		"directory": "/home/garrett/Unreal/Unreal_Engine_5.7.1/Engine/Source"
+	},
+	{
+		"file": "/home/garrett/Desktop/Capstone/mecha-maker/Source/MechaMaker/MechaMaker.cpp",
+		"arguments": [
+			"/home/garrett/Unreal/Unreal_Engine_5.7.1/Engine/Extras/ThirdPartyNotUE/SDKs/HostLinux/Linux_x64/v26_clang-20.1.8-rockylinux8/x86_64-unknown-linux-gnu/bin/clang++",
+			"@/home/garrett/Desktop/Capstone/mecha-maker/.vscode/compileCommands_MechaMaker/MechaMaker.1.rsp"
+		],
+		"directory": "/home/garrett/Unreal/Unreal_Engine_5.7.1/Engine/Source"
+	},
+	{
+		"file": "/home/garrett/Desktop/Capstone/mecha-maker/Source/MechaMaker/MechaMaker.h",
+		"arguments": [
+			"/home/garrett/Unreal/Unreal_Engine_5.7.1/Engine/Extras/ThirdPartyNotUE/SDKs/HostLinux/Linux_x64/v26_clang-20.1.8-rockylinux8/x86_64-unknown-linux-gnu/bin/clang++",
+			"@/home/garrett/Desktop/Capstone/mecha-maker/.vscode/compileCommands_MechaMaker/MechaMaker.1.rsp"
+		],
+		"directory": "/home/garrett/Unreal/Unreal_Engine_5.7.1/Engine/Source"
+	}
+]

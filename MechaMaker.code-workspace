@@ -1,0 +1,879 @@
+{
+	"folders": [
+		{
+			"name": "MechaMaker",
+			"path": "."
+		},
+		{
+			"name": "UE5",
+			"path": "/home/garrett/Unreal/Unreal_Engine_5.7.1"
+		}
+	],
+	"settings": {
+		"typescript.tsc.autoDetect": "off",
+		"npm.autoDetect": "off",
+		"terminal.integrated.env.linux": {
+			"PATH": "/home/garrett/Unreal/Unreal_Engine_5.7.1/Engine/Binaries/ThirdParty/DotNet/8.0.412/linux-x64:${env:PATH}",
+			"DOTNET_ROOT": "/home/garrett/Unreal/Unreal_Engine_5.7.1/Engine/Binaries/ThirdParty/DotNet/8.0.412/linux-x64",
+			"DOTNET_HOST_PATH": "/home/garrett/Unreal/Unreal_Engine_5.7.1/Engine/Binaries/ThirdParty/DotNet/8.0.412/linux-x64/dotnet",
+			"DOTNET_MULTILEVEL_LOOKUP": "0",
+			"DOTNET_ROLL_FORWARD": "LatestMajor"
+		}
+	},
+	"extensions": {
+		"recommendations": [
+			"ms-vscode.cpptools",
+			"ms-dotnettools.csharp"
+		]
+	},
+	"tasks": {
+		"version": "2.0.0",
+		"tasks": [
+			{
+				"label": "MechaMaker Linux Debug Build",
+				"group": "build",
+				"command": "Engine/Build/BatchFiles/Linux/Build.sh",
+				"args": [
+					"MechaMaker",
+					"Linux",
+					"Debug",
+					"/home/garrett/Desktop/Capstone/mecha-maker/MechaMaker.uproject",
+					"-waitmutex"
+				],
+				"problemMatcher": "$msCompile",
+				"type": "shell",
+				"options": {
+					"cwd": "/home/garrett/Unreal/Unreal_Engine_5.7.1"
+				}
+			},
+			{
+				"label": "MechaMaker Linux Debug Rebuild",
+				"group": "build",
+				"command": "Engine/Build/BatchFiles/Linux/Build.sh",
+				"args": [
+					"MechaMaker",
+					"Linux",
+					"Debug",
+					"/home/garrett/Desktop/Capstone/mecha-maker/MechaMaker.uproject",
+					"-waitmutex"
+				],
+				"problemMatcher": "$msCompile",
+				"dependsOn": [
+					"MechaMaker Linux Debug Clean"
+				],
+				"type": "shell",
+				"options": {
+					"cwd": "/home/garrett/Unreal/Unreal_Engine_5.7.1"
+				}
+			},
+			{
+				"label": "MechaMaker Linux Debug Clean",
+				"group": "build",
+				"command": "Engine/Build/BatchFiles/Linux/Build.sh",
+				"args": [
+					"MechaMaker",
+					"Linux",
+					"Debug",
+					"/home/garrett/Desktop/Capstone/mecha-maker/MechaMaker.uproject",
+					"-waitmutex",
+					"-clean"
+				],
+				"problemMatcher": "$msCompile",
+				"type": "shell",
+				"options": {
+					"cwd": "/home/garrett/Unreal/Unreal_Engine_5.7.1"
+				}
+			},
+			{
+				"label": "MechaMaker Linux DebugGame Build",
+				"group": "build",
+				"command": "Engine/Build/BatchFiles/Linux/Build.sh",
+				"args": [
+					"MechaMaker",
+					"Linux",
+					"DebugGame",
+					"/home/garrett/Desktop/Capstone/mecha-maker/MechaMaker.uproject",
+					"-waitmutex"
+				],
+				"problemMatcher": "$msCompile",
+				"type": "shell",
+				"options": {
+					"cwd": "/home/garrett/Unreal/Unreal_Engine_5.7.1"
+				}
+			},
+			{
+				"label": "MechaMaker Linux DebugGame Rebuild",
+				"group": "build",
+				"command": "Engine/Build/BatchFiles/Linux/Build.sh",
+				"args": [
+					"MechaMaker",
+					"Linux",
+					"DebugGame",
+					"/home/garrett/Desktop/Capstone/mecha-maker/MechaMaker.uproject",
+					"-waitmutex"
+				],
+				"problemMatcher": "$msCompile",
+				"dependsOn": [
+					"MechaMaker Linux DebugGame Clean"
+				],
+				"type": "shell",
+				"options": {
+					"cwd": "/home/garrett/Unreal/Unreal_Engine_5.7.1"
+				}
+			},
+			{
+				"label": "MechaMaker Linux DebugGame Clean",
+				"group": "build",
+				"command": "Engine/Build/BatchFiles/Linux/Build.sh",
+				"args": [
+					"MechaMaker",
+					"Linux",
+					"DebugGame",
+					"/home/garrett/Desktop/Capstone/mecha-maker/MechaMaker.uproject",
+					"-waitmutex",
+					"-clean"
+				],
+				"problemMatcher": "$msCompile",
+				"type": "shell",
+				"options": {
+					"cwd": "/home/garrett/Unreal/Unreal_Engine_5.7.1"
+				}
+			},
+			{
+				"label": "MechaMaker Linux Development Build",
+				"group": "build",
+				"command": "Engine/Build/BatchFiles/Linux/Build.sh",
+				"args": [
+					"MechaMaker",
+					"Linux",
+					"Development",
+					"/home/garrett/Desktop/Capstone/mecha-maker/MechaMaker.uproject",
+					"-waitmutex"
+				],
+				"problemMatcher": "$msCompile",
+				"type": "shell",
+				"options": {
+					"cwd": "/home/garrett/Unreal/Unreal_Engine_5.7.1"
+				}
+			},
+			{
+				"label": "MechaMaker Linux Development Rebuild",
+				"group": "build",
+				"command": "Engine/Build/BatchFiles/Linux/Build.sh",
+				"args": [
+					"MechaMaker",
+					"Linux",
+					"Development",
+					"/home/garrett/Desktop/Capstone/mecha-maker/MechaMaker.uproject",
+					"-waitmutex"
+				],
+				"problemMatcher": "$msCompile",
+				"dependsOn": [
+					"MechaMaker Linux Development Clean"
+				],
+				"type": "shell",
+				"options": {
+					"cwd": "/home/garrett/Unreal/Unreal_Engine_5.7.1"
+				}
+			},
+			{
+				"label": "MechaMaker Linux Development Clean",
+				"group": "build",
+				"command": "Engine/Build/BatchFiles/Linux/Build.sh",
+				"args": [
+					"MechaMaker",
+					"Linux",
+					"Development",
+					"/home/garrett/Desktop/Capstone/mecha-maker/MechaMaker.uproject",
+					"-waitmutex",
+					"-clean"
+				],
+				"problemMatcher": "$msCompile",
+				"type": "shell",
+				"options": {
+					"cwd": "/home/garrett/Unreal/Unreal_Engine_5.7.1"
+				}
+			},
+			{
+				"label": "MechaMaker Linux Test Build",
+				"group": "build",
+				"command": "Engine/Build/BatchFiles/Linux/Build.sh",
+				"args": [
+					"MechaMaker",
+					"Linux",
+					"Test",
+					"/home/garrett/Desktop/Capstone/mecha-maker/MechaMaker.uproject",
+					"-waitmutex"
+				],
+				"problemMatcher": "$msCompile",
+				"type": "shell",
+				"options": {
+					"cwd": "/home/garrett/Unreal/Unreal_Engine_5.7.1"
+				}
+			},
+			{
+				"label": "MechaMaker Linux Test Rebuild",
+				"group": "build",
+				"command": "Engine/Build/BatchFiles/Linux/Build.sh",
+				"args": [
+					"MechaMaker",
+					"Linux",
+					"Test",
+					"/home/garrett/Desktop/Capstone/mecha-maker/MechaMaker.uproject",
+					"-waitmutex"
+				],
+				"problemMatcher": "$msCompile",
+				"dependsOn": [
+					"MechaMaker Linux Test Clean"
+				],
+				"type": "shell",
+				"options": {
+					"cwd": "/home/garrett/Unreal/Unreal_Engine_5.7.1"
+				}
+			},
+			{
+				"label": "MechaMaker Linux Test Clean",
+				"group": "build",
+				"command": "Engine/Build/BatchFiles/Linux/Build.sh",
+				"args": [
+					"MechaMaker",
+					"Linux",
+					"Test",
+					"/home/garrett/Desktop/Capstone/mecha-maker/MechaMaker.uproject",
+					"-waitmutex",
+					"-clean"
+				],
+				"problemMatcher": "$msCompile",
+				"type": "shell",
+				"options": {
+					"cwd": "/home/garrett/Unreal/Unreal_Engine_5.7.1"
+				}
+			},
+			{
+				"label": "MechaMaker Linux Shipping Build",
+				"group": "build",
+				"command": "Engine/Build/BatchFiles/Linux/Build.sh",
+				"args": [
+					"MechaMaker",
+					"Linux",
+					"Shipping",
+					"/home/garrett/Desktop/Capstone/mecha-maker/MechaMaker.uproject",
+					"-waitmutex"
+				],
+				"problemMatcher": "$msCompile",
+				"type": "shell",
+				"options": {
+					"cwd": "/home/garrett/Unreal/Unreal_Engine_5.7.1"
+				}
+			},
+			{
+				"label": "MechaMaker Linux Shipping Rebuild",
+				"group": "build",
+				"command": "Engine/Build/BatchFiles/Linux/Build.sh",
+				"args": [
+					"MechaMaker",
+					"Linux",
+					"Shipping",
+					"/home/garrett/Desktop/Capstone/mecha-maker/MechaMaker.uproject",
+					"-waitmutex"
+				],
+				"problemMatcher": "$msCompile",
+				"dependsOn": [
+					"MechaMaker Linux Shipping Clean"
+				],
+				"type": "shell",
+				"options": {
+					"cwd": "/home/garrett/Unreal/Unreal_Engine_5.7.1"
+				}
+			},
+			{
+				"label": "MechaMaker Linux Shipping Clean",
+				"group": "build",
+				"command": "Engine/Build/BatchFiles/Linux/Build.sh",
+				"args": [
+					"MechaMaker",
+					"Linux",
+					"Shipping",
+					"/home/garrett/Desktop/Capstone/mecha-maker/MechaMaker.uproject",
+					"-waitmutex",
+					"-clean"
+				],
+				"problemMatcher": "$msCompile",
+				"type": "shell",
+				"options": {
+					"cwd": "/home/garrett/Unreal/Unreal_Engine_5.7.1"
+				}
+			},
+			{
+				"label": "MechaMaker LinuxArm64 Debug Build",
+				"group": "build",
+				"command": "Engine/Build/BatchFiles/Linux/Build.sh",
+				"args": [
+					"MechaMaker",
+					"LinuxArm64",
+					"Debug",
+					"/home/garrett/Desktop/Capstone/mecha-maker/MechaMaker.uproject",
+					"-waitmutex"
+				],
+				"problemMatcher": "$msCompile",
+				"type": "shell",
+				"options": {
+					"cwd": "/home/garrett/Unreal/Unreal_Engine_5.7.1"
+				}
+			},
+			{
+				"label": "MechaMaker LinuxArm64 Debug Rebuild",
+				"group": "build",
+				"command": "Engine/Build/BatchFiles/Linux/Build.sh",
+				"args": [
+					"MechaMaker",
+					"LinuxArm64",
+					"Debug",
+					"/home/garrett/Desktop/Capstone/mecha-maker/MechaMaker.uproject",
+					"-waitmutex"
+				],
+				"problemMatcher": "$msCompile",
+				"dependsOn": [
+					"MechaMaker LinuxArm64 Debug Clean"
+				],
+				"type": "shell",
+				"options": {
+					"cwd": "/home/garrett/Unreal/Unreal_Engine_5.7.1"
+				}
+			},
+			{
+				"label": "MechaMaker LinuxArm64 Debug Clean",
+				"group": "build",
+				"command": "Engine/Build/BatchFiles/Linux/Build.sh",
+				"args": [
+					"MechaMaker",
+					"LinuxArm64",
+					"Debug",
+					"/home/garrett/Desktop/Capstone/mecha-maker/MechaMaker.uproject",
+					"-waitmutex",
+					"-clean"
+				],
+				"problemMatcher": "$msCompile",
+				"type": "shell",
+				"options": {
+					"cwd": "/home/garrett/Unreal/Unreal_Engine_5.7.1"
+				}
+			},
+			{
+				"label": "MechaMaker LinuxArm64 DebugGame Build",
+				"group": "build",
+				"command": "Engine/Build/BatchFiles/Linux/Build.sh",
+				"args": [
+					"MechaMaker",
+					"LinuxArm64",
+					"DebugGame",
+					"/home/garrett/Desktop/Capstone/mecha-maker/MechaMaker.uproject",
+					"-waitmutex"
+				],
+				"problemMatcher": "$msCompile",
+				"type": "shell",
+				"options": {
+					"cwd": "/home/garrett/Unreal/Unreal_Engine_5.7.1"
+				}
+			},
+			{
+				"label": "MechaMaker LinuxArm64 DebugGame Rebuild",
+				"group": "build",
+				"command": "Engine/Build/BatchFiles/Linux/Build.sh",
+				"args": [
+					"MechaMaker",
+					"LinuxArm64",
+					"DebugGame",
+					"/home/garrett/Desktop/Capstone/mecha-maker/MechaMaker.uproject",
+					"-waitmutex"
+				],
+				"problemMatcher": "$msCompile",
+				"dependsOn": [
+					"MechaMaker LinuxArm64 DebugGame Clean"
+				],
+				"type": "shell",
+				"options": {
+					"cwd": "/home/garrett/Unreal/Unreal_Engine_5.7.1"
+				}
+			},
+			{
+				"label": "MechaMaker LinuxArm64 DebugGame Clean",
+				"group": "build",
+				"command": "Engine/Build/BatchFiles/Linux/Build.sh",
+				"args": [
+					"MechaMaker",
+					"LinuxArm64",
+					"DebugGame",
+					"/home/garrett/Desktop/Capstone/mecha-maker/MechaMaker.uproject",
+					"-waitmutex",
+					"-clean"
+				],
+				"problemMatcher": "$msCompile",
+				"type": "shell",
+				"options": {
+					"cwd": "/home/garrett/Unreal/Unreal_Engine_5.7.1"
+				}
+			},
+			{
+				"label": "MechaMaker LinuxArm64 Development Build",
+				"group": "build",
+				"command": "Engine/Build/BatchFiles/Linux/Build.sh",
+				"args": [
+					"MechaMaker",
+					"LinuxArm64",
+					"Development",
+					"/home/garrett/Desktop/Capstone/mecha-maker/MechaMaker.uproject",
+					"-waitmutex"
+				],
+				"problemMatcher": "$msCompile",
+				"type": "shell",
+				"options": {
+					"cwd": "/home/garrett/Unreal/Unreal_Engine_5.7.1"
+				}
+			},
+			{
+				"label": "MechaMaker LinuxArm64 Development Rebuild",
+				"group": "build",
+				"command": "Engine/Build/BatchFiles/Linux/Build.sh",
+				"args": [
+					"MechaMaker",
+					"LinuxArm64",
+					"Development",
+					"/home/garrett/Desktop/Capstone/mecha-maker/MechaMaker.uproject",
+					"-waitmutex"
+				],
+				"problemMatcher": "$msCompile",
+				"dependsOn": [
+					"MechaMaker LinuxArm64 Development Clean"
+				],
+				"type": "shell",
+				"options": {
+					"cwd": "/home/garrett/Unreal/Unreal_Engine_5.7.1"
+				}
+			},
+			{
+				"label": "MechaMaker LinuxArm64 Development Clean",
+				"group": "build",
+				"command": "Engine/Build/BatchFiles/Linux/Build.sh",
+				"args": [
+					"MechaMaker",
+					"LinuxArm64",
+					"Development",
+					"/home/garrett/Desktop/Capstone/mecha-maker/MechaMaker.uproject",
+					"-waitmutex",
+					"-clean"
+				],
+				"problemMatcher": "$msCompile",
+				"type": "shell",
+				"options": {
+					"cwd": "/home/garrett/Unreal/Unreal_Engine_5.7.1"
+				}
+			},
+			{
+				"label": "MechaMaker LinuxArm64 Test Build",
+				"group": "build",
+				"command": "Engine/Build/BatchFiles/Linux/Build.sh",
+				"args": [
+					"MechaMaker",
+					"LinuxArm64",
+					"Test",
+					"/home/garrett/Desktop/Capstone/mecha-maker/MechaMaker.uproject",
+					"-waitmutex"
+				],
+				"problemMatcher": "$msCompile",
+				"type": "shell",
+				"options": {
+					"cwd": "/home/garrett/Unreal/Unreal_Engine_5.7.1"
+				}
+			},
+			{
+				"label": "MechaMaker LinuxArm64 Test Rebuild",
+				"group": "build",
+				"command": "Engine/Build/BatchFiles/Linux/Build.sh",
+				"args": [
+					"MechaMaker",
+					"LinuxArm64",
+					"Test",
+					"/home/garrett/Desktop/Capstone/mecha-maker/MechaMaker.uproject",
+					"-waitmutex"
+				],
+				"problemMatcher": "$msCompile",
+				"dependsOn": [
+					"MechaMaker LinuxArm64 Test Clean"
+				],
+				"type": "shell",
+				"options": {
+					"cwd": "/home/garrett/Unreal/Unreal_Engine_5.7.1"
+				}
+			},
+			{
+				"label": "MechaMaker LinuxArm64 Test Clean",
+				"group": "build",
+				"command": "Engine/Build/BatchFiles/Linux/Build.sh",
+				"args": [
+					"MechaMaker",
+					"LinuxArm64",
+					"Test",
+					"/home/garrett/Desktop/Capstone/mecha-maker/MechaMaker.uproject",
+					"-waitmutex",
+					"-clean"
+				],
+				"problemMatcher": "$msCompile",
+				"type": "shell",
+				"options": {
+					"cwd": "/home/garrett/Unreal/Unreal_Engine_5.7.1"
+				}
+			},
+			{
+				"label": "MechaMaker LinuxArm64 Shipping Build",
+				"group": "build",
+				"command": "Engine/Build/BatchFiles/Linux/Build.sh",
+				"args": [
+					"MechaMaker",
+					"LinuxArm64",
+					"Shipping",
+					"/home/garrett/Desktop/Capstone/mecha-maker/MechaMaker.uproject",
+					"-waitmutex"
+				],
+				"problemMatcher": "$msCompile",
+				"type": "shell",
+				"options": {
+					"cwd": "/home/garrett/Unreal/Unreal_Engine_5.7.1"
+				}
+			},
+			{
+				"label": "MechaMaker LinuxArm64 Shipping Rebuild",
+				"group": "build",
+				"command": "Engine/Build/BatchFiles/Linux/Build.sh",
+				"args": [
+					"MechaMaker",
+					"LinuxArm64",
+					"Shipping",
+					"/home/garrett/Desktop/Capstone/mecha-maker/MechaMaker.uproject",
+					"-waitmutex"
+				],
+				"problemMatcher": "$msCompile",
+				"dependsOn": [
+					"MechaMaker LinuxArm64 Shipping Clean"
+				],
+				"type": "shell",
+				"options": {
+					"cwd": "/home/garrett/Unreal/Unreal_Engine_5.7.1"
+				}
+			},
+			{
+				"label": "MechaMaker LinuxArm64 Shipping Clean",
+				"group": "build",
+				"command": "Engine/Build/BatchFiles/Linux/Build.sh",
+				"args": [
+					"MechaMaker",
+					"LinuxArm64",
+					"Shipping",
+					"/home/garrett/Desktop/Capstone/mecha-maker/MechaMaker.uproject",
+					"-waitmutex",
+					"-clean"
+				],
+				"problemMatcher": "$msCompile",
+				"type": "shell",
+				"options": {
+					"cwd": "/home/garrett/Unreal/Unreal_Engine_5.7.1"
+				}
+			},
+			{
+				"label": "MechaMakerEditor Linux Debug Build",
+				"group": "build",
+				"command": "Engine/Build/BatchFiles/Linux/Build.sh",
+				"args": [
+					"MechaMakerEditor",
+					"Linux",
+					"Debug",
+					"/home/garrett/Desktop/Capstone/mecha-maker/MechaMaker.uproject",
+					"-waitmutex"
+				],
+				"problemMatcher": "$msCompile",
+				"type": "shell",
+				"options": {
+					"cwd": "/home/garrett/Unreal/Unreal_Engine_5.7.1"
+				}
+			},
+			{
+				"label": "MechaMakerEditor Linux Debug Rebuild",
+				"group": "build",
+				"command": "Engine/Build/BatchFiles/Linux/Build.sh",
+				"args": [
+					"MechaMakerEditor",
+					"Linux",
+					"Debug",
+					"/home/garrett/Desktop/Capstone/mecha-maker/MechaMaker.uproject",
+					"-waitmutex"
+				],
+				"problemMatcher": "$msCompile",
+				"dependsOn": [
+					"MechaMakerEditor Linux Debug Clean"
+				],
+				"type": "shell",
+				"options": {
+					"cwd": "/home/garrett/Unreal/Unreal_Engine_5.7.1"
+				}
+			},
+			{
+				"label": "MechaMakerEditor Linux Debug Clean",
+				"group": "build",
+				"command": "Engine/Build/BatchFiles/Linux/Build.sh",
+				"args": [
+					"MechaMakerEditor",
+					"Linux",
+					"Debug",
+					"/home/garrett/Desktop/Capstone/mecha-maker/MechaMaker.uproject",
+					"-waitmutex",
+					"-clean"
+				],
+				"problemMatcher": "$msCompile",
+				"type": "shell",
+				"options": {
+					"cwd": "/home/garrett/Unreal/Unreal_Engine_5.7.1"
+				}
+			},
+			{
+				"label": "MechaMakerEditor Linux DebugGame Build",
+				"group": "build",
+				"command": "Engine/Build/BatchFiles/Linux/Build.sh",
+				"args": [
+					"MechaMakerEditor",
+					"Linux",
+					"DebugGame",
+					"/home/garrett/Desktop/Capstone/mecha-maker/MechaMaker.uproject",
+					"-waitmutex"
+				],
+				"problemMatcher": "$msCompile",
+				"type": "shell",
+				"options": {
+					"cwd": "/home/garrett/Unreal/Unreal_Engine_5.7.1"
+				}
+			},
+			{
+				"label": "MechaMakerEditor Linux DebugGame Rebuild",
+				"group": "build",
+				"command": "Engine/Build/BatchFiles/Linux/Build.sh",
+				"args": [
+					"MechaMakerEditor",
+					"Linux",
+					"DebugGame",
+					"/home/garrett/Desktop/Capstone/mecha-maker/MechaMaker.uproject",
+					"-waitmutex"
+				],
+				"problemMatcher": "$msCompile",
+				"dependsOn": [
+					"MechaMakerEditor Linux DebugGame Clean"
+				],
+				"type": "shell",
+				"options": {
+					"cwd": "/home/garrett/Unreal/Unreal_Engine_5.7.1"
+				}
+			},
+			{
+				"label": "MechaMakerEditor Linux DebugGame Clean",
+				"group": "build",
+				"command": "Engine/Build/BatchFiles/Linux/Build.sh",
+				"args": [
+					"MechaMakerEditor",
+					"Linux",
+					"DebugGame",
+					"/home/garrett/Desktop/Capstone/mecha-maker/MechaMaker.uproject",
+					"-waitmutex",
+					"-clean"
+				],
+				"problemMatcher": "$msCompile",
+				"type": "shell",
+				"options": {
+					"cwd": "/home/garrett/Unreal/Unreal_Engine_5.7.1"
+				}
+			},
+			{
+				"label": "MechaMakerEditor Linux Development Build",
+				"group": "build",
+				"command": "Engine/Build/BatchFiles/Linux/Build.sh",
+				"args": [
+					"MechaMakerEditor",
+					"Linux",
+					"Development",
+					"/home/garrett/Desktop/Capstone/mecha-maker/MechaMaker.uproject",
+					"-waitmutex"
+				],
+				"problemMatcher": "$msCompile",
+				"type": "shell",
+				"options": {
+					"cwd": "/home/garrett/Unreal/Unreal_Engine_5.7.1"
+				}
+			},
+			{
+				"label": "MechaMakerEditor Linux Development Rebuild",
+				"group": "build",
+				"command": "Engine/Build/BatchFiles/Linux/Build.sh",
+				"args": [
+					"MechaMakerEditor",
+					"Linux",
+					"Development",
+					"/home/garrett/Desktop/Capstone/mecha-maker/MechaMaker.uproject",
+					"-waitmutex"
+				],
+				"problemMatcher": "$msCompile",
+				"dependsOn": [
+					"MechaMakerEditor Linux Development Clean"
+				],
+				"type": "shell",
+				"options": {
+					"cwd": "/home/garrett/Unreal/Unreal_Engine_5.7.1"
+				}
+			},
+			{
+				"label": "MechaMakerEditor Linux Development Clean",
+				"group": "build",
+				"command": "Engine/Build/BatchFiles/Linux/Build.sh",
+				"args": [
+					"MechaMakerEditor",
+					"Linux",
+					"Development",
+					"/home/garrett/Desktop/Capstone/mecha-maker/MechaMaker.uproject",
+					"-waitmutex",
+					"-clean"
+				],
+				"problemMatcher": "$msCompile",
+				"type": "shell",
+				"options": {
+					"cwd": "/home/garrett/Unreal/Unreal_Engine_5.7.1"
+				}
+			}
+		]
+	},
+	"launch": {
+		"version": "0.2.0",
+		"configurations": [
+			{
+				"name": "Launch MechaMaker (Debug)",
+				"request": "launch",
+				"program": "/home/garrett/Desktop/Capstone/mecha-maker/Binaries/Linux/UnrealGame-Linux-Debug",
+				"preLaunchTask": "MechaMaker Linux Debug Build",
+				"args": [
+				],
+				"cwd": "/home/garrett/Unreal/Unreal_Engine_5.7.1",
+				"type": "cppdbg",
+				"visualizerFile": "/home/garrett/Unreal/Unreal_Engine_5.7.1/Engine/Extras/VisualStudioDebugging/Unreal.natvis",
+				"showDisplayString": true
+			},
+			{
+				"name": "Launch MechaMaker (DebugGame)",
+				"request": "launch",
+				"program": "/home/garrett/Desktop/Capstone/mecha-maker/Binaries/Linux/UnrealGame-Linux-DebugGame",
+				"preLaunchTask": "MechaMaker Linux DebugGame Build",
+				"args": [
+				],
+				"cwd": "/home/garrett/Unreal/Unreal_Engine_5.7.1",
+				"type": "cppdbg",
+				"visualizerFile": "/home/garrett/Unreal/Unreal_Engine_5.7.1/Engine/Extras/VisualStudioDebugging/Unreal.natvis",
+				"showDisplayString": true
+			},
+			{
+				"name": "Launch MechaMaker (Development)",
+				"request": "launch",
+				"program": "/home/garrett/Desktop/Capstone/mecha-maker/Binaries/Linux/UnrealGame",
+				"preLaunchTask": "MechaMaker Linux Development Build",
+				"args": [
+				],
+				"cwd": "/home/garrett/Unreal/Unreal_Engine_5.7.1",
+				"type": "cppdbg",
+				"visualizerFile": "/home/garrett/Unreal/Unreal_Engine_5.7.1/Engine/Extras/VisualStudioDebugging/Unreal.natvis",
+				"showDisplayString": true
+			},
+			{
+				"name": "Launch MechaMaker (Test)",
+				"request": "launch",
+				"program": "/home/garrett/Desktop/Capstone/mecha-maker/Binaries/Linux/UnrealGame-Linux-Test",
+				"preLaunchTask": "MechaMaker Linux Test Build",
+				"args": [
+				],
+				"cwd": "/home/garrett/Unreal/Unreal_Engine_5.7.1",
+				"type": "cppdbg",
+				"visualizerFile": "/home/garrett/Unreal/Unreal_Engine_5.7.1/Engine/Extras/VisualStudioDebugging/Unreal.natvis",
+				"showDisplayString": true
+			},
+			{
+				"name": "Launch MechaMaker (Shipping)",
+				"request": "launch",
+				"program": "/home/garrett/Desktop/Capstone/mecha-maker/Binaries/Linux/UnrealGame-Linux-Shipping",
+				"preLaunchTask": "MechaMaker Linux Shipping Build",
+				"args": [
+				],
+				"cwd": "/home/garrett/Unreal/Unreal_Engine_5.7.1",
+				"type": "cppdbg",
+				"visualizerFile": "/home/garrett/Unreal/Unreal_Engine_5.7.1/Engine/Extras/VisualStudioDebugging/Unreal.natvis",
+				"showDisplayString": true
+			},
+			{
+				"name": "Launch MechaMakerEditor (Debug)",
+				"request": "launch",
+				"program": "/home/garrett/Unreal/Unreal_Engine_5.7.1/Engine/Binaries/Linux/UnrealEditor-Linux-Debug",
+				"preLaunchTask": "MechaMakerEditor Linux Debug Build",
+				"args": [
+					"/home/garrett/Desktop/Capstone/mecha-maker/MechaMaker.uproject"
+				],
+				"cwd": "/home/garrett/Unreal/Unreal_Engine_5.7.1",
+				"type": "cppdbg",
+				"visualizerFile": "/home/garrett/Unreal/Unreal_Engine_5.7.1/Engine/Extras/VisualStudioDebugging/Unreal.natvis",
+				"showDisplayString": true
+			},
+			{
+				"name": "Launch MechaMakerEditor (DebugGame)",
+				"request": "launch",
+				"program": "/home/garrett/Unreal/Unreal_Engine_5.7.1/Engine/Binaries/Linux/UnrealEditor-Linux-DebugGame",
+				"preLaunchTask": "MechaMakerEditor Linux DebugGame Build",
+				"args": [
+					"/home/garrett/Desktop/Capstone/mecha-maker/MechaMaker.uproject"
+				],
+				"cwd": "/home/garrett/Unreal/Unreal_Engine_5.7.1",
+				"type": "cppdbg",
+				"visualizerFile": "/home/garrett/Unreal/Unreal_Engine_5.7.1/Engine/Extras/VisualStudioDebugging/Unreal.natvis",
+				"showDisplayString": true
+			},
+			{
+				"name": "Launch MechaMakerEditor (Development)",
+				"request": "launch",
+				"program": "/home/garrett/Unreal/Unreal_Engine_5.7.1/Engine/Binaries/Linux/UnrealEditor",
+				"preLaunchTask": "MechaMakerEditor Linux Development Build",
+				"args": [
+					"/home/garrett/Desktop/Capstone/mecha-maker/MechaMaker.uproject"
+				],
+				"cwd": "/home/garrett/Unreal/Unreal_Engine_5.7.1",
+				"type": "cppdbg",
+				"visualizerFile": "/home/garrett/Unreal/Unreal_Engine_5.7.1/Engine/Extras/VisualStudioDebugging/Unreal.natvis",
+				"showDisplayString": true
+			},
+			{
+				"name": "Generate Project Files",
+				"type": "coreclr",
+				"request": "launch",
+				"preLaunchTask": "UnrealBuildTool Linux Development Build",
+				"program": "/home/garrett/Unreal/Unreal_Engine_5.7.1/Engine/Build/BatchFiles/RunUBT.bat",
+				"args": [
+					"-projectfiles",
+					"-vscode",
+					"-project=/home/garrett/Desktop/Capstone/mecha-maker/MechaMaker.uproject",
+					"-game",
+					"-engine",
+					"-dotnet"
+				],
+				"env": {
+					"PATH": "/home/garrett/Unreal/Unreal_Engine_5.7.1/Engine/Binaries/ThirdParty/DotNet/8.0.412/linux-x64:${env:PATH}",
+					"DOTNET_ROOT": "/home/garrett/Unreal/Unreal_Engine_5.7.1/Engine/Binaries/ThirdParty/DotNet/8.0.412/linux-x64",
+					"DOTNET_HOST_PATH": "/home/garrett/Unreal/Unreal_Engine_5.7.1/Engine/Binaries/ThirdParty/DotNet/8.0.412/linux-x64/dotnet",
+					"DOTNET_MULTILEVEL_LOOKUP": "0",
+					"DOTNET_ROLL_FORWARD": "LatestMajor"
+				},
+				"console": "internalConsole",
+				"internalConsoleOptions": "openOnSessionStart",
+				"stopAtEntry": false,
+				"cwd": "/home/garrett/Unreal/Unreal_Engine_5.7.1"
+			}
+		]
+	}
+}
