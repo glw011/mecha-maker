@@ -1,0 +1,24 @@
+{
+	"FileVersion": 3,
+	"Version": 1,
+	"VersionName": "0.1",
+	"FriendlyName": "ApplParser",
+	"Description": "",
+	"Category": "Other",
+	"CreatedBy": "Garrett",
+	"CreatedByURL": "",
+	"DocsURL": "https://github.com/mecha-maker/",
+	"MarketplaceURL": "",
+	"SupportURL": "",
+	"CanContainContent": true,
+	"IsBetaVersion": false,
+	"IsExperimentalVersion": false,
+	"Installed": false,
+	"Modules": [
+		{
+			"Name": "ApplParser",
+			"Type": "Runtime",
+			"LoadingPhase": "Default"
+		}
+	]
+}
