@@ -16,6 +16,16 @@
 	"Installed": false,
 	"Modules": [
 		{
+			"Name": "Antlr4Runtime",
+			"Type": "Runtime",
+			"LoadingPhase": "Default"
+		},
+		{
+			"Name": "ApplLang",
+			"Type": "Runtime",
+			"LoadingPhase": "Default"
+		},
+		{
 			"Name": "ApplParser",
 			"Type": "Runtime",
 			"LoadingPhase": "Default"

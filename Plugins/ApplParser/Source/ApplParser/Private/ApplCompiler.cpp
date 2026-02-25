@@ -1,9 +1,6 @@
 #include "ApplCompiler.h"
+#include "ApplLangInterface.h"
 #include "Logging/LogMacros.h"
-#include "ApplErrorListener.h"
-#include "antlr4-runtime/antlr4-runtime.h"
-#include "ApplLang/APPL_Lex.h"
-#include "ApplLang/APPL_Parse.h"
 
 
 DEFINE_LOG_CATEGORY_STATIC(ApplCompilerLog, Log, All);
@@ -13,55 +10,47 @@ bool UApplCompiler::CompileAndRun(const FString& Source, FApplParseResult& OutRe
   OutResult = FApplParseResult{};
   OutResult.Errors.Reset();
 
+  // init c++ result struct
+  ApplLangInterface::ApplParseResult& parseResult;
+
   // convert UE string to utf-8 (i.e. std::string)
-  std::string utf8In = TCHAR_TO_UTF8(*Source);
+  std::string& utf8In = TCHAR_TO_UTF8(*Source);
 
   try{
-    // create text stream from utf-8 input
-    antlr4::ANTLRInputStream InputStream(utf8In);
-    // lex text stream
-    APPL_Lex Lexer(&InputStream);
-    // tokenize input
-    antlr4::CommonTokenStream Tokens(&Lexer);
-    // parse tokens
-    APPL_Parse Parser(&Tokens);
+    // pass utf-8 string and c++ result struct to ApplLang and begin parsing
+    bool parseSuccess = ApplLangInterface::StartParse(utf8In, parseResult);
 
-    // catch parse syntax errors with custom ApplErrorListener
-    FApplErrorListener ErrListener(OutResult.Errors);
-    Parser.removeErrorListeners();
-    Parser.addErrorListener(&ErrListener);
+    // log any exceptions caught during parse
+    if((int exceptCount = parseResult.applExcepts.size()) > 0){
+      for(int i=0; i<exceptCount; i++) UE_LOG(ApplCompilerLog, Error, TEXT(UTF8_TO_TCHAR(parseResult.applExcepts.at(i))));
+    }
 
-    // start at entry rule (i.e. main) and build parse tree
-    APPL_Parse::MainContext* Tree = Parser.main();
+    // log any syntax/other errors
+    if((int errCount = parseResult.applErrors.size()) > 0){
+      for(int i=0; i<errCount; i++) UE_LOG(ApplCompilerLog, Error, TEXT(UTF8_TO_TCHAR(parseResult.applErrors.at(i))));
+    }
 
-    // count statements in parse tree (unless parse fails)
-    const int32 stmtCount = Tree ? (int32)Tree->statement().size() : 0;
-    // store count in result struct
-    OutResult.StmtCount = stmtCount;
-    
-    // *** TODO ***   -->   implement checks to set flag
-    OutResult.bSuccess = (OutResult.Errors.Num() == 0);   // placeholder
+    // store c++ struct in UE result struct
+    OutResult.StmtCount = parseResult.stmtCount;
+    OutResult.bSuccess = parseResult.success;
 
-    // log results 
+    // log parse results 
     UE_LOG(ApplCompilerLog, Log, TEXT("ApplCompiler: Success=%s, Statements=%d, Errors=%d"),
       OutResult.bSuccess ? TEXT("true") : TEXT("false"),
       OutResult.StmtCount,
       OutResult.Errors.Num()
     );
-    
+
     return OutResult.bSuccess;
   }
-  // catch standard exceptions (set flag/ApplErrorListener and log in UE)
+
+  // catch standard exceptions
   catch(const std::exception& Ex){
-    OutResult.Errors.Add(FString::Printf(TEXT("Parsing Exception: %s"), UTF8_TO_TCHAR(Ex.what())));
-    OutResult.bSuccess = false;
     UE_LOG(ApplCompilerLog, Error, TEXT("ApplCompiler Exception: %s"), UTF8_TO_TCHAR(Ex.what()));
     return false;
   }
-  // catch other exceptions (set flag/ApplErrorListener and log in UE)
+  // catch other exceptions
   catch(...){
-    OutResult.Errors.Add(TEXT("Unknown exception occurred during parsing..."));
-    OutResult.bSuccess = false;
     UE_LOG(ApplCompilerLog, Error, TEXT("APPL Compile Unknown Exception"));
     return false;
   }
