@@ -22,14 +22,14 @@ public class ApplParser : ModuleRules{
 		PublicIncludePaths.AddRange(
 			new string[]{
 				Path.Combine(ModuleDirectory, "Public"),
-				Path.Combine(AntlrPath, "Include"),
+				Path.Combine(AntlrPath, "Include", "antlr4-runtime"),
 			}
 		);
 				
 		
 		PrivateIncludePaths.AddRange(
 			new string[]{
-				Path.Combine(ModuleDirectory, "Private")
+				Path.Combine(ModuleDirectory, "Private"),
 			}
 		);
 			

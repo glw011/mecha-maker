@@ -10,13 +10,14 @@ struct FApplParseResult{
 
   UPROPERTY(BlueprintReadOnly) bool bSuccess = false;
   UPROPERTY(BlueprintReadOnly) TArray<FString> Errors;
+  UPROPERTY(BlueprintReadOnly) int32 StmtCount = 0;
 };
 
-UCLASS()
+UCLASS(BlueprintType)
 class APPLPARSER_API UApplCompiler : public UObject{
   GENERATED_BODY()
 
-public:
-  UFUNCTION(BlueprintCallable)
-  bool Compile(const FString& Source, FApplParseResult& OutErr);
+  public:
+    UFUNCTION(BlueprintCallable, Category="ApplParser")
+    bool CompileAndRun(const FString& Source, FApplParseResult& OutResult);
 };

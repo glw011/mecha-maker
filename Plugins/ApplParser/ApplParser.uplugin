@@ -7,12 +7,12 @@
 	"Category": "Other",
 	"CreatedBy": "Garrett",
 	"CreatedByURL": "",
-	"DocsURL": "https://github.com/mecha-maker/",
+	"DocsURL": "https://github.com/glw011/mecha-maker/wiki",
 	"MarketplaceURL": "",
 	"SupportURL": "",
-	"CanContainContent": true,
-	"IsBetaVersion": false,
-	"IsExperimentalVersion": false,
+	"CanContainContent": false,
+	"IsBetaVersion": true,
+	"IsExperimentalVersion": true,
 	"Installed": false,
 	"Modules": [
 		{
