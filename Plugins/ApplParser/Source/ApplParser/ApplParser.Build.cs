@@ -14,13 +14,15 @@ public class ApplParser : ModuleRules{
     bEnforceIWYU = false;
     IWYUSupport = IWYUSupport.None;
 
-		string AntlrPath = Path.Combine(ModuleDirectory, "..", "ThirdParty", "antlr4runtime");
-		string IncludePath = Path.Combine(AntlrPath, "Include");
+
+		string ThirdPartyPath = Path.Combine(ModuleDirectory, "..", "ThirdParty");
+		string AntlrPath = Path.Combine(ThirdPartyPath, "antlr4runtime");
 		
+
 		PublicIncludePaths.AddRange(
 			new string[]{
 				Path.Combine(ModuleDirectory, "Public"),
-				// ... add public include paths required here ...
+				Path.Combine(AntlrPath, "Include"),
 			}
 		);
 				
@@ -28,29 +30,37 @@ public class ApplParser : ModuleRules{
 		PrivateIncludePaths.AddRange(
 			new string[]{
 				Path.Combine(ModuleDirectory, "Private")
-				// ... add other private include paths required here ...
 			}
 		);
 			
 		
-		PublicDependencyModuleNames.AddRange(new string[]{"Core"});
+		PublicDependencyModuleNames.AddRange(
+			new string[]{
+				"Core", "CoreUObject", "Engine"							
+			}
+		);
 			
 		
 		PrivateDependencyModuleNames.AddRange(
 			new string[]{
-				"CoreUObject",
-				"Engine",
 				"Slate",
 				"SlateCore",
-				// ... add private dependencies that you statically link with here ...	
 			}
 		);
+
+
+		// include static antlr4 lib according to platform
+		if(Target.Platform == UnrealTargetPlatform.Win64){
+			PublicAdditionalLibraries.Add(Path.Combine(AntlrPath, "Lib", "Windows", "antlr4-runtime-static.lib"));
+		}
+		else if(Target.Platform == UnrealTargetPlatform.Linux){
+			PublicAdditionalLibraries.Add(Path.Combine(AntlrPath, "Lib", "Linux", "libantlr4-runtime.a"));
+		}
+		else if(Target.Platform == UnrealTargetPlatform.Mac){
+			PublicAdditionalLibraries.Add(Path.Combine(AntlrPath, "Lib", "MacOS", "libantlr4-runtime.a"));
+		}
 		
 		
-		DynamicallyLoadedModuleNames.AddRange(
-			new string[]{
-				// ... add any modules that your module loads dynamically here ...
-			}
-		);
+		DynamicallyLoadedModuleNames.AddRange(new string[]{});
 	}
 }
