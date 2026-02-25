@@ -4,8 +4,8 @@
 #pragma once
 
 
-#include "antlr4-runtime.h"
-#include "APPL_Parse.h"
+#include "antlr4-runtime/antlr4-runtime.h"
+#include "ApplLang/APPL_Parse.h"
 
 
 /**

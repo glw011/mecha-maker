@@ -1,7 +1,7 @@
 #include "ApplCompiler.h"
 #include "Logging/LogMacros.h"
 #include "ApplErrorListener.h"
-#include "antlr4-runtime.h"
+#include "antlr4-runtime/antlr4-runtime.h"
 #include "ApplLang/APPL_Lex.h"
 #include "ApplLang/APPL_Parse.h"
 

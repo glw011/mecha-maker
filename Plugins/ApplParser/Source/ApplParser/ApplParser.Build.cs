@@ -1,6 +1,5 @@
-// Copyright Epic Games, Inc. All Rights Reserved.
-
 using UnrealBuildTool;
+using System.IO;
 
 public class ApplParser : ModuleRules{
 	public ApplParser(ReadOnlyTargetRules Target) : base(Target){
@@ -10,19 +9,15 @@ public class ApplParser : ModuleRules{
 		bEnableExceptions = true;
 		bUseRTTI = true;
 
-		// project too small to be crazy strict about headers...
-    bEnforceIWYU = false;
-    IWYUSupport = IWYUSupport.None;
 
-
-		string ThirdPartyPath = Path.Combine(ModuleDirectory, "..", "ThirdParty");
+		string ThirdPartyPath = ThirdPartyPath.GetFullPath(Path.Combine(ModuleDirectory, "..", "ThirdParty"));
 		string AntlrPath = Path.Combine(ThirdPartyPath, "antlr4runtime");
 		
 
 		PublicIncludePaths.AddRange(
 			new string[]{
 				Path.Combine(ModuleDirectory, "Public"),
-				Path.Combine(AntlrPath, "Include", "antlr4-runtime"),
+				Path.Combine(AntlrPath, "Include"),
 			}
 		);
 				
@@ -39,14 +34,6 @@ public class ApplParser : ModuleRules{
 				"Core", "CoreUObject", "Engine"							
 			}
 		);
-			
-		
-		PrivateDependencyModuleNames.AddRange(
-			new string[]{
-				"Slate",
-				"SlateCore",
-			}
-		);
 
 
 		// include static antlr4 lib according to platform
@@ -61,6 +48,5 @@ public class ApplParser : ModuleRules{
 		}
 		
 		
-		DynamicallyLoadedModuleNames.AddRange(new string[]{});
 	}
 }

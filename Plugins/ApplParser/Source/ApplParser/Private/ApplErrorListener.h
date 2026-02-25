@@ -1,9 +1,10 @@
 #pragma once
 
 #include "CoreMinimal.h"
-#include "antlr4-runtime.h"
+#include "antlr4-runtime/antlr4-runtime.h"
 
-// collects syntax errors from antlr + formats into array of strings usable in UE
+
+// collects syntax errors from antlr + formats into array of strings usable in UE to give code feedback after fail
 class FApplErrorListener final : public antlr4::BaseErrorListener{
   public:
     explicit FApplErrorListener(TArray<FString>& InErr) : Errors(InErr){}
