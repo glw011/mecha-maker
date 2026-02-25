@@ -9,8 +9,14 @@ public class ApplParser : ModuleRules{
 		bEnableExceptions = true;
 		bUseRTTI = true;
 
+		// fix unreal errors from undef'd ANTLR4_USE_THREAD_LOCAL_CACHE
+    PublicDefinitions.Add("ANTLR4_USE_THREAD_LOCAL_CACHE=0");
 
-		string ThirdPartyPath = ThirdPartyPath.GetFullPath(Path.Combine(ModuleDirectory, "..", "ThirdParty"));
+    // fix unreal errors from undef'd TRACE_ATN_SIM
+    PublicDefinitions.Add("TRACE_ATN_SIM=0");
+
+
+		string ThirdPartyPath = Path.GetFullPath(Path.Combine(ModuleDirectory, "..", "ThirdParty"));
 		string AntlrPath = Path.Combine(ThirdPartyPath, "antlr4runtime");
 		
 
@@ -18,6 +24,7 @@ public class ApplParser : ModuleRules{
 			new string[]{
 				Path.Combine(ModuleDirectory, "Public"),
 				Path.Combine(AntlrPath, "Include"),
+				Path.Combine(AntlrPath, "Include", "antlr4-runtime"),
 			}
 		);
 				

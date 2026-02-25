@@ -9,7 +9,7 @@
 DEFINE_LOG_CATEGORY_STATIC(ApplCompilerLog, Log, All);
 
 
-bool ApplCompiler::CompileAndRun(FString& Source, FApplParseResult& OutResult){
+bool UApplCompiler::CompileAndRun(const FString& Source, FApplParseResult& OutResult){
   OutResult = FApplParseResult{};
   OutResult.Errors.Reset();
 
@@ -43,7 +43,7 @@ bool ApplCompiler::CompileAndRun(FString& Source, FApplParseResult& OutResult){
     OutResult.bSuccess = (OutResult.Errors.Num() == 0);   // placeholder
 
     // log results 
-    UE_LOG(LogApplCompiler, Log, TEXT("ApplCompiler: Success=%s, Statements=%d, Errors=%d"),
+    UE_LOG(ApplCompilerLog, Log, TEXT("ApplCompiler: Success=%s, Statements=%d, Errors=%d"),
       OutResult.bSuccess ? TEXT("true") : TEXT("false"),
       OutResult.StmtCount,
       OutResult.Errors.Num()
@@ -55,14 +55,14 @@ bool ApplCompiler::CompileAndRun(FString& Source, FApplParseResult& OutResult){
   catch(const std::exception& Ex){
     OutResult.Errors.Add(FString::Printf(TEXT("Parsing Exception: %s"), UTF8_TO_TCHAR(Ex.what())));
     OutResult.bSuccess = false;
-    UE_LOG(LogApplCompiler, Error, TEXT("ApplCompiler Exception: %s"), UTF8_TO_TCHAR(Ex.what()));
+    UE_LOG(ApplCompilerLog, Error, TEXT("ApplCompiler Exception: %s"), UTF8_TO_TCHAR(Ex.what()));
     return false;
   }
   // catch other exceptions (set flag/ApplErrorListener and log in UE)
   catch(...){
     OutResult.Errors.Add(TEXT("Unknown exception occurred during parsing..."));
     OutResult.bSuccess = false;
-    UE_LOG(LogApplCompiler, Error, TEXT("APPL Compile Unknown Exception"));
+    UE_LOG(ApplCompilerLog, Error, TEXT("APPL Compile Unknown Exception"));
     return false;
   }
 }

@@ -2,7 +2,7 @@
 // Generated from APPL_Lex.g4 by ANTLR 4.13.2
 
 
-#include "APPL_Lex.h"
+#include "ApplLang/APPL_Lex.h"
 
 
 using namespace antlr4;
