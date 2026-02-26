@@ -17,6 +17,9 @@ public class Antlr4Runtime : ModuleRules{
     // antlr runtime source don't include .h files not ordered correctly
     IWYUSupport = IWYUSupport.None;
 
+    // just going in circles...
+    bUseUnity = false;
+
 		// fix unreal errors from undef'd ANTLR4_USE_THREAD_LOCAL_CACHE
     PublicDefinitions.Add("ANTLR4_USE_THREAD_LOCAL_CACHE=0");
 
@@ -32,16 +35,6 @@ public class Antlr4Runtime : ModuleRules{
     // add source files in public/private root to includes
     PublicIncludePaths.Add(publicPath);
     PrivateIncludePaths.Add(privatePath);
-
-    // add public antlr source files in nested dirs to includes
-    foreach(string currPath in System.IO.Directory.EnumerateDirectories(publicPath, "*", System.IO.SearchOption.AllDirectories)){
-      PublicIncludePaths.Add(currPath);
-    }
-
-    // add private antlr source files in nested dirs to includes
-    foreach(string currPath in System.IO.Directory.EnumerateDirectories(privatePath, "*", System.IO.SearchOption.AllDirectories)){
-      PrivateIncludePaths.Add(currPath);
-    }
 
     PublicDependencyModuleNames.AddRange(new string[]{"Core"});
 
