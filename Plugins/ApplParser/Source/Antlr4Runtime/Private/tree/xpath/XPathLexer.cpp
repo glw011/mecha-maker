@@ -1,3 +1,4 @@
+#pragma GCC visibility push(default)
 
 // Generated from XPathLexer.g4 by ANTLR 4.13.1
 
@@ -178,3 +179,5 @@ void XPathLexer::initialize() {
   ::antlr4::internal::call_once(xpathlexerLexerOnceFlag, xpathlexerLexerInitialize);
 #endif
 }
+
+#pragma GCC visibility pop

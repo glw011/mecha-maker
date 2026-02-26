@@ -1,3 +1,4 @@
+#pragma GCC visibility push(default)
 #include "LexerAction.h"
 
 using namespace antlr4::atn;
@@ -13,3 +14,5 @@ size_t LexerAction::hashCode() const {
   }
   return hash;
 }
+
+#pragma GCC visibility pop

@@ -1,3 +1,4 @@
+#pragma GCC visibility push(default)
 /* Copyright (c) 2012-2017 The ANTLR Project. All rights reserved.
  * Use of this file is governed by the BSD 3-clause license that
  * can be found in the LICENSE.txt file in the project root.
@@ -106,3 +107,5 @@ bool LexerActionExecutor::equals(const LexerActionExecutor &other) const {
          _lexerActions.size() == other._lexerActions.size() &&
          std::equal(_lexerActions.begin(), _lexerActions.end(), other._lexerActions.begin(), lexerActionEqual);
 }
+
+#pragma GCC visibility pop

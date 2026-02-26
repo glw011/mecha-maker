@@ -1,3 +1,4 @@
+#pragma GCC visibility push(default)
 // Copyright 2012-2022 The ANTLR Project
 //
 // Redistribution and use in source and binary forms, with or without modification, are permitted
@@ -165,3 +166,5 @@ bool PredictionContextMergeCache::PredictionContextComparer::operator()(
     const PredictionContextPair &lhs, const PredictionContextPair &rhs) const {
   return *lhs.first == *rhs.first && *lhs.second == *rhs.second;
 }
+
+#pragma GCC visibility pop

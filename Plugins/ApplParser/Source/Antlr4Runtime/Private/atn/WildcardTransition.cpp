@@ -1,4 +1,5 @@
-﻿/* Copyright (c) 2012-2017 The ANTLR Project. All rights reserved.
+#pragma GCC visibility push(default)
+/* Copyright (c) 2012-2017 The ANTLR Project. All rights reserved.
  * Use of this file is governed by the BSD 3-clause license that
  * can be found in the LICENSE.txt file in the project root.
  */
@@ -19,3 +20,5 @@ bool WildcardTransition::matches(size_t symbol, size_t minVocabSymbol, size_t ma
 std::string WildcardTransition::toString() const {
   return "WILDCARD " + Transition::toString() + " {}";
 }
+
+#pragma GCC visibility pop

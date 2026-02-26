@@ -1,3 +1,4 @@
+#pragma GCC visibility push(default)
 #include "atn/ATNStateType.h"
 
 std::string antlr4::atn::atnStateTypeName(ATNStateType atnStateType) {
@@ -31,3 +32,5 @@ std::string antlr4::atn::atnStateTypeName(ATNStateType atnStateType) {
   }
   return "UNKNOWN";
 }
+
+#pragma GCC visibility pop

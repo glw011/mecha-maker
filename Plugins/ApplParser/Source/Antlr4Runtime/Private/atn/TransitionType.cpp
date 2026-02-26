@@ -1,3 +1,4 @@
+#pragma GCC visibility push(default)
 #include "atn/TransitionType.h"
 
 std::string antlr4::atn::transitionTypeName(TransitionType transitionType) {
@@ -25,3 +26,5 @@ std::string antlr4::atn::transitionTypeName(TransitionType transitionType) {
   }
   return "UNKNOWN";
 }
+
+#pragma GCC visibility pop

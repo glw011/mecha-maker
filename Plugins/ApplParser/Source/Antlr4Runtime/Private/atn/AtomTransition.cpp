@@ -1,4 +1,5 @@
-﻿/* Copyright (c) 2012-2017 The ANTLR Project. All rights reserved.
+#pragma GCC visibility push(default)
+/* Copyright (c) 2012-2017 The ANTLR Project. All rights reserved.
  * Use of this file is governed by the BSD 3-clause license that
  * can be found in the LICENSE.txt file in the project root.
  */
@@ -25,3 +26,5 @@ bool AtomTransition::matches(size_t symbol, size_t /*minVocabSymbol*/, size_t /*
 std::string AtomTransition::toString() const {
   return "ATOM " + Transition::toString() + " { label: " + std::to_string(_label) + " }";
 }
+
+#pragma GCC visibility pop

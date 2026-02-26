@@ -1,3 +1,4 @@
+#pragma GCC visibility push(default)
 // Copyright 2012-2022 The ANTLR Project
 //
 // Redistribution and use in source and binary forms, with or without modification, are permitted
@@ -98,3 +99,5 @@ void SharedMutex::unlock_shared() {
   _impl.unlock_shared();
 #endif
 }
+
+#pragma GCC visibility pop

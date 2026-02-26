@@ -1,4 +1,5 @@
-﻿/* Copyright (c) 2012-2017 The ANTLR Project. All rights reserved.
+#pragma GCC visibility push(default)
+/* Copyright (c) 2012-2017 The ANTLR Project. All rights reserved.
  * Use of this file is governed by the BSD 3-clause license that
  * can be found in the LICENSE.txt file in the project root.
  */
@@ -239,3 +240,5 @@ ParseTree * Trees::findNodeSuchThat(ParseTree *t, Ref<Predicate> const& pred) {
   return nullptr;
 }
 
+
+#pragma GCC visibility pop

@@ -1,3 +1,4 @@
+#pragma GCC visibility push(default)
 // Copyright 2012-2022 The ANTLR Project
 //
 // Redistribution and use in source and binary forms, with or without modification, are permitted
@@ -54,3 +55,5 @@ bool PredictionContextCache::PredictionContextComparer::operator()(
     const Ref<const PredictionContext> &rhs) const {
   return *lhs == *rhs;
 }
+
+#pragma GCC visibility pop
