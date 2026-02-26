@@ -1,3 +1,4 @@
+#pragma GCC visibility push(default)
 #include "ApplLangInterface.h"
 
 THIRD_PARTY_INCLUDES_START
@@ -59,3 +60,4 @@ bool ApplLangInterface::StartParse(const std::string utf8In, ApplParseResult& re
     return false;
   }
 }
+#pragma GCC visibility pop

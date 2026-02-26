@@ -1,3 +1,4 @@
+#pragma GCC visibility push(default)
 
 // Generated from APPL_Parse.g4 by ANTLR 4.13.2
 
@@ -2991,3 +2992,5 @@ void APPL_Parse::initialize() {
   ::antlr4::internal::call_once(appl_parseParserOnceFlag, appl_parseParserInitialize);
 #endif
 }
+
+#pragma GCC visibility pop

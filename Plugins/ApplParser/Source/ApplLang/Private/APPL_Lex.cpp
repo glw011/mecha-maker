@@ -1,3 +1,4 @@
+#pragma GCC visibility push(default)
 
 // Generated from APPL_Lex.g4 by ANTLR 4.13.2
 
@@ -269,3 +270,5 @@ void APPL_Lex::initialize() {
   ::antlr4::internal::call_once(appl_lexLexerOnceFlag, appl_lexLexerInitialize);
 #endif
 }
+
+#pragma GCC visibility pop
