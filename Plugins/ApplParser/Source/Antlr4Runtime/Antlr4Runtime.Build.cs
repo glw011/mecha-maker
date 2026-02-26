@@ -36,6 +36,15 @@ public class Antlr4Runtime : ModuleRules{
     PublicIncludePaths.Add(publicPath);
     PrivateIncludePaths.Add(privatePath);
 
+    foreach(string SubDir in 
+      System.IO.Directory.EnumerateDirectories(publicPath, "*", System.IO.SearchOption.AllDirectories)){
+        PublicIncludePaths.Add(SubDir);
+    }
+    foreach(string SubDir in 
+      System.IO.Directory.EnumerateDirectories(privatePath, "*", System.IO.SearchOption.AllDirectories)){
+        PrivateIncludePaths.Add(SubDir);
+    }
+
     PublicDependencyModuleNames.AddRange(new string[]{"Core"});
 
   }
