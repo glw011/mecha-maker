@@ -18,10 +18,10 @@ public class ApplLang : ModuleRules{
     PublicIncludePaths.Add(Path.Combine(ModuleDirectory, "Public"));
     PrivateIncludePaths.Add(Path.Combine(ModuleDirectory, "Private"));
 
-    PublicDependencyModuleNames.AddRange(new string[]{"Core", "Antlr4Runtime"});
+    PublicDependencyModuleNames.AddRange(new string[]{"Core"});
+    PrivateDependencyModuleNames.AddRange(new string[]{"Antlr4Runtime"});
 
-    // If your antlr sources use warnings that break with -Werror, you can:
     // bTreatAsEngineModule = false; // something to test
-    bTreatWarningsAsErrors = false; // if you hit warnings-as-errors
+    bWarningsAsErrors = false; // stop 'warnings = errors'
   }
 }

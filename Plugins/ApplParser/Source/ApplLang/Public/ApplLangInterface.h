@@ -11,6 +11,6 @@ struct ApplParseResult{
 
 class ApplLangInterface{
   public:
-    bool StartParse(std::string utf8In, ApplParseResult& result){};
+    static bool StartParse(const std::string utf8In, ApplParseResult& result);
 };
 

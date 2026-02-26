@@ -5,7 +5,7 @@
 #include "APPL_Parse.h"
 
 
-bool ApplLangInterface::StartParse(std::string utf8In, ApplParseResult result){
+bool ApplLangInterface::StartParse(const std::string utf8In, ApplParseResult& result){
   // ensure cleared result struct
   result.success = false;
   result.applErrors.clear();
@@ -44,7 +44,7 @@ bool ApplLangInterface::StartParse(std::string utf8In, ApplParseResult result){
   }
   // catch standard exceptions (set flag/ApplErrorListener and log in UE)
   catch(const std::exception& ex){
-    result.applExcepts.push_back("Parsing Exception: " + ex.what());
+    result.applExcepts.push_back(std::string("Parsing Exception: ") + ex.what());
     result.success = false;
     return false;
   }
