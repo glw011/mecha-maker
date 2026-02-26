@@ -2,6 +2,7 @@
  * Use of this file is governed by the BSD 3-clause license that
  * can be found in the LICENSE.txt file in the project root.
  */
+#pragma GCC visibility push(default)
 
 #include "ConsoleErrorListener.h"
 
@@ -13,3 +14,6 @@ void ConsoleErrorListener::syntaxError(Recognizer * /*recognizer*/, Token * /*of
   size_t line, size_t charPositionInLine, const std::string &msg, std::exception_ptr /*e*/)  {
   std::cerr << "line " << line << ":" << charPositionInLine << " " << msg << std::endl;
 }
+
+#pragma GCC visibility pop
+

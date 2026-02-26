@@ -3,6 +3,9 @@
  * can be found in the LICENSE.txt file in the project root.
  */
 
+#pragma GCC visibility push(default)
+
+
 #include "IntStream.h"
 
 using namespace antlr4;
@@ -10,3 +13,6 @@ using namespace antlr4;
 const std::string IntStream::UNKNOWN_SOURCE_NAME = "<unknown>";
 
 IntStream::~IntStream() = default;
+
+
+#pragma GCC visibility pop

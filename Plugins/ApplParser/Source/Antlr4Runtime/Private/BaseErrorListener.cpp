@@ -3,6 +3,8 @@
  * can be found in the LICENSE.txt file in the project root.
  */
 
+#pragma GCC visibility push(default)
+
 #include "BaseErrorListener.h"
 #include "RecognitionException.h"
 
@@ -23,3 +25,5 @@ void BaseErrorListener::reportAttemptingFullContext(Parser * /*recognizer*/, con
 void BaseErrorListener::reportContextSensitivity(Parser * /*recognizer*/, const dfa::DFA &/*dfa*/, size_t /*startIndex*/,
   size_t /*stopIndex*/, size_t /*prediction*/, atn::ATNConfigSet * /*configs*/) {
 }
+
+#pragma GCC visibility pop

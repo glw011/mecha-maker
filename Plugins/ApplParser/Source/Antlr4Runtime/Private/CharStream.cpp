@@ -3,9 +3,13 @@
  * can be found in the LICENSE.txt file in the project root.
  */
 
+#pragma GCC visibility push(default)
+
 #include "CharStream.h"
 
 using namespace antlr4;
 
 CharStream::~CharStream() {
 }
+
+#pragma GCC visibility pop

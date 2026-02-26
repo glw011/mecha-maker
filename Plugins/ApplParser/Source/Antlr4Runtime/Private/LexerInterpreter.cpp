@@ -3,6 +3,8 @@
  * can be found in the LICENSE.txt file in the project root.
  */
 
+#pragma GCC visibility push(default)
+
 #include "atn/ATNType.h"
 #include "atn/LexerATNSimulator.h"
 #include "dfa/DFA.h"
@@ -58,3 +60,6 @@ const std::vector<std::string>& LexerInterpreter::getModeNames() const {
 const dfa::Vocabulary& LexerInterpreter::getVocabulary() const {
   return _vocabulary;
 }
+
+#pragma GCC visibility pop
+

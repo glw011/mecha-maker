@@ -17,7 +17,7 @@ public class Antlr4Runtime : ModuleRules{
     // antlr runtime source don't include .h files not ordered correctly
     IWYUSupport = IWYUSupport.None;
 
-    // just going in circles...
+    // this did something but ive looked at so much UBT docs at this point I don't remember what
     bUseUnity = false;
 
 		// fix unreal errors from undef'd ANTLR4_USE_THREAD_LOCAL_CACHE
@@ -26,7 +26,6 @@ public class Antlr4Runtime : ModuleRules{
     // fix unreal errors from undef'd TRACE_ATN_SIM
     PublicDefinitions.Add("TRACE_ATN_SIM=0");
 
-    //bTreatAsEngineModule = false; // something to test
     bWarningsAsErrors = false; // stop 'warnings = errors'
 
     string publicPath = Path.Combine(ModuleDirectory, "Public");
@@ -43,6 +42,10 @@ public class Antlr4Runtime : ModuleRules{
     foreach(string SubDir in 
       System.IO.Directory.EnumerateDirectories(privatePath, "*", System.IO.SearchOption.AllDirectories)){
         PrivateIncludePaths.Add(SubDir);
+    }
+
+    if(Target.Platform == UnrealTargetPlatform.Linux){
+      PublicRuntimeLibraryPaths.Add(Path.Combine(PluginDirectory, "Binaries", "Linux"));
     }
 
     PublicDependencyModuleNames.AddRange(new string[]{"Core"});

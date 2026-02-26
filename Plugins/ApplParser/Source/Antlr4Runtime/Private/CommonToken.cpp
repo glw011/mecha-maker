@@ -3,6 +3,8 @@
  * can be found in the LICENSE.txt file in the project root.
  */
 
+#pragma GCC visibility push(default)
+
 #include "TokenSource.h"
 #include "CharStream.h"
 #include "Recognizer.h"
@@ -191,3 +193,6 @@ void CommonToken::InitializeInstanceFields() {
   _stop = 0;
   _source = EMPTY_SOURCE;
 }
+
+#pragma GCC visibility pop
+

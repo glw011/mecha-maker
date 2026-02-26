@@ -2,6 +2,7 @@
  * Use of this file is governed by the BSD 3-clause license that
  * can be found in the LICENSE.txt file in the project root.
  */
+#pragma GCC visibility push(default)
 
 #include "WritableToken.h"
 #include "Lexer.h"
@@ -412,3 +413,5 @@ void BufferedTokenStream::InitializeInstanceFields() {
   _needSetup = true;
   _fetchedEOF = false;
 }
+
+#pragma GCC visibility pop

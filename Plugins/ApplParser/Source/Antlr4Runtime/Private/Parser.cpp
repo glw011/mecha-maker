@@ -3,6 +3,8 @@
  * can be found in the LICENSE.txt file in the project root.
  */
 
+#pragma GCC visibility push(default)
+
 #include "atn/ATNDeserializationOptions.h"
 #include "tree/pattern/ParseTreePatternMatcher.h"
 #include "dfa/DFA.h"
@@ -667,4 +669,6 @@ void Parser::InitializeInstanceFields() {
   _tracer = nullptr;
   _ctx = nullptr;
 }
+
+#pragma GCC visibility pop
 

@@ -1,6 +1,8 @@
 #pragma once
 
+THIRD_PARTY_INCLUDES_START
 #include "antlr4-runtime.h"
+THIRD_PARTY_INCLUDES_END
 
 
 // collects syntax errors from antlr + formats into array of strings usable in UE to give code feedback after fail

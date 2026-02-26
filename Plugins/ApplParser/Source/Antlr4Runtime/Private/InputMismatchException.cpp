@@ -3,6 +3,8 @@
  * can be found in the LICENSE.txt file in the project root.
  */
 
+#pragma GCC visibility push(default)
+
 #include "Parser.h"
 
 #include "InputMismatchException.h"
@@ -16,3 +18,5 @@ InputMismatchException::InputMismatchException(Parser *recognizer)
 
 InputMismatchException::~InputMismatchException() {
 }
+
+#pragma GCC visibility pop

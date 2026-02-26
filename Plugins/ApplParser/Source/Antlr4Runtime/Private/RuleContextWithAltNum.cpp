@@ -3,6 +3,9 @@
  * can be found in the LICENSE.txt file in the project root.
  */
 
+#pragma GCC visibility push(default)
+
+
 #include "atn/ATN.h"
 
 #include "RuleContextWithAltNum.h"
@@ -25,3 +28,6 @@ size_t RuleContextWithAltNum::getAltNumber() const {
 void RuleContextWithAltNum::setAltNumber(size_t number) {
   altNum = number;
 }
+
+#pragma GCC visibility pop
+

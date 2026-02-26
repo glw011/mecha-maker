@@ -18,10 +18,9 @@ public class ApplLang : ModuleRules{
     PublicIncludePaths.Add(Path.Combine(ModuleDirectory, "Public"));
     PrivateIncludePaths.Add(Path.Combine(ModuleDirectory, "Private"));
 
-    PublicDependencyModuleNames.AddRange(new string[]{"Core"});
-    PrivateDependencyModuleNames.AddRange(new string[]{"Antlr4Runtime"});
+    PublicDependencyModuleNames.AddRange(new string[]{"Core", "Antlr4Runtime"});
+    //PrivateDependencyModuleNames.AddRange(new string[]{"Antlr4Runtime"});
 
-    // bTreatAsEngineModule = false; // something to test
     bWarningsAsErrors = false; // stop 'warnings = errors'
   }
 }

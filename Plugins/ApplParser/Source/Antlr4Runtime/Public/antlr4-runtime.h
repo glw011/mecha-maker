@@ -3,6 +3,8 @@
  * can be found in the LICENSE.txt file in the project root.
  */
 
+ #pragma GCC visibility push(default)
+
 #pragma once
 
 // This is the umbrella header for all ANTLR4 C++ runtime headers.
@@ -166,3 +168,5 @@
 #include "tree/xpath/XPathWildcardAnywhereElement.h"
 #include "tree/xpath/XPathWildcardElement.h"
 #include "internal/Synchronization.h"
+
+#pragma GCC visibility pop

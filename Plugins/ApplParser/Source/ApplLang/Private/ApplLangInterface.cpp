@@ -1,6 +1,10 @@
 #include "ApplLangInterface.h"
-#include "ApplErrorListener.h"
+
+THIRD_PARTY_INCLUDES_START
 #include "antlr4-runtime.h"
+THIRD_PARTY_INCLUDES_END
+
+#include "ApplErrorListener.h"
 #include "APPL_Lex.h"
 #include "APPL_Parse.h"
 

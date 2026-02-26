@@ -3,6 +3,8 @@
  * can be found in the LICENSE.txt file in the project root.
  */
 
+#pragma GCC visibility push(default)
+
 #include "atn/ParserATNSimulator.h"
 #include "Parser.h"
 #include "atn/PredicateTransition.h"
@@ -50,3 +52,6 @@ size_t FailedPredicateException::getPredIndex() {
 std::string FailedPredicateException::getPredicate() {
   return _predicate;
 }
+
+#pragma GCC visibility pop
+

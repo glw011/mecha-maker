@@ -3,6 +3,9 @@
  * can be found in the LICENSE.txt file in the project root.
  */
 
+#pragma GCC visibility push(default)
+
+
 #include "RuntimeMetaData.h"
 #include "Version.h"
 
@@ -52,3 +55,6 @@ std::string RuntimeMetaData::getMajorMinorVersion(const std::string &version) {
 
   return version.substr(0, referenceLength);
 }
+
+#pragma GCC visibility pop
+

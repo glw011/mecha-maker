@@ -3,6 +3,9 @@
  * can be found in the LICENSE.txt file in the project root.
  */
 
+#pragma GCC visibility push(default)
+
+
 #include "misc/Interval.h"
 #include "support/CPPUtils.h"
 #include "CharStream.h"
@@ -34,3 +37,6 @@ std::string LexerNoViableAltException::toString() {
   std::string format = "LexerNoViableAltException('" + symbol + "')";
   return format;
 }
+
+#pragma GCC visibility pop
+

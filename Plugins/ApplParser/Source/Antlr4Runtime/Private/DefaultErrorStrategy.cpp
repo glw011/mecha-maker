@@ -3,6 +3,9 @@
  * can be found in the LICENSE.txt file in the project root.
  */
 
+#pragma GCC visibility push(default)
+
+
 #include "NoViableAltException.h"
 #include "misc/IntervalSet.h"
 #include "atn/ParserATNSimulator.h"
@@ -334,3 +337,6 @@ void DefaultErrorStrategy::InitializeInstanceFields() {
   errorRecoveryMode = false;
   lastErrorIndex = -1;
 }
+
+#pragma GCC visibility pop
+

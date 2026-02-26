@@ -3,6 +3,9 @@
  * can be found in the LICENSE.txt file in the project root.
  */
 
+#pragma GCC visibility push(default)
+
+
 #include "Token.h"
 #include "Exceptions.h"
 #include "assert.h"
@@ -268,3 +271,6 @@ void UnbufferedTokenStream::InitializeInstanceFields()
   _numMarkers = 0;
   _currentTokenIndex = 0;
 }
+
+#pragma GCC visibility pop
+

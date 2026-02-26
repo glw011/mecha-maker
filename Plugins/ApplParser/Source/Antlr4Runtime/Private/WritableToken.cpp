@@ -3,7 +3,13 @@
  * can be found in the LICENSE.txt file in the project root.
  */
 
+#pragma GCC visibility push(default)
+
+
 #include "WritableToken.h"
 
 antlr4::WritableToken::~WritableToken() {
 }
+
+#pragma GCC visibility pop
+

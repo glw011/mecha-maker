@@ -3,7 +3,11 @@
  * can be found in the LICENSE.txt file in the project root.
  */
 
+#pragma GCC visibility push(default)
+
 #include "TokenSource.h"
 
 antlr4::TokenSource::~TokenSource() {
 }
+
+#pragma GCC visibility pop

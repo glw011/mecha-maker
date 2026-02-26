@@ -3,6 +3,8 @@
  * can be found in the LICENSE.txt file in the project root.
  */
 
+#pragma GCC visibility push(default)
+
 #include "misc/Interval.h"
 #include "Exceptions.h"
 #include "support/Utf8.h"
@@ -206,3 +208,6 @@ std::string UnbufferedCharStream::toString() const {
 size_t UnbufferedCharStream::getBufferStartIndex() const {
   return _currentCharIndex - _p;
 }
+
+#pragma GCC visibility pop
+

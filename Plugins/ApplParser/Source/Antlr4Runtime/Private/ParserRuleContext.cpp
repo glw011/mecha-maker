@@ -3,6 +3,8 @@
  * can be found in the LICENSE.txt file in the project root.
  */
 
+#pragma GCC visibility push(default)
+
 #include "tree/TerminalNode.h"
 #include "tree/ErrorNode.h"
 #include "misc/Interval.h"
@@ -136,3 +138,4 @@ std::string ParserRuleContext::toInfoString(Parser *recognizer) {
     std::to_string(stop->getTokenIndex()) + '}';
 }
 
+#pragma GCC visibility pop

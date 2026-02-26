@@ -3,6 +3,9 @@
  * can be found in the LICENSE.txt file in the project root.
  */
 
+#pragma GCC visibility push(default)
+
+
 #include "atn/ATN.h"
 #include "Recognizer.h"
 #include "ParserRuleContext.h"
@@ -63,3 +66,6 @@ Recognizer* RecognitionException::getRecognizer() const {
 void RecognitionException::InitializeInstanceFields() {
   _offendingState = INVALID_INDEX;
 }
+
+#pragma GCC visibility pop
+

@@ -3,6 +3,8 @@
  * can be found in the LICENSE.txt file in the project root.
  */
 
+#pragma GCC visibility push(default)
+
 #include <string.h>
 
 #include "Exceptions.h"
@@ -178,3 +180,5 @@ std::string ANTLRInputStream::toString() const {
 void ANTLRInputStream::InitializeInstanceFields() {
   p = 0;
 }
+
+#pragma GCC visibility pop

@@ -2,6 +2,8 @@
  * Use of this file is governed by the BSD 3-clause license that
  * can be found in the LICENSE.txt file in the project root.
  */
+#pragma GCC visibility push(default)
+
 
 #include "misc/Interval.h"
 #include "CommonToken.h"
@@ -37,3 +39,5 @@ std::unique_ptr<CommonToken> CommonTokenFactory::create(std::pair<TokenSource*, 
 std::unique_ptr<CommonToken> CommonTokenFactory::create(size_t type, const std::string &text) {
   return std::unique_ptr<CommonToken>(new CommonToken(type, text));
 }
+#pragma GCC visibility pop
+

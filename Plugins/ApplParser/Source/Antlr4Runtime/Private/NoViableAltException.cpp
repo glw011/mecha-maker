@@ -3,6 +3,9 @@
  * can be found in the LICENSE.txt file in the project root.
  */
 
+#pragma GCC visibility push(default)
+
+
 #include "Parser.h"
 
 #include "NoViableAltException.h"
@@ -44,3 +47,6 @@ Token* NoViableAltException::getStartToken() const {
 atn::ATNConfigSet* NoViableAltException::getDeadEndConfigs() const {
   return _deadEndConfigs.get();
 }
+
+#pragma GCC visibility pop
+

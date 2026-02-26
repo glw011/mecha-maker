@@ -3,6 +3,9 @@
  * can be found in the LICENSE.txt file in the project root.
  */
 
+#pragma GCC visibility push(default)
+
+
 #include "ProxyErrorListener.h"
 
 using namespace antlr4;
@@ -51,3 +54,6 @@ void ProxyErrorListener::reportContextSensitivity(Parser *recognizer, const dfa:
     listener->reportContextSensitivity(recognizer, dfa, startIndex, stopIndex, prediction, configs);
   }
 }
+
+#pragma GCC visibility pop
+

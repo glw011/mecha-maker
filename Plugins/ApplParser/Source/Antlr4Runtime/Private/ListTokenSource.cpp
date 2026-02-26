@@ -3,6 +3,9 @@
  * can be found in the LICENSE.txt file in the project root.
  */
 
+#pragma GCC visibility push(default)
+
+
 #include "Token.h"
 #include "CommonToken.h"
 #include "CharStream.h"
@@ -90,3 +93,6 @@ void ListTokenSource::InitializeInstanceFields() {
   i = 0;
   _factory = CommonTokenFactory::DEFAULT.get();
 }
+
+#pragma GCC visibility pop
+

@@ -3,6 +3,8 @@
  * can be found in the LICENSE.txt file in the project root.
  */
 
+#pragma GCC visibility push(default)
+
 #include "tree/Trees.h"
 #include "misc/Interval.h"
 #include "Parser.h"
@@ -141,4 +143,7 @@ std::string RuleContext::toString(Recognizer *recog, RuleContext *stop) {
 void RuleContext::InitializeInstanceFields() {
   invokingState = INVALID_INDEX;
 }
+
+#pragma GCC visibility pop
+
 

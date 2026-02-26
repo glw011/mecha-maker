@@ -3,6 +3,9 @@
  * can be found in the LICENSE.txt file in the project root.
  */
 
+#pragma GCC visibility push(default)
+
+
 #include "Exceptions.h"
 #include "misc/Interval.h"
 #include "Token.h"
@@ -426,3 +429,6 @@ std::string TokenStreamRewriter::catOpText(std::string *a, std::string *b) {
   }
   return x + y;
 }
+
+#pragma GCC visibility pop
+

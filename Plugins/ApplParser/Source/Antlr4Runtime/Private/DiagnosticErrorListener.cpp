@@ -3,6 +3,9 @@
  * can be found in the LICENSE.txt file in the project root.
  */
 
+#pragma GCC visibility push(default)
+
+
 #include "atn/PredictionContext.h"
 #include "atn/ATNConfig.h"
 #include "atn/ATNConfigSet.h"
@@ -82,3 +85,6 @@ antlrcpp::BitSet DiagnosticErrorListener::getConflictingAlts(const antlrcpp::Bit
 
   return result;
 }
+
+
+#pragma GCC visibility pop

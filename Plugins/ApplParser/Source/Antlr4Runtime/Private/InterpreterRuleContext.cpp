@@ -3,6 +3,9 @@
  * can be found in the LICENSE.txt file in the project root.
  */
 
+#pragma GCC visibility push(default)
+
+
 #include "InterpreterRuleContext.h"
 
 using namespace antlr4;
@@ -17,3 +20,6 @@ InterpreterRuleContext::InterpreterRuleContext(ParserRuleContext *parent, size_t
 size_t InterpreterRuleContext::getRuleIndex() const {
   return _ruleIndex;
 }
+
+#pragma GCC visibility pop
+

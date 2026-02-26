@@ -3,6 +3,8 @@
  * can be found in the LICENSE.txt file in the project root.
  */
 
+#pragma GCC visibility push(default)
+
 #include "atn/LexerATNSimulator.h"
 #include "Exceptions.h"
 #include "misc/Interval.h"
@@ -292,3 +294,6 @@ void Lexer::InitializeInstanceFields() {
   type = 0;
   mode = Lexer::DEFAULT_MODE;
 }
+
+#pragma GCC visibility pop
+

@@ -3,6 +3,9 @@
  * can be found in the LICENSE.txt file in the project root.
  */
 
+#pragma GCC visibility push(default)
+
+
 #include "Exceptions.h"
 #include "ParserRuleContext.h"
 #include "InputMismatchException.h"
@@ -59,3 +62,6 @@ Token* BailErrorStrategy::recoverInline(Parser *recognizer)  {
 
 void BailErrorStrategy::sync(Parser * /*recognizer*/) {
 }
+
+#pragma GCC visibility pop
+

@@ -3,6 +3,8 @@
  * can be found in the LICENSE.txt file in the project root.
  */
 
+#pragma GCC visibility push(default)
+
 #include "dfa/DFA.h"
 #include "atn/RuleStartState.h"
 #include "InterpreterRuleContext.h"
@@ -292,3 +294,6 @@ void ParserInterpreter::recover(RecognitionException &e) {
 Token* ParserInterpreter::recoverInline() {
   return _errHandler->recoverInline(this);
 }
+
+#pragma GCC visibility pop
+
