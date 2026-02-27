@@ -41,6 +41,12 @@ bool ApplLangInterface::StartParse(const std::string utf8In, ApplParseResult& re
     const int32_t statmentCount = Tree ? (int32)Tree->statement().size() : 0;
     // store count in result struct
     result.stmtCount = statmentCount;
+
+    // walk tree w/ listener to trigger robot behavior when encountered
+    //antlr4::tree::ParseTreeWalker Walker;
+    //FApplListener Listener(Context);
+    //Walker.walk(&Listener, Tree);
+
     
     // *** TODO ***   -->   implement real checks to set flag
     result.success = (result.applErrors.size() == 0);   // placeholder
