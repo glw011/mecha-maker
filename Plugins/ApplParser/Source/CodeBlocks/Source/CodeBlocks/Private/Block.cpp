@@ -131,21 +131,21 @@ std::string Block::getContentStr(){
       );
       break;
     case CodeBlocks::BlockType::IF_ELSE_STMT:
-      CodeBlocks::BlockType elsBType = this->Slots.at(0).getBlock().getType();
+      CodeBlocks::BlockType elsBType = this->Slots.at(2).getBlock().getType();
 
       // format text as 'if(..){...} else if(...){...}' when 'ifStmt' or 'ifElseStmt' nested within else cblk
       if(elsBType == CodeBlocks::BlockType::IF_ELSE_STMT || elsBType == CodeBlocks::BlockType::IF_STMT){
         fContStr = ifElseStmtContStr(
-          this->Slots.at(0).getBlock().getContentStr(),
-          this->Slots.at(1).getBlock().getContentStr(),
-          this->Slots.at(2).getBlock().getContentStr()
+          this->Slots[0].getBlock().getContentStr(),
+          this->Slots[1].getBlock().getContentStr(),
+          this->Slots[2].getBlock().getContentStr()
         );
       }
       // otherwise: wrap as '{' + cblk + '}'
       else{
           fContStr = ifElseStmtContStr(
-          this->Slots.at(0).getBlock().getContentStr(),
-          this->Slots.at(1).getBlock().getContentStr(),
+          this->Slots[0].getBlock().getContentStr(),
+          this->Slots[1].getBlock().getContentStr(),
           cblkContStr(this->Slots.at(2).getBlock().getContentStr())
         );
       }
@@ -292,9 +292,9 @@ std::string Block::ifStmtContStr(std::string condSlot, std::string cblkSlot){
   return fstr;
 }
 
-std::string Block::ifElseStmtContStr(std::string condSlot, std::string ifCblkSlot, std::string elsCblkSlot){
-  // "if({condSlot}){ifCblkSlot}else{elsCblkSlot}"
-  std::string fstr = "if(" + condSlot + ")" + cblkContStr(ifCblkSlot) + "else " + elsCblkSlot;
+std::string Block::ifElseStmtContStr(std::string condSlot, std::string ifCblkSlot, std::string elsBlkSlot){
+  // "if({condSlot}){ifCblkSlot}{elsBlkSlot}"
+  std::string fstr = "if(" + condSlot + ")" + cblkContStr(ifCblkSlot) + elsBlkSlot;
   return fstr;
 }
 

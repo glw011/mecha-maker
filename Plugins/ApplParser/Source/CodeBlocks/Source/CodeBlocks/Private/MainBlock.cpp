@@ -11,14 +11,15 @@
 
 MainBlock::MainBlock(){
   SlotStr = "{}";
-  EndStr = "}%__ENDMAIN__%";
+  EndStr = "}$__ENDMAIN__$";
   this->ProgramStr = "main(){";
   this->SlotCount = 0;
   this->SlotList = LinkedList();
 }
 
-// *** TODO ***
 bool MainBlock::insertBlock(Block droppedBlock){}
+
+// *** TODO ***
 bool MainBlock::insertBlockBefore(Block droppedBlock, BlockSlot blockRef){}
 bool MainBlock::insertBlockAfter(Block droppedBlock, BlockSlot blockRef){}
 

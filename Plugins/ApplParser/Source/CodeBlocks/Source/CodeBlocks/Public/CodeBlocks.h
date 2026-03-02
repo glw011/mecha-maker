@@ -1,6 +1,7 @@
 #include <unordered_map>
 #include <string>
 #include <set>
+#include <array>
 #include <vector>
 
 #ifndef CODE_BLOCKS
@@ -34,7 +35,7 @@
       ARR_REF
     };
 
-    std::array TypeNames = {
+    static std::array TypeNames = {
       "NONE", 
       "MainBlock", 
       "AssignBlock",

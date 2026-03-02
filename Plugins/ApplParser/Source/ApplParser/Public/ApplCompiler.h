@@ -21,3 +21,4 @@ class APPLPARSER_API UApplCompiler : public UObject{
     UFUNCTION(BlueprintCallable, Category="ApplParser")
     bool CompileAndRun(const FString& Source, FApplParseResult& OutResult);
 };
+

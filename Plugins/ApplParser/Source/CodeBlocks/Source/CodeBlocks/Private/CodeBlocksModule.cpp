@@ -36,8 +36,8 @@ std::unordered_map<CodeBlocks::BlockType, std::string> CodeBlocks::ContentStrMap
   {BlockType::WHILE_LOOP, "while({condSlot}){cblkSlot}"},
   {BlockType::FOR_LOOP, "for({assignSlot} {condSlot} {exprSlot}){cblkSlot}"},
   {BlockType::FOR_EA_LOOP, "for each {idRefSlot} in {arrRefSlot}{cblkSlot}"},
-  {BlockType::IF_ELSE_STMT, "if({condSlot}){cblkSlot}else{cblkSlot}"},
-  {BlockType::IF_STMT, "if({condSlot}){cblkSlot}"},
+  {BlockType::IF_ELSE_STMT, "if({condSlot}){cblkSlot} else {elsBlkSlot}"},
+  {BlockType::IF_STMT, ""},
   {BlockType::BINRY_EXPR, "{lOprndSlot} {oprtrSlot} {rOprndSlot}"},
   {BlockType::UNARY_EXPR, "{idRefSlot}{oprtrSlot}"},
   {BlockType::PRE_UNARY_EXPR, "{oprtrSlot}{idRefSlot}"},
@@ -57,18 +57,6 @@ std::set<CodeBlocks::BlockType> CodeBlocks::SizedTypes = {
   BlockType::FUN_DEF,
   BlockType::ARR_REF
 };
-
-static std::array NoneVars = {""};
-static std::array AssignVars = {""};
-static std::array FunDefVars = {""};
-static std::array FunCallVars = {""};
-static std::array WhileVars = {""};
-static std::array ForVars = {""};
-static std::array ForEaVars = {""};
-static std::array IfElseVars = {""};
-static std::array IfVars = {""};
-static std::array BinryVars = {""};
-static std::array UnaryVars = {""};
 
 std::unordered_map<CodeBlocks::BlockType, std::vector<std::string>> TypeVarsMap = {
 };
