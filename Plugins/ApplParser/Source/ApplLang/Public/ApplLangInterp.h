@@ -1,4 +1,5 @@
 #include "ApplLangListener.h"
+#include "ApplLangInterface.h"
 #include <unordered_map>
 #include <vector>
 #include <string>
@@ -113,10 +114,11 @@ class ApplLangInterp : public ApplLangListener{
 
 };
 
-
+/*
 struct ApplParseResult{
   bool success = false;
   std::vector<std::string> applErrors;
   std::vector<std::string> applExcepts;
   int32_t stmtCount = 0;
 };
+*/
