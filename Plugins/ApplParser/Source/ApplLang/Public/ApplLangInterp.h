@@ -1,5 +1,6 @@
+#pragma once
+
 #include "ApplLangListener.h"
-#include "ApplLangInterface.h"
 #include <unordered_map>
 #include <vector>
 #include <string>

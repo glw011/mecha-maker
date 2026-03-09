@@ -2,14 +2,13 @@
 
 
 
-ApplLangInterp::ApplLangInterp(){
-  // init sym tables here
+void ApplLangInterp::enterMain(APPL_Parse::MainContext* mainCtx){
+  // initialize sym tables here
 }
 
-void ApplLangInterp::enterMain(APPL_Parse::MainContext* mainCtx){
+void ApplLangInterp::exitMain(APPL_Parse::MainContext* mainCtx){
   // clear/reset sym tables here
 }
-//void ApplLangInterp::exitMain(APPL_Parse::MainContext* mainCtx){}
 
 //void ApplLangInterp::enterStatement(APPL_Parse::StatementContext* stmtCtx){}
 void ApplLangInterp::exitStatement(APPL_Parse::StatementContext* stmtCtx){}
@@ -98,10 +97,10 @@ void ApplLangInterp::exitArg_list(APPL_Parse::Arg_listContext* argListCtx){}
 void ApplLangInterp::exitNumber(APPL_Parse::NumberContext* numCtx){}
 
 //void ApplLangInterp::enterPos_num(APPL_Parse::Pos_numContext* posNumCtx){}
-//void ApplLangInterp::exitPos_num(APPL_Parse::Pos_numContext* posNumCtx){}
+void ApplLangInterp::exitPos_num(APPL_Parse::Pos_numContext* posNumCtx){}
 
 //void ApplLangInterp::enterNeg_num(APPL_Parse::Neg_numContext* negNumCtx){}
-//void ApplLangInterp::exitNeg_num(APPL_Parse::Neg_numContext* negNumCtx){}
+void ApplLangInterp::exitNeg_num(APPL_Parse::Neg_numContext* negNumCtx){}
 
 //void ApplLangInterp::enterBooln(APPL_Parse::BoolnContext* boolCtx){}
 void ApplLangInterp::exitBooln(APPL_Parse::BoolnContext* boolCtx){}
