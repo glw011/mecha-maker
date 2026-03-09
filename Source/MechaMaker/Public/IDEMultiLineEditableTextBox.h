@@ -16,7 +16,7 @@ class MECHAMAKER_API UIDEMultiLineEditableTextBox : public UMultiLineEditableTex
 	GENERATED_BODY()
 
 	public:
-		UFUNCTION(BlueprintPure, meta=(DisplayName="GetCaretPosition", Keywords="GetCaretPosition"), Category="IDE")
+		UFUNCTION(BlueprintPure, meta=(DisplayName="Get Caret Position", Keywords="Get Caret Position"), Category="IDE")
 		bool getCursorPosition(int& linePos, int& charPos){
 			auto slateWidget = StaticCastSharedRef<SMultiLineEditableTextBox>(TakeWidget());
 			auto currPos = slateWidget->GetCursorLocation();
@@ -25,11 +25,24 @@ class MECHAMAKER_API UIDEMultiLineEditableTextBox : public UMultiLineEditableTex
 			return currPos.IsValid();
 		}
 		
-		UFUNCTION(BlueprintCallable, meta=(DisplayName="GoToPosition", Keywords="GoToPosition"), Category="IDE")
+		UFUNCTION(BlueprintCallable, meta=(DisplayName="Go To Position", Keywords="Go To Position"), Category="IDE")
 		void goToPosition(int linePos, int charPos){
 			auto slateWidget = StaticCastSharedRef<SMultiLineEditableTextBox>(TakeWidget());
 			auto textPos = FTextLocation(linePos, charPos);
 			slateWidget->GoTo(textPos);
+		}
+		
+		
+		UFUNCTION(BlueprintCallable, meta=(DisplayName="Insert Text", Keywords="Insert Text"), Category="IDE")
+		void insertTextAtCurrPos(FText inTxt){
+			auto slateWidget = StaticCastSharedRef<SMultiLineEditableTextBox>(TakeWidget());
+			slateWidget->InsertTextAtCursor(inTxt);
+		}
+
+		UFUNCTION(BlueprintCallable, meta=(DisplayName="Insert String", Keywords="Insert String"), Category="IDE")
+		void insertStrAtCurrPos(FString inString){
+			auto slateWidget = StaticCastSharedRef<SMultiLineEditableTextBox>(TakeWidget());
+			slateWidget->InsertTextAtCursor(inString);
 		}
 
 };
