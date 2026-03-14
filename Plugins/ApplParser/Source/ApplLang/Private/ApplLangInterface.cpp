@@ -1,5 +1,10 @@
 #pragma GCC visibility push(default)
+
 #include "ApplLangInterface.h"
+// ApplLangInterp.h (and transitively antlr4-runtime.h) is included ONLY here
+// in the .cpp, never in ApplLangInterface.h, so the antlr4 include chain stays
+// confined to the ApplLang module and never reaches the ApplParser module.
+#include "ApplLangInterp.h"
 
 THIRD_PARTY_INCLUDES_START
 #include "antlr4-runtime.h"
@@ -10,60 +15,60 @@ THIRD_PARTY_INCLUDES_END
 #include "APPL_Parse.h"
 
 
-bool ApplLangInterface::StartParse(const std::string utf8In, ApplParseResult& result){
-  // ensure cleared result struct
-  result.success = false;
-  result.applErrors.clear();
-  result.applExcepts.clear();
-  result.stmtCount = 0;
-
-  try{
-    // text stream from utf-8 input
-    antlr4::ANTLRInputStream InputStream(utf8In);
-    // lexer from text stream
-    APPL_Lex Lexer(&InputStream);
-    // tokenizer from lexer
-    antlr4::CommonTokenStream Tokens(&Lexer);
-    // parser from tokenizer
-    APPL_Parse Parser(&Tokens);
-
-    // init custom ApplErrorListener
-    ApplErrorListener ErrListener(result.applErrors);
-    // remove default listener
-    Parser.removeErrorListeners();
-    // use custom ApplErrorListener to catch syntax errors 
-    Parser.addErrorListener(&ErrListener);
-
-    // start at entry rule (i.e. main) and build parse tree
-    APPL_Parse::MainContext* Tree = Parser.main();
-
-    // count statements in parse tree (unless parse fails)
-    const int32_t statmentCount = Tree ? (int32)Tree->statement().size() : 0;
-    // store count in result struct
-    result.stmtCount = statmentCount;
-
-    // walk tree w/ listener to trigger robot behavior when encountered
-    antlr4::tree::ParseTreeWalker Walker;
-    //ApplListener Listener(Context);
-    //Walker.walk(&Listener, Tree);
-
-    
-    // *** TODO ***   -->   implement real checks to set flag
-    result.success = (result.applErrors.size() == 0);   // placeholder
-    
-    return result.success;
-  }
-  // catch standard exceptions (set flag/ApplErrorListener and log in UE)
-  catch(const std::exception& ex){
-    result.applExcepts.push_back(std::string("Parsing Exception: ") + ex.what());
+bool ApplLangInterface::StartParse(
+    const std::string& utf8In,
+    ApplParseResult&   result,
+    ComponentCallFn    componentHandler)
+{
     result.success = false;
-    return false;
-  }
-  // catch other exceptions (set flag/ApplErrorListener and log in UE)
-  catch(...){
-    result.applExcepts.push_back("Unknown exception during parsing!");
-    result.success = false;
-    return false;
-  }
+    result.applErrors.clear();
+    result.applExcepts.clear();
+    result.stmtCount = 0;
+
+    try {
+        antlr4::ANTLRInputStream  InputStream(utf8In);
+        APPL_Lex                  Lexer(&InputStream);
+        antlr4::CommonTokenStream Tokens(&Lexer);
+        APPL_Parse                Parser(&Tokens);
+
+        ApplErrorListener ErrListener(result.applErrors);
+        Parser.removeErrorListeners();
+        Parser.addErrorListener(&ErrListener);
+
+        APPL_Parse::MainContext* Tree = Parser.main();
+
+        result.stmtCount = Tree
+            ? static_cast<int32_t>(Tree->statement().size())
+            : 0;
+
+        if (result.applErrors.empty() && Tree) {
+            ApplLangInterp Interpreter;
+
+            if (componentHandler)
+                Interpreter.componentCallHandler = componentHandler;
+
+            // Fix: no stray semicolon between try-block and catch-block.
+            try {
+                Interpreter.visitMain(Tree);
+            } catch (const ApplRuntimeError& rte) {
+                result.applErrors.push_back(
+                    std::string("Runtime error: ") + rte.what());
+            }
+        }
+
+        result.success = result.applErrors.empty();
+        return result.success;
+    }
+    catch (const std::exception& ex) {
+        result.applExcepts.push_back(std::string("Parsing exception: ") + ex.what());
+        result.success = false;
+        return false;
+    }
+    catch (...) {
+        result.applExcepts.push_back("Unknown exception during parsing!");
+        result.success = false;
+        return false;
+    }
 }
+
 #pragma GCC visibility pop

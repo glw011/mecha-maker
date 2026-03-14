@@ -1,125 +1,114 @@
 #pragma once
 
-#include "ApplLangListener.h"
+// ---------------------------------------------------------------------------
+//  ApplLangInterp.h
+//
+//  Tree-walking interpreter for APPL. Extends APPL_ParseBaseVisitor.
+//  Lives in the ApplLang module — must remain UE-blind.
+// ---------------------------------------------------------------------------
+
+#include "APPL_ParseBaseVisitor.h"
+#include "APPL_Parse.h"
+#include "ApplTypes.h"          // ApplValue, ComponentCallFn, ApplRuntimeError
+
 #include <unordered_map>
 #include <vector>
 #include <string>
+#include <any>
+#include <functional>
+#include <cmath>
 
 
-
-class ApplLangInterp : public ApplLangListener{
-  public:
-    explicit ApplLangInterp();
-
-    virtual void enterMain(APPL_Parse::MainContext* mainCtx) override;
-    virtual void exitMain(APPL_Parse::MainContext* mainCtx) override;
-
-    //virtual void enterStatement(APPL_Parse::StatementContext* stmtCtx) override;
-    virtual void exitStatement(APPL_Parse::StatementContext* stmtCtx) override;
-
-    //virtual void enterAssign(APPL_Parse::AssignContext* assignCtx) override;
-    virtual void exitAssign(APPL_Parse::AssignContext* assignCtx) override;
-
-    //virtual void enterFun_def(APPL_Parse::Fun_defContext* funDefCtx) override;
-    virtual void exitFun_def(APPL_Parse::Fun_defContext* funDefCtx) override;
-
-    //virtual void enterParam_list(APPL_Parse::Param_listContext* paramListCtx) override;
-    virtual void exitParam_list(APPL_Parse::Param_listContext* paramListCtx) override;
-
-    //virtual void enterConditional(APPL_Parse::ConditionalContext* condtnlCtx) override;
-    virtual void exitConditional(APPL_Parse::ConditionalContext* condtnlCtx) override;
-
-    //virtual void enterIf_else_stmt(APPL_Parse::If_else_stmtContext* ifElsCtx) override;
-    virtual void exitIf_else_stmt(APPL_Parse::If_else_stmtContext* ifElsCtx) override;
-
-    //virtual void enterElse_blk(APPL_Parse::Else_blkContext* elsBlkCtx) override;
-    virtual void exitElse_blk(APPL_Parse::Else_blkContext* elsBlkCtx) override;
-
-    //virtual void enterWhile_loop(APPL_Parse::While_loopContext* whlLoopCtx) override;
-    virtual void exitWhile_loop(APPL_Parse::While_loopContext* whlLoopCtx) override;
-
-    //virtual void enterFor_loop(APPL_Parse::For_loopContext* forLoopCtx) override;
-    virtual void exitFor_loop(APPL_Parse::For_loopContext* forLoopCtx) override;
-
-    //virtual void enterFor_ea_loop(APPL_Parse::For_ea_loopContext* forEaLoopCtx) override;
-    virtual void exitFor_ea_loop(APPL_Parse::For_ea_loopContext* forEaLoopCtx) override;
-
-    //virtual void enterCblk(APPL_Parse::CblkContext* cblkCtx) override;
-    virtual void exitCblk(APPL_Parse::CblkContext* cblkCtx) override;
-
-    //virtual void enterReturn(APPL_Parse::ReturnContext* returnCtx) override;
-    virtual void exitReturn(APPL_Parse::ReturnContext* returnCtx) override;
-
-    //virtual void enterExpr(APPL_Parse::ExprContext* exprCtx) override;
-    virtual void exitExpr(APPL_Parse::ExprContext* exprCtx) override;
-
-    //virtual void enterOperatn(APPL_Parse::OperatnContext* oprtnCtx) override;
-    virtual void exitOperatn(APPL_Parse::OperatnContext* oprtnCtx) override;
-
-    //virtual void enterUnary_oprtn(APPL_Parse::Unary_oprtnContext* uOprtnCtx) override;
-    virtual void exitUnary_oprtn(APPL_Parse::Unary_oprtnContext* uOprtnCtx) override;
-
-    //virtual void enterIteratn(APPL_Parse::IteratnContext* itrCtx) override;
-    virtual void exitIteratn(APPL_Parse::IteratnContext* itrCtx) override;
-
-    //virtual void enterPrefx_unary_oprtn(APPL_Parse::Prefx_unary_oprtnContext* prfxuOprtnCtx) override;
-    virtual void exitPrefx_unary_oprtn(APPL_Parse::Prefx_unary_oprtnContext* prfxuOprtnCtx) override;
-
-    //virtual void enterNegatn(APPL_Parse::NegatnContext* ngtnCtx) override;
-    virtual void exitNegatn(APPL_Parse::NegatnContext* ngtnCtx) override;
-
-    //virtual void enterBinary_oprtn(APPL_Parse::Binary_oprtnContext* bOprtnCtx) override;
-    virtual void exitBinary_oprtn(APPL_Parse::Binary_oprtnContext* bOprtnCtx) override;
-
-    //virtual void enterArth_bin_op(APPL_Parse::Arth_bin_opContext* arthbOprtnCtx) override;
-    virtual void exitArth_bin_op(APPL_Parse::Arth_bin_opContext* arthbOprtnCtx) override;
-
-    //virtual void enterComparison(APPL_Parse::ComparisonContext* comparCtx) override;
-    virtual void exitComparison(APPL_Parse::ComparisonContext* comparCtx) override;
-
-    //virtual void enterAug_bin_op(APPL_Parse::Aug_bin_opContext* augAssignCtx) override;
-    virtual void exitAug_bin_op(APPL_Parse::Aug_bin_opContext* augAssignCtx) override;
-
-    //virtual void enterFactor(APPL_Parse::FactorContext* factrCtx) override;
-    virtual void exitFactor(APPL_Parse::FactorContext* factrCtx) override;
-
-    //virtual void enterFun_call(APPL_Parse::Fun_callContext* funCallCtx) override;
-    virtual void exitFun_call(APPL_Parse::Fun_callContext* funcCallCtx) override;
-
-    //virtual void enterArg_list(APPL_Parse::Arg_listContext* argListCtx) override;
-    virtual void exitArg_list(APPL_Parse::Arg_listContext* argListCtx) override;
-
-    //virtual void enterNumber(APPL_Parse::NumberContext* numCtx) override;
-    virtual void exitNumber(APPL_Parse::NumberContext* numCtx) override;
-
-    //virtual void enterPos_num(APPL_Parse::Pos_numContext* posNumCtx) override;
-    virtual void exitPos_num(APPL_Parse::Pos_numContext* posNumCtx) override;
-
-    //virtual void enterNeg_num(APPL_Parse::Neg_numContext* negNumCtx) override;
-    virtual void exitNeg_num(APPL_Parse::Neg_numContext* negNumCtx) override;
-
-    //virtual void enterBooln(APPL_Parse::BoolnContext* boolCtx) override;
-    virtual void exitBooln(APPL_Parse::BoolnContext* boolCtx) override;
-
-    // override rule handlers (must match base listener method names)
-    // placeholder examples for now...
-    // ---------------------------------------------------------------------------
-    //virtual void enterMoveStmt(Type* ctx) override;
-    //virtual void enterTurnStmt(Type* ctx) override;
-    //virtual void enterWaitStmt(Type* ctx) override;
-
-  private:
-    std::unordered_map<std::string, std::vector<std::string>> argLists = {};
-    std::unordered_map<std::string, std::vector<std::string>> paramLists = {};
-    std::unordered_map<int, int> intVariables; 
-
+// ---------------------------------------------------------------------------
+//  Internal control-flow exception — propagates return values back up through
+//  the visitor call stack. Never escapes ApplLangInterface::StartParse.
+// ---------------------------------------------------------------------------
+struct ApplReturnException {
+    ApplValue value;
+    explicit ApplReturnException(ApplValue v) : value(std::move(v)) {}
 };
 
-/*
-struct ApplParseResult{
-  bool success = false;
-  std::vector<std::string> applErrors;
-  std::vector<std::string> applExcepts;
-  int32_t stmtCount = 0;
+
+// ---------------------------------------------------------------------------
+//  Scope frame and function definition — used internally by the interpreter.
+// ---------------------------------------------------------------------------
+using ScopeFrame = std::unordered_map<std::string, ApplValue>;
+
+struct FunctionDef {
+    std::vector<std::string>  params;
+    APPL_Parse::CblkContext*  body = nullptr;
 };
-*/
+
+
+// ---------------------------------------------------------------------------
+//  ApplLangInterp
+// ---------------------------------------------------------------------------
+class ApplLangInterp : public APPL_ParseBaseVisitor {
+public:
+
+    // Component function dispatch hook. Set by ApplLangInterface before
+    // calling visitMain. The lambda is constructed in the ApplParser module
+    // (UApplCompiler) so UE types never appear in this header.
+    ComponentCallFn componentCallHandler;
+
+    // Variable inspection (used by tests / ApplLangInterface).
+    bool       hasVar(const std::string& name) const;
+    ApplValue  getVar(const std::string& name) const;
+
+    // -----------------------------------------------------------------------
+    //  Visitor overrides
+    // -----------------------------------------------------------------------
+    std::any visitMain             (APPL_Parse::MainContext*              ctx) override;
+    std::any visitStatement        (APPL_Parse::StatementContext*         ctx) override;
+    std::any visitAssign           (APPL_Parse::AssignContext*            ctx) override;
+    std::any visitFun_def          (APPL_Parse::Fun_defContext*           ctx) override;
+    std::any visitParam_list       (APPL_Parse::Param_listContext*        ctx) override;
+    std::any visitConditional      (APPL_Parse::ConditionalContext*       ctx) override;
+    std::any visitIf_else_stmt     (APPL_Parse::If_else_stmtContext*      ctx) override;
+    std::any visitElse_blk         (APPL_Parse::Else_blkContext*          ctx) override;
+    std::any visitWhile_loop       (APPL_Parse::While_loopContext*        ctx) override;
+    std::any visitFor_loop         (APPL_Parse::For_loopContext*          ctx) override;
+    std::any visitFor_ea_loop      (APPL_Parse::For_ea_loopContext*       ctx) override;
+    std::any visitCblk             (APPL_Parse::CblkContext*              ctx) override;
+    std::any visitReturn           (APPL_Parse::ReturnContext*            ctx) override;
+    std::any visitExpr             (APPL_Parse::ExprContext*              ctx) override;
+    std::any visitOperatn          (APPL_Parse::OperatnContext*           ctx) override;
+    std::any visitUnary_oprtn      (APPL_Parse::Unary_oprtnContext*       ctx) override;
+    std::any visitIteratn          (APPL_Parse::IteratnContext*           ctx) override;
+    std::any visitPrefx_unary_oprtn(APPL_Parse::Prefx_unary_oprtnContext* ctx) override;
+    std::any visitNegatn           (APPL_Parse::NegatnContext*            ctx) override;
+    std::any visitBinary_oprtn     (APPL_Parse::Binary_oprtnContext*      ctx) override;
+    std::any visitLogic_or_expr    (APPL_Parse::Logic_or_exprContext*     ctx) override;
+    std::any visitLogic_and_expr   (APPL_Parse::Logic_and_exprContext*    ctx) override;
+    std::any visitComparison_expr  (APPL_Parse::Comparison_exprContext*   ctx) override;
+    std::any visitAdd_expr         (APPL_Parse::Add_exprContext*          ctx) override;
+    std::any visitMult_expr        (APPL_Parse::Mult_exprContext*         ctx) override;
+    std::any visitPow_expr         (APPL_Parse::Pow_exprContext*          ctx) override;
+    std::any visitAugop            (APPL_Parse::AugopContext*             ctx) override;
+    std::any visitFactor           (APPL_Parse::FactorContext*            ctx) override;
+    std::any visitFun_call         (APPL_Parse::Fun_callContext*          ctx) override;
+    std::any visitArg_list         (APPL_Parse::Arg_listContext*          ctx) override;
+    std::any visitNumber           (APPL_Parse::NumberContext*            ctx) override;
+    std::any visitPos_num          (APPL_Parse::Pos_numContext*           ctx) override;
+    std::any visitNeg_num          (APPL_Parse::Neg_numContext*           ctx) override;
+    std::any visitBooln            (APPL_Parse::BoolnContext*             ctx) override;
+
+private:
+    std::vector<ScopeFrame>                      scopeStack_;
+    std::unordered_map<std::string, FunctionDef> functionTable_;
+
+    void       pushScope();
+    void       popScope();
+    ApplValue  lookupVar(const std::string& name) const;
+    void       assignVar(const std::string& name, const ApplValue& val);
+
+    static ApplValue valueFrom   (const std::any& a);
+    ApplValue        evalExpr    (APPL_Parse::ExprContext* ctx);
+    void             execCblk    (APPL_Parse::CblkContext* ctx);
+
+    static ApplValue applyArith    (const std::string& op, const ApplValue& l, const ApplValue& r);
+    static ApplValue applyCompareFn(const std::string& op, const ApplValue& l, const ApplValue& r);
+    static ApplValue applyAugop   (const std::string& op, const ApplValue& cur, const ApplValue& r);
+
+    static constexpr int kMaxLoopIterations = 100'000;
+};

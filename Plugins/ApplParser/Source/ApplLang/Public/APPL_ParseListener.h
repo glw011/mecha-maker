@@ -74,14 +74,23 @@ public:
   virtual void enterBinary_oprtn(APPL_Parse::Binary_oprtnContext *ctx) = 0;
   virtual void exitBinary_oprtn(APPL_Parse::Binary_oprtnContext *ctx) = 0;
 
-  virtual void enterArth_bin_op(APPL_Parse::Arth_bin_opContext *ctx) = 0;
-  virtual void exitArth_bin_op(APPL_Parse::Arth_bin_opContext *ctx) = 0;
+  virtual void enterLogic_or_expr(APPL_Parse::Logic_or_exprContext *ctx) = 0;
+  virtual void exitLogic_or_expr(APPL_Parse::Logic_or_exprContext *ctx) = 0;
 
-  virtual void enterComparison(APPL_Parse::ComparisonContext *ctx) = 0;
-  virtual void exitComparison(APPL_Parse::ComparisonContext *ctx) = 0;
+  virtual void enterLogic_and_expr(APPL_Parse::Logic_and_exprContext *ctx) = 0;
+  virtual void exitLogic_and_expr(APPL_Parse::Logic_and_exprContext *ctx) = 0;
 
-  virtual void enterAug_bin_op(APPL_Parse::Aug_bin_opContext *ctx) = 0;
-  virtual void exitAug_bin_op(APPL_Parse::Aug_bin_opContext *ctx) = 0;
+  virtual void enterComparison_expr(APPL_Parse::Comparison_exprContext *ctx) = 0;
+  virtual void exitComparison_expr(APPL_Parse::Comparison_exprContext *ctx) = 0;
+
+  virtual void enterAdd_expr(APPL_Parse::Add_exprContext *ctx) = 0;
+  virtual void exitAdd_expr(APPL_Parse::Add_exprContext *ctx) = 0;
+
+  virtual void enterMult_expr(APPL_Parse::Mult_exprContext *ctx) = 0;
+  virtual void exitMult_expr(APPL_Parse::Mult_exprContext *ctx) = 0;
+
+  virtual void enterPow_expr(APPL_Parse::Pow_exprContext *ctx) = 0;
+  virtual void exitPow_expr(APPL_Parse::Pow_exprContext *ctx) = 0;
 
   virtual void enterAugop(APPL_Parse::AugopContext *ctx) = 0;
   virtual void exitAugop(APPL_Parse::AugopContext *ctx) = 0;

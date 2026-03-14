@@ -76,14 +76,23 @@ public:
   virtual void enterBinary_oprtn(APPL_Parse::Binary_oprtnContext * /*ctx*/) override { }
   virtual void exitBinary_oprtn(APPL_Parse::Binary_oprtnContext * /*ctx*/) override { }
 
-  virtual void enterArth_bin_op(APPL_Parse::Arth_bin_opContext * /*ctx*/) override { }
-  virtual void exitArth_bin_op(APPL_Parse::Arth_bin_opContext * /*ctx*/) override { }
+  virtual void enterLogic_or_expr(APPL_Parse::Logic_or_exprContext * /*ctx*/) override { }
+  virtual void exitLogic_or_expr(APPL_Parse::Logic_or_exprContext * /*ctx*/) override { }
 
-  virtual void enterComparison(APPL_Parse::ComparisonContext * /*ctx*/) override { }
-  virtual void exitComparison(APPL_Parse::ComparisonContext * /*ctx*/) override { }
+  virtual void enterLogic_and_expr(APPL_Parse::Logic_and_exprContext * /*ctx*/) override { }
+  virtual void exitLogic_and_expr(APPL_Parse::Logic_and_exprContext * /*ctx*/) override { }
 
-  virtual void enterAug_bin_op(APPL_Parse::Aug_bin_opContext * /*ctx*/) override { }
-  virtual void exitAug_bin_op(APPL_Parse::Aug_bin_opContext * /*ctx*/) override { }
+  virtual void enterComparison_expr(APPL_Parse::Comparison_exprContext * /*ctx*/) override { }
+  virtual void exitComparison_expr(APPL_Parse::Comparison_exprContext * /*ctx*/) override { }
+
+  virtual void enterAdd_expr(APPL_Parse::Add_exprContext * /*ctx*/) override { }
+  virtual void exitAdd_expr(APPL_Parse::Add_exprContext * /*ctx*/) override { }
+
+  virtual void enterMult_expr(APPL_Parse::Mult_exprContext * /*ctx*/) override { }
+  virtual void exitMult_expr(APPL_Parse::Mult_exprContext * /*ctx*/) override { }
+
+  virtual void enterPow_expr(APPL_Parse::Pow_exprContext * /*ctx*/) override { }
+  virtual void exitPow_expr(APPL_Parse::Pow_exprContext * /*ctx*/) override { }
 
   virtual void enterAugop(APPL_Parse::AugopContext * /*ctx*/) override { }
   virtual void exitAugop(APPL_Parse::AugopContext * /*ctx*/) override { }
