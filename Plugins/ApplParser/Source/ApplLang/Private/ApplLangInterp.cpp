@@ -6,50 +6,6 @@
 
 
 // ===========================================================================
-//  ApplValue coercion implementations (defined in ApplTypes.h, implemented here
-//  so the header stays free of function bodies that would cause ODR issues).
-// ===========================================================================
-
-double ApplValue::toDouble() const {
-    switch (type) {
-        case ApplType::INT:  return static_cast<double>(ival);
-        case ApplType::FLT:  return dval;
-        case ApplType::BOOL: return bval ? 1.0 : 0.0;
-        default: throw ApplRuntimeError("Cannot convert string to number");
-    }
-}
-
-int ApplValue::toInt() const {
-    switch (type) {
-        case ApplType::INT:  return ival;
-        case ApplType::FLT:  return static_cast<int>(dval);
-        case ApplType::BOOL: return bval ? 1 : 0;
-        default: throw ApplRuntimeError("Cannot convert string to integer");
-    }
-}
-
-bool ApplValue::toBool() const {
-    switch (type) {
-        case ApplType::BOOL: return bval;
-        case ApplType::INT:  return ival != 0;
-        case ApplType::FLT:  return dval != 0.0;
-        case ApplType::STR:  return !sval.empty();
-    }
-    return false;
-}
-
-std::string ApplValue::typeName() const {
-    switch (type) {
-        case ApplType::INT:  return "int";
-        case ApplType::FLT:  return "float";
-        case ApplType::BOOL: return "bool";
-        case ApplType::STR:  return "string";
-    }
-    return "unknown";
-}
-
-
-// ===========================================================================
 //  Scope management
 // ===========================================================================
 

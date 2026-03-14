@@ -63,17 +63,50 @@ struct ApplValue {
         : type(ApplType::STR), ival(0), dval(0.0), bval(!v.empty()), sval(v) {}
 
     // Type queries
-    bool isInt()  const { return type == ApplType::INT;  }
-    bool isFlt()  const { return type == ApplType::FLT;  }
-    bool isBool() const { return type == ApplType::BOOL; }
-    bool isStr()  const { return type == ApplType::STR;  }
+    bool isInt()  const{return type == ApplType::INT;}
+    bool isFlt()  const{return type == ApplType::FLT;}
+    bool isBool() const{return type == ApplType::BOOL;}
+    bool isStr()  const{return type == ApplType::STR;}
 
     // Coercions
-    double toDouble() const;
-    int    toInt()    const;
-    bool   toBool()   const;
+    double toDouble() const{
+        switch(type){
+            case ApplType::INT:  return static_cast<double>(ival);
+            case ApplType::FLT:  return dval;
+            case ApplType::BOOL: return bval ? 1.0 : 0.0;
+            default: throw ApplRuntimeError("Cannot convert string to number");
+        }
+    }
 
-    std::string typeName() const;
+    int toInt() const{
+        switch(type){
+            case ApplType::INT:  return ival;
+            case ApplType::FLT:  return static_cast<int>(dval);
+            case ApplType::BOOL: return bval ? 1 : 0;
+            default: throw ApplRuntimeError("Cannot convert string to int");
+        }
+    }
+
+    bool toBool() const{
+        switch(type){
+            case ApplType::BOOL: return bval;
+            case ApplType::INT:  return ival != 0;
+            case ApplType::FLT:  return dval != 0.0;
+            case ApplType::STR:  return !sval.empty();
+        }
+
+        return false;
+    }
+
+    std::string typeName() const{
+        switch(type){
+            case ApplType::INT:  return "int";
+            case ApplType::FLT:  return "float";
+            case ApplType::BOOL: return "bool";
+            case ApplType::STR:  return "string";
+        }
+        return "unknown";
+    }
 };
 
 
