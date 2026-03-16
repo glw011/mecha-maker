@@ -19,6 +19,7 @@ Makefile
 
 # Visual Studio / IDE
 *.suo
+*.sln
 *.user
 *.opensdf
 *.db
