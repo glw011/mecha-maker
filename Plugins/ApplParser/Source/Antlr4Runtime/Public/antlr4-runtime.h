@@ -54,7 +54,6 @@ APPL_VISIBILITY_PUSH
 #include "UnbufferedTokenStream.h"
 #include "Version.h"
 #include "Vocabulary.h"
-#include "Vocabulary.h"
 #include "WritableToken.h"
 #include "atn/ATN.h"
 #include "atn/ATNConfig.h"

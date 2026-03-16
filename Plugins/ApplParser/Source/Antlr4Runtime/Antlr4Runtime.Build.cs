@@ -22,7 +22,8 @@ public class Antlr4Runtime : ModuleRules{
 
 		// fix unreal errors from undef'd ANTLR4_USE_THREAD_LOCAL_CACHE
     PublicDefinitions.Add("ANTLR4_USE_THREAD_LOCAL_CACHE=0");
-    PublicDefinitions.Add("ANTLR4CPP_BUILD");
+    
+    PublicDefinitions.Add("ANTLR4CPP_STATIC");
 
     // fix unreal errors from undef'd TRACE_ATN_SIM
     PublicDefinitions.Add("TRACE_ATN_SIM=0");
