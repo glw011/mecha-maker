@@ -14,7 +14,7 @@ public class Antlr4Runtime : ModuleRules{
     // Match your project standard (UE 5.7 uses C++20 in many configs)
     CppStandard = CppStandardVersion.Cpp20;
 
-    // antlr runtime source don't include .h files not ordered correctly
+    // antlr runtime source don't order included .h files correctly so unreal whines
     IWYUSupport = IWYUSupport.None;
 
     // this did something but ive looked at so much UBT docs at this point I don't remember what

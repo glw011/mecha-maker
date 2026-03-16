@@ -5,6 +5,7 @@ APPL_VISIBILITY_PUSH
  * can be found in the LICENSE.txt file in the project root.
  */
 
+#include <chrono>
 #include "atn/PredicateEvalInfo.h"
 #include "atn/LookaheadEventInfo.h"
 #include "Parser.h"

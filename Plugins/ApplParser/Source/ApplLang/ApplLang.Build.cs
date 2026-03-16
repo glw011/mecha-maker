@@ -15,6 +15,9 @@ public class ApplLang : ModuleRules{
     // project standard *(? need to confirm/set in MM build file) 
     CppStandard = CppStandardVersion.Cpp20;
 
+    // antlr runtime source don't order included .h files correctly so unreal whines
+    IWYUSupport = IWYUSupport.None;
+
     PublicIncludePaths.Add(Path.Combine(ModuleDirectory, "Public"));
     PrivateIncludePaths.Add(Path.Combine(ModuleDirectory, "Private"));
 
