@@ -1,4 +1,5 @@
-#pragma GCC visibility push(default)
+#include "ApplVisibility.h"
+APPL_VISIBILITY_PUSH
 /* Copyright (c) 2012-2017 The ANTLR Project. All rights reserved.
  * Use of this file is governed by the BSD 3-clause license that
  * can be found in the LICENSE.txt file in the project root.
@@ -154,4 +155,4 @@ std::vector<ParseTree *> XPath::evaluate(ParseTree *t) {
   return work;
 }
 
-#pragma GCC visibility pop
+APPL_VISIBILITY_POP

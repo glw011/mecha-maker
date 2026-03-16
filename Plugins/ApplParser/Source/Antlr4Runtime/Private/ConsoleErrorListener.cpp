@@ -2,7 +2,8 @@
  * Use of this file is governed by the BSD 3-clause license that
  * can be found in the LICENSE.txt file in the project root.
  */
-#pragma GCC visibility push(default)
+#include "ApplVisibility.h"
+APPL_VISIBILITY_PUSH
 
 #include "ConsoleErrorListener.h"
 
@@ -15,5 +16,5 @@ void ConsoleErrorListener::syntaxError(Recognizer * /*recognizer*/, Token * /*of
   std::cerr << "line " << line << ":" << charPositionInLine << " " << msg << std::endl;
 }
 
-#pragma GCC visibility pop
+APPL_VISIBILITY_POP
 

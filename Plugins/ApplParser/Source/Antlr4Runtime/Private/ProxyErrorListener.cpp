@@ -3,7 +3,8 @@
  * can be found in the LICENSE.txt file in the project root.
  */
 
-#pragma GCC visibility push(default)
+#include "ApplVisibility.h"
+APPL_VISIBILITY_PUSH
 
 
 #include "ProxyErrorListener.h"
@@ -55,5 +56,5 @@ void ProxyErrorListener::reportContextSensitivity(Parser *recognizer, const dfa:
   }
 }
 
-#pragma GCC visibility pop
+APPL_VISIBILITY_POP
 

@@ -3,7 +3,8 @@
  * can be found in the LICENSE.txt file in the project root.
  */
 
-#pragma GCC visibility push(default)
+#include "ApplVisibility.h"
+APPL_VISIBILITY_PUSH
 
 
 #include "IntStream.h"
@@ -15,4 +16,4 @@ const std::string IntStream::UNKNOWN_SOURCE_NAME = "<unknown>";
 IntStream::~IntStream() = default;
 
 
-#pragma GCC visibility pop
+APPL_VISIBILITY_POP

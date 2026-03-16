@@ -1,4 +1,5 @@
-#pragma GCC visibility push(default)
+#include "ApplVisibility.h"
+APPL_VISIBILITY_PUSH
 #include "atn/TransitionType.h"
 
 std::string antlr4::atn::transitionTypeName(TransitionType transitionType) {
@@ -27,4 +28,4 @@ std::string antlr4::atn::transitionTypeName(TransitionType transitionType) {
   return "UNKNOWN";
 }
 
-#pragma GCC visibility pop
+APPL_VISIBILITY_POP

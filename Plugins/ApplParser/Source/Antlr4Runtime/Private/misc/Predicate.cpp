@@ -1,7 +1,8 @@
-#pragma GCC visibility push(default)
+#include "ApplVisibility.h"
+APPL_VISIBILITY_PUSH
 #include "misc/Predicate.h"
 
 antlr4::misc::Predicate::~Predicate() {
 }
 
-#pragma GCC visibility pop
+APPL_VISIBILITY_POP

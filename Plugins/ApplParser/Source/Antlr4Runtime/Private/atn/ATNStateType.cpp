@@ -1,4 +1,5 @@
-#pragma GCC visibility push(default)
+#include "ApplVisibility.h"
+APPL_VISIBILITY_PUSH
 #include "atn/ATNStateType.h"
 
 std::string antlr4::atn::atnStateTypeName(ATNStateType atnStateType) {
@@ -33,4 +34,4 @@ std::string antlr4::atn::atnStateTypeName(ATNStateType atnStateType) {
   return "UNKNOWN";
 }
 
-#pragma GCC visibility pop
+APPL_VISIBILITY_POP

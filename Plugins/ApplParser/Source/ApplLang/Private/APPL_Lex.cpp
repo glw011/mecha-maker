@@ -1,6 +1,7 @@
 
 // Generated from APPL_Lex.g4 by ANTLR 4.13.2
-#pragma GCC visibility push(default)
+#include "ApplVisibility.h"
+APPL_VISIBILITY_PUSH
 
 #include "APPL_Lex.h"
 
@@ -279,4 +280,4 @@ void APPL_Lex::initialize() {
 #endif
 }
 
-#pragma GCC visibility pop
+APPL_VISIBILITY_POP

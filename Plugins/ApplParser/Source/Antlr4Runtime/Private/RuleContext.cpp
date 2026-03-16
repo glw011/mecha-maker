@@ -3,7 +3,8 @@
  * can be found in the LICENSE.txt file in the project root.
  */
 
-#pragma GCC visibility push(default)
+#include "ApplVisibility.h"
+APPL_VISIBILITY_PUSH
 
 #include "tree/Trees.h"
 #include "misc/Interval.h"
@@ -144,6 +145,6 @@ void RuleContext::InitializeInstanceFields() {
   invokingState = INVALID_INDEX;
 }
 
-#pragma GCC visibility pop
+APPL_VISIBILITY_POP
 
 

@@ -3,7 +3,8 @@
  * can be found in the LICENSE.txt file in the project root.
  */
 
-#pragma GCC visibility push(default)
+#include "ApplVisibility.h"
+APPL_VISIBILITY_PUSH
 
 
 #include "Exceptions.h"
@@ -430,5 +431,5 @@ std::string TokenStreamRewriter::catOpText(std::string *a, std::string *b) {
   return x + y;
 }
 
-#pragma GCC visibility pop
+APPL_VISIBILITY_POP
 

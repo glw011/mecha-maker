@@ -2,7 +2,8 @@
  * Use of this file is governed by the BSD 3-clause license that
  * can be found in the LICENSE.txt file in the project root.
  */
-#pragma GCC visibility push(default)
+#include "ApplVisibility.h"
+APPL_VISIBILITY_PUSH
 
 #include "ConsoleErrorListener.h"
 #include "RecognitionException.h"
@@ -156,4 +157,4 @@ void Recognizer::InitializeInstanceFields() {
   _interpreter = nullptr;
 }
 
-#pragma GCC visibility pop
+APPL_VISIBILITY_POP

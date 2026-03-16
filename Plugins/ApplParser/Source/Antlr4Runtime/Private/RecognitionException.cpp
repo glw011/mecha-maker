@@ -3,7 +3,8 @@
  * can be found in the LICENSE.txt file in the project root.
  */
 
-#pragma GCC visibility push(default)
+#include "ApplVisibility.h"
+APPL_VISIBILITY_PUSH
 
 
 #include "atn/ATN.h"
@@ -67,5 +68,5 @@ void RecognitionException::InitializeInstanceFields() {
   _offendingState = INVALID_INDEX;
 }
 
-#pragma GCC visibility pop
+APPL_VISIBILITY_POP
 

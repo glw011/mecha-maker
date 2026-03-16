@@ -1,4 +1,5 @@
-#pragma GCC visibility push(default)
+#include "ApplVisibility.h"
+APPL_VISIBILITY_PUSH
 // Copyright 2012-2022 The ANTLR Project
 //
 // Redistribution and use in source and binary forms, with or without modification, are permitted
@@ -100,4 +101,4 @@ void SharedMutex::unlock_shared() {
 #endif
 }
 
-#pragma GCC visibility pop
+APPL_VISIBILITY_POP

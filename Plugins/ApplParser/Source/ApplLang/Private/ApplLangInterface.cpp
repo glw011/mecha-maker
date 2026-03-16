@@ -1,4 +1,5 @@
-#pragma GCC visibility push(default)
+#include "ApplVisibility.h"
+APPL_VISIBILITY_PUSH
 
 #include "ApplLangInterface.h"
 // ApplLangInterp.h (and transitively antlr4-runtime.h) is included ONLY here
@@ -71,4 +72,4 @@ bool ApplLangInterface::StartParse(
     }
 }
 
-#pragma GCC visibility pop
+APPL_VISIBILITY_POP

@@ -1,4 +1,5 @@
-#pragma GCC visibility push(default)
+#include "ApplVisibility.h"
+APPL_VISIBILITY_PUSH
 #include "LexerAction.h"
 
 using namespace antlr4::atn;
@@ -15,4 +16,4 @@ size_t LexerAction::hashCode() const {
   return hash;
 }
 
-#pragma GCC visibility pop
+APPL_VISIBILITY_POP

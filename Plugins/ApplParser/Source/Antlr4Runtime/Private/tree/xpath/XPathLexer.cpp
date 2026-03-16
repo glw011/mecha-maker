@@ -1,4 +1,5 @@
-#pragma GCC visibility push(default)
+#include "ApplVisibility.h"
+APPL_VISIBILITY_PUSH
 
 // Generated from XPathLexer.g4 by ANTLR 4.13.1
 
@@ -180,4 +181,4 @@ void XPathLexer::initialize() {
 #endif
 }
 
-#pragma GCC visibility pop
+APPL_VISIBILITY_POP

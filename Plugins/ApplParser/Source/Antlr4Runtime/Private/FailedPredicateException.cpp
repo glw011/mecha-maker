@@ -3,7 +3,8 @@
  * can be found in the LICENSE.txt file in the project root.
  */
 
-#pragma GCC visibility push(default)
+#include "ApplVisibility.h"
+APPL_VISIBILITY_PUSH
 
 #include "atn/ParserATNSimulator.h"
 #include "Parser.h"
@@ -53,5 +54,5 @@ std::string FailedPredicateException::getPredicate() {
   return _predicate;
 }
 
-#pragma GCC visibility pop
+APPL_VISIBILITY_POP
 

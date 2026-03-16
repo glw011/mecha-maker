@@ -3,7 +3,8 @@
  * can be found in the LICENSE.txt file in the project root.
  */
 
-#pragma GCC visibility push(default)
+#include "ApplVisibility.h"
+APPL_VISIBILITY_PUSH
 
 #include "atn/LexerATNSimulator.h"
 #include "Exceptions.h"
@@ -295,5 +296,5 @@ void Lexer::InitializeInstanceFields() {
   mode = Lexer::DEFAULT_MODE;
 }
 
-#pragma GCC visibility pop
+APPL_VISIBILITY_POP
 

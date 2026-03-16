@@ -3,7 +3,8 @@
  * can be found in the LICENSE.txt file in the project root.
  */
 
-#pragma GCC visibility push(default)
+#include "ApplVisibility.h"
+APPL_VISIBILITY_PUSH
 
 
 #include "Exceptions.h"
@@ -63,5 +64,5 @@ Token* BailErrorStrategy::recoverInline(Parser *recognizer)  {
 void BailErrorStrategy::sync(Parser * /*recognizer*/) {
 }
 
-#pragma GCC visibility pop
+APPL_VISIBILITY_POP
 

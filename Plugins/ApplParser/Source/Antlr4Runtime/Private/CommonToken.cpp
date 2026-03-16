@@ -3,7 +3,8 @@
  * can be found in the LICENSE.txt file in the project root.
  */
 
-#pragma GCC visibility push(default)
+#include "ApplVisibility.h"
+APPL_VISIBILITY_PUSH
 
 #include "TokenSource.h"
 #include "CharStream.h"
@@ -194,5 +195,5 @@ void CommonToken::InitializeInstanceFields() {
   _source = EMPTY_SOURCE;
 }
 
-#pragma GCC visibility pop
+APPL_VISIBILITY_POP
 

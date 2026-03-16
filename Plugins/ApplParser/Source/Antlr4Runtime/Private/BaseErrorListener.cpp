@@ -3,7 +3,8 @@
  * can be found in the LICENSE.txt file in the project root.
  */
 
-#pragma GCC visibility push(default)
+#include "ApplVisibility.h"
+APPL_VISIBILITY_PUSH
 
 #include "BaseErrorListener.h"
 #include "RecognitionException.h"
@@ -26,4 +27,4 @@ void BaseErrorListener::reportContextSensitivity(Parser * /*recognizer*/, const 
   size_t /*stopIndex*/, size_t /*prediction*/, atn::ATNConfigSet * /*configs*/) {
 }
 
-#pragma GCC visibility pop
+APPL_VISIBILITY_POP
