@@ -2,13 +2,11 @@
 
 using UnrealBuildTool;
 
-public class MechaMaker : ModuleRules
-{
-	public MechaMaker(ReadOnlyTargetRules Target) : base(Target)
-	{
+public class MechaMaker : ModuleRules{
+	public MechaMaker(ReadOnlyTargetRules Target) : base(Target){
 		PCHUsage = PCHUsageMode.UseExplicitOrSharedPCHs;
 	
-		PublicDependencyModuleNames.AddRange(new string[] { "Core", "CoreUObject", "Engine", "InputCore" });
+		PublicDependencyModuleNames.AddRange(new string[] { "Core", "CoreUObject", "Engine", "InputCore", "Slate", "SlateCore", "UMG"});
 
 		PrivateDependencyModuleNames.AddRange(new string[] {  });
 

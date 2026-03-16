@@ -1,0 +1,34 @@
+{
+	"FileVersion": 3,
+	"Version": 1,
+	"VersionName": "v0.5",
+	"FriendlyName": "ApplParser",
+	"Description": "",
+	"Category": "Other",
+	"CreatedBy": "Garrett",
+	"CreatedByURL": "",
+	"DocsURL": "https://github.com/glw011/mecha-maker/wiki",
+	"MarketplaceURL": "",
+	"SupportURL": "",
+	"CanContainContent": false,
+	"IsBetaVersion": true,
+	"IsExperimentalVersion": true,
+	"Installed": false,
+	"Modules": [
+		{
+			"Name": "Antlr4Runtime",
+			"Type": "Runtime",
+			"LoadingPhase": "Default"
+		},
+		{
+			"Name": "ApplLang",
+			"Type": "Runtime",
+			"LoadingPhase": "Default"
+		},
+		{
+			"Name": "ApplParser",
+			"Type": "Runtime",
+			"LoadingPhase": "Default"
+		}
+	]
+}
