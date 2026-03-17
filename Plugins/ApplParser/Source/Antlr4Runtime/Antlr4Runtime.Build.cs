@@ -23,10 +23,11 @@ public class Antlr4Runtime : ModuleRules{
 		// fix unreal errors from undef'd ANTLR4_USE_THREAD_LOCAL_CACHE
     PublicDefinitions.Add("ANTLR4_USE_THREAD_LOCAL_CACHE=0");
     
-    PublicDefinitions.Add("ANTLR4CPP_STATIC");
-
     // fix unreal errors from undef'd TRACE_ATN_SIM
     PublicDefinitions.Add("TRACE_ATN_SIM=0");
+
+    // fix unreal link errors on windows
+    PrivateDefinitions.Add("ANTLR4CPP_STATIC");
 
     bWarningsAsErrors = false; // stop 'warnings = errors'
 
