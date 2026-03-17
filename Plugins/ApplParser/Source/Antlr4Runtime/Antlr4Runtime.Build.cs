@@ -27,7 +27,7 @@ public class Antlr4Runtime : ModuleRules{
     PublicDefinitions.Add("TRACE_ATN_SIM=0");
 
     // fix unreal link errors on windows
-    PrivateDefinitions.Add("ANTLR4CPP_STATIC");
+    PrivateDefinitions.Add("ANTLR4CPP_BUILD");
 
     bWarningsAsErrors = false; // stop 'warnings = errors'
 
