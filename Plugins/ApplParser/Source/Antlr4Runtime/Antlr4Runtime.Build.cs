@@ -26,9 +26,6 @@ public class Antlr4Runtime : ModuleRules{
     // fix unreal errors from undef'd TRACE_ATN_SIM
     PublicDefinitions.Add("TRACE_ATN_SIM=0");
 
-    // fix unreal link errors on windows
-    PrivateDefinitions.Add("ANTLR4CPP_BUILD");
-
     bWarningsAsErrors = false; // stop 'warnings = errors'
 
     string publicPath = Path.Combine(ModuleDirectory, "Public");
@@ -49,6 +46,11 @@ public class Antlr4Runtime : ModuleRules{
 
     if(Target.Platform == UnrealTargetPlatform.Linux){
       PublicRuntimeLibraryPaths.Add(Path.Combine(PluginDirectory, "Binaries", "Linux"));
+    }
+
+    if(Target.Platform == UnrealTargetPlatform.Win64){
+      // fix link errors on windows
+      PrivateDefinitions.Add("ANTLR4CPP_EXPORTS");
     }
 
     PublicDependencyModuleNames.AddRange(new string[]{"Core"});

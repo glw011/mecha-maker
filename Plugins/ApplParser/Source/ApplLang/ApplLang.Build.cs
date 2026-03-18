@@ -22,7 +22,10 @@ public class ApplLang : ModuleRules{
     PrivateIncludePaths.Add(Path.Combine(ModuleDirectory, "Private"));
 
     PublicDependencyModuleNames.AddRange(new string[]{"Core", "Antlr4Runtime"});
-    //PrivateDependencyModuleNames.AddRange(new string[]{"Antlr4Runtime"});
+    
+    if(Target.Platform == UnrealTargetPlatform.Win64){
+      PrivateDefinitions.Add("APPL_LANG_EXPORTS");
+    }
 
     bWarningsAsErrors = false; // stop 'warnings = errors'
   }
