@@ -5,10 +5,6 @@
 #include <cassert>
 
 
-// ===========================================================================
-//  Scope management
-// ===========================================================================
-
 void ApplLangInterp::pushScope() { scopeStack_.emplace_back(); }
 
 void ApplLangInterp::popScope() {
