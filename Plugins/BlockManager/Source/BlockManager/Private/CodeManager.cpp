@@ -42,7 +42,7 @@ void UCodeManager::PrintRecursive(const FBlockData& Block)
             GEngine->AddOnScreenDebugMessage(-1, 10.f, FColor::Cyan, Msg);
         }
 
-        else if (Block.BlockName == "NumTimes")
+        //else if (Block.BlockName == "NumTimes")
 
         else 
         {
