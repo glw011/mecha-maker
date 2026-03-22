@@ -3,7 +3,15 @@ Binaries/
 DerivedDataCache/
 Intermediate/
 Saved/
+
+# VSCode gen'd dirs
 .vs/
+.vscode/
+.ignore
+
+# Makefile/workspace for building project
+Makefile
+*.code-workspace
 
 # Logs & temp files
 *.log
@@ -11,6 +19,7 @@ Saved/
 
 # Visual Studio / IDE
 *.suo
+*.sln
 *.user
 *.opensdf
 *.db

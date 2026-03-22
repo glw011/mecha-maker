@@ -3,10 +3,8 @@
 using UnrealBuildTool;
 using System.Collections.Generic;
 
-public class MechaMakerEditorTarget : TargetRules
-{
-	public MechaMakerEditorTarget(TargetInfo Target) : base(Target)
-	{
+public class MechaMakerEditorTarget : TargetRules{
+	public MechaMakerEditorTarget(TargetInfo Target) : base(Target){
 		Type = TargetType.Editor;
 		DefaultBuildSettings = BuildSettingsVersion.V6;
 

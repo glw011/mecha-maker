@@ -3,14 +3,13 @@
 #include "Kismet/BlueprintFunctionLibrary.h"
 #include "TestFunction.generated.h"
 
-UCLASS() 
-class MyPlugin_Api UTestFunction : public UBlueprintFunctionLibrary
+UCLASS()
+class BLOCKMANAGER_API UTestFunction : public UBlueprintFunctionLibrary
 {
-	GENERATED_BODY()
+    GENERATED_BODY()
 
-public: 
+    public:
 
-	UFUNCTION(BlueprintCallable, Category = "BlockManager")
-	static void PrintVariable(int 32 Val);
-
+        UFUNCTION(BlueprintCallable, Category="MyDebug")
+        static void PrintMessage(const FString& Message, float Duration = 2.0f);
 };
