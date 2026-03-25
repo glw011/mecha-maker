@@ -17,6 +17,7 @@ void UBaseMovement::StartMove(float FlLeftMotor, float FlRightMotor, float FlDur
 {
 
     Character = Cast<ACharacter>(GetOwner());
+
     if (!Character) return;
 
     Character->GetCharacterMovement()->MaxWalkSpeed = FlSpeed;
