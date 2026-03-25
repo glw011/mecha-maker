@@ -39,8 +39,10 @@ public class SaveBlock : ModuleRules
 				"Slate",
 				"SlateCore",
 				"Json",
-				"JsonUtilities"
-				// ... add private dependencies that you statically link with here ...	
+				"JsonUtilities",
+
+				//Just to check and see if Movement can be called without cast
+				"Movement"
 			}
 			);
 		
