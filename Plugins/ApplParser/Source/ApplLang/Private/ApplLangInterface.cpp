@@ -2,9 +2,6 @@
 APPL_VISIBILITY_PUSH
 
 #include "ApplLangInterface.h"
-// ApplLangInterp.h (and transitively antlr4-runtime.h) is included ONLY here
-// in the .cpp, never in ApplLangInterface.h, so the antlr4 include chain stays
-// confined to the ApplLang module and never reaches the ApplParser module.
 #include "ApplLangInterp.h"
 
 THIRD_PARTY_INCLUDES_START
@@ -48,7 +45,6 @@ bool ApplLangInterface::StartParse(
             if (componentHandler)
                 Interpreter.componentCallHandler = componentHandler;
 
-            // Fix: no stray semicolon between try-block and catch-block.
             try {
                 Interpreter.visitMain(Tree);
             } catch (const ApplRuntimeError& rte) {
