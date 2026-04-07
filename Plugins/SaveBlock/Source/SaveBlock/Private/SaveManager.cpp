@@ -58,6 +58,6 @@ void USaveManager::TestMove(ACharacter* Character)
 
     if(MoveComp)
     {
-        MoveComp->StartMove(100, 100, 3, 1000, 10);
+        MoveComp->StartMove(100, 100, 1.5, 1000, 10);
     }
 }
