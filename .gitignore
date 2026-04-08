@@ -15,6 +15,7 @@ Makefile
 
 # Logs & temp files
 *.log
+*.docx
 *.tmp
 
 # Visual Studio / IDE
