@@ -82,11 +82,11 @@ public:
     // ----------------------------------------------------------------
 
     /** Drop a new block from the side menu into a CBLK_SBLK sequence. Returns assigned BlockId, or -1 on failure. */
-    UFUNCTION(BlueprintCallable, Category="Blocks|CodeSeq")
+    UFUNCTION(BlueprintCallable, Category="CBlocks")
     static int32 NewBlockInCodeBlock(int32 BackendBlockType, int32 CblkId);
 
     /** Drop a new variable-sized block from the side menu into a CBLK_SBLK sequence. Returns BlockId, or -1 on failure. */
-    UFUNCTION(BlueprintCallable, Category="Blocks|CodeSeq")
+    UFUNCTION(BlueprintCallable, Category="CBlocks")
     static int32 NewSizedBlockInCodeBlock(int32 BackendBlockType, int32 ArgCount, int32 CblkId);
 
     /**
@@ -95,11 +95,11 @@ public:
      * OldParentId != -1 → block came from a single BlockSlot (supply OldSlotPos too).
      * Both == -1        → block came from the main program area.
      */
-    UFUNCTION(BlueprintCallable, Category="Blocks|CodeSeq")
+    UFUNCTION(BlueprintCallable, Category="CBlocks")
     static bool MoveBlockToCodeBlock(int32 BlockId, int32 CblkId, int32 OldCblkId, int32 OldParentId, int32 OldSlotPos);
 
     /** Remove a block from a CBLK_SBLK sequence (does not delete it from the registry). Returns true on success. */
-    UFUNCTION(BlueprintCallable, Category="Blocks|CodeSeq")
+    UFUNCTION(BlueprintCallable, Category="CBlocks")
     static bool RemoveBlockFromCodeBlock(int32 BlockId, int32 CblkId);
 
     /**
@@ -107,6 +107,6 @@ public:
      * bInsertBefore = true places BlockId before RefBlockId; false places it after.
      * (Stub — returns false until reordering is implemented.)
      */
-    UFUNCTION(BlueprintCallable, Category="Blocks|CodeSeq")
+    UFUNCTION(BlueprintCallable, Category="CBlocks")
     static bool ReorderInCodeBlock(int32 BlockId, int32 RefBlockId, int32 CblkId, bool bInsertBefore);
 };

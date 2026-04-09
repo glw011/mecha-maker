@@ -40,7 +40,7 @@ Block::Block() : id(++nxtId), argCount(0), SlotCount(0), codeSeq(nullptr){
 }
 
 Block::Block(CodeBlocks::BlockType blkType) : id(++nxtId), argCount(0), codeSeq(nullptr){
-  if(!CodeBlocks::SizedTypes.count(blkType) > 0){
+  if(CodeBlocks::SizedTypes.count(blkType) == 0){
     this->BType = blkType;
     this->SlotCount = CodeBlocks::SlotCountMap[blkType];
     this->Slots.resize(this->SlotCount);
@@ -250,7 +250,7 @@ std::string Block::getContentStr(){
 // ---- setType ----
 
 void Block::setType(CodeBlocks::BlockType blkType){
-  if(!CodeBlocks::SizedTypes.count(blkType) > 0){
+  if(CodeBlocks::SizedTypes.count(blkType) == 0){
     BType = blkType;
     SlotCount = CodeBlocks::SlotCountMap[blkType];
     Slots.resize(SlotCount);
