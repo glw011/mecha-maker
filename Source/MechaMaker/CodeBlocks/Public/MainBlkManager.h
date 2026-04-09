@@ -45,6 +45,28 @@ class BlockManager {
     //  - Returns: true on success, else false
     bool removeBlock(int blockId);
 
+    // ----------------------------------------------------------------
+    // Code block sequence (CBLK_SBLK / nested CodeAreaSlot)
+    // ----------------------------------------------------------------
+
+    // Create new block from side menu and append to a CBLK_SBLK sequence
+    int newBlockInCodeBlock(CodeBlocks::BlockType blkType, int cblkId);
+
+    // Create new sized block from side menu and append to a CBLK_SBLK sequence
+    int newSizedBlockInCodeBlock(CodeBlocks::BlockType blkType, int argCount, int cblkId);
+
+    // Move an existing block into a CBLK_SBLK sequence.
+    // oldCblkId != -1   → came from another CBLK_SBLK
+    // oldParentId != -1 → came from a single BlockSlot (supply oldSlotPos too)
+    // both == -1        → came from the main program area
+    bool moveBlockToCodeBlock(int blockId, int cblkId, int oldCblkId, int oldParentId, int oldSlotPos);
+
+    // Remove a block from a CBLK_SBLK sequence (does not delete it from the registry)
+    bool removeBlockFromCodeBlock(int blockId, int cblkId);
+
+    // Reorder within a CBLK_SBLK sequence — stub, implement later
+    bool reorderInCodeBlock(int blockId, int refBlockId, int cblkId, bool insertBefore);
+
     // Store user-input string for a specific slot on a block (e.g. var name, data value)
     void setUserInput(int blockId, int slotPos, std::string inputStr);
 

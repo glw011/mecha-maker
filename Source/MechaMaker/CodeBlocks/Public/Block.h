@@ -5,15 +5,17 @@
 #include <atomic>
 #include "CodeBlocks.h"
 #include "BlockSlot.h"
+#include "LinkedList.h"
 
 class Block{
   public:
     Block();
     Block(CodeBlocks::BlockType blkType);
     Block(CodeBlocks::BlockType blkType, int size);
+    ~Block();
 
     void setType(CodeBlocks::BlockType blkType);
-    void setType(CodeBlocks::BlockType blkType, int runtimeSize);  // construct for dynamic sized types (fun def/call & arrays)
+    void setType(CodeBlocks::BlockType blkType, int runtimeSize);
     std::string getContentStr();
     CodeBlocks::BlockType getType();
     int getId();
@@ -21,36 +23,23 @@ class Block{
     void setUserInput(int slotPos, std::string val);
     std::string getUserInput(int slotPos);
 
+    // codeSeq operations — only valid on CBLK_SBLK blocks
+    bool appendToCodeSeq(Block* block);
+    bool removeFromCodeSeq(int blockId);
+    bool reorderInCodeSeq(int blockId, int refId, bool before);
+
   private:
     int id, argCount, SlotCount;
     CodeBlocks::BlockType BType;
     std::vector<BlockSlot> Slots;
-    std::vector<std::string> userInputVals;  // stores user-typed text for DATA_BLK, VAR_REF, etc.
-    
+    std::vector<std::string> userInputVals;
+
+    // sequence container for CBLK_SBLK — nullptr for all other block types
+    LinkedList* codeSeq;
+
     bool validDynamSlotCount();
     std::string getEmptySlots();
-    
+    std::string getCodeSeqStr();   // builds the body string for CBLK_SBLK
+
     static std::atomic<int> nxtId;
-
-    
-    /*
-    static std::string assignmentContStr(std::string idRefSlot, std::string exprSlot);
-    static std::string funDefContStr(std::string idRefSlot, std::string paramListSlot, std::string cblkSlot);
-    static std::string funCallContStr(std::string idRefSlot, std::string argListSlot);
-    static std::string whileLoopContStr(std::string condSlot, std::string cblkSlot);
-    static std::string forLoopContStr(std::string assignSlot, std::string condSlot, std::string exprSlot, std::string cblkSlot);
-    static std::string forEaLoopContStr(std::string idRefSlot, std::string arrRefSlot, std::string cblkSlot);
-    static std::string ifElseStmtContStr(std::string condSlot, std::string ifCblkSlot, std::string elsCblkSlot);
-    static std::string binaryOpContStr(std::string lOprndSlot, std::string oprtrSlot, std::string rOprndSlot);
-    static std::string unaryOpContStr(std::string leftSlot, std::string rightSlot);
-    static std::string varRefContStr(std::string varName);
-    static std::string returnStmtContStr(std::string exprSlot);
-    static std::string dataContStr(std::string dataVal);
-    static std::string nestExprContStr(std::string contStr);
-    static std::string elseSBlkContStr(std::string contStr);
-    static std::string cblkContStr(std::string contStr);
-    static std::string argListContStr(std::vector<BlockSlot> args, int totlArgs);
-    */
 };
-
-

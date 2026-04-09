@@ -101,6 +101,51 @@ bool BlockManager::removeBlock(int blockId){
   return true;
 }
 
+// ----------------------------------------------------------------
+// Code block sequence (CBLK_SBLK / nested CodeAreaSlot)
+// ----------------------------------------------------------------
+
+int BlockManager::newBlockInCodeBlock(CodeBlocks::BlockType blkType, int cblkId){
+  if(!blockRegistry.count(cblkId)) return -1;
+  int id = registerNewBlock(blkType);
+  blockRegistry[cblkId]->appendToCodeSeq(blockRegistry[id].get());
+  return id;
+}
+
+int BlockManager::newSizedBlockInCodeBlock(CodeBlocks::BlockType blkType, int argCount, int cblkId){
+  if(!blockRegistry.count(cblkId)) return -1;
+  int id = registerNewSizedBlock(blkType, argCount);
+  blockRegistry[cblkId]->appendToCodeSeq(blockRegistry[id].get());
+  return id;
+}
+
+bool BlockManager::moveBlockToCodeBlock(int blockId, int cblkId, int oldCblkId, int oldParentId, int oldSlotPos){
+  if(!blockRegistry.count(blockId) || !blockRegistry.count(cblkId)) return false;
+
+  // clear old location
+  if(oldCblkId >= 0 && blockRegistry.count(oldCblkId)){
+    blockRegistry[oldCblkId]->removeFromCodeSeq(blockId);
+  } else if(oldParentId >= 0 && blockRegistry.count(oldParentId)){
+    BlockSlot* oldSlot = blockRegistry[oldParentId]->getSlot(oldSlotPos);
+    if(oldSlot) oldSlot->rmChild();
+  } else {
+    // came from the main program area
+    mainBlock.removeBlock(blockId);
+  }
+
+  return blockRegistry[cblkId]->appendToCodeSeq(blockRegistry[blockId].get());
+}
+
+bool BlockManager::removeBlockFromCodeBlock(int blockId, int cblkId){
+  if(!blockRegistry.count(cblkId)) return false;
+  return blockRegistry[cblkId]->removeFromCodeSeq(blockId);
+}
+
+bool BlockManager::reorderInCodeBlock(int blockId, int refBlockId, int cblkId, bool insertBefore){
+  if(!blockRegistry.count(cblkId)) return false;
+  return blockRegistry[cblkId]->reorderInCodeSeq(blockId, refBlockId, insertBefore);
+}
+
 void BlockManager::setUserInput(int blockId, int slotPos, std::string inputStr){
   if(!blockRegistry.count(blockId)) return;
   blockRegistry[blockId]->setUserInput(slotPos, inputStr);

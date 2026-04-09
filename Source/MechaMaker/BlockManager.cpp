@@ -50,3 +50,25 @@ FString UBlockManager::GetProgramString(){
     std::string result = BlockManager::getInstance().getProgramString();
     return FString(UTF8_TO_TCHAR(result.c_str()));
 }
+
+int32 UBlockManager::NewBlockInCodeBlock(int32 BackendBlockType, int32 CblkId){
+    return BlockManager::getInstance().newBlockInCodeBlock(
+        static_cast<CodeBlocks::BlockType>(BackendBlockType), CblkId);
+}
+
+int32 UBlockManager::NewSizedBlockInCodeBlock(int32 BackendBlockType, int32 ArgCount, int32 CblkId){
+    return BlockManager::getInstance().newSizedBlockInCodeBlock(
+        static_cast<CodeBlocks::BlockType>(BackendBlockType), ArgCount, CblkId);
+}
+
+bool UBlockManager::MoveBlockToCodeBlock(int32 BlockId, int32 CblkId, int32 OldCblkId, int32 OldParentId, int32 OldSlotPos){
+    return BlockManager::getInstance().moveBlockToCodeBlock(BlockId, CblkId, OldCblkId, OldParentId, OldSlotPos);
+}
+
+bool UBlockManager::RemoveBlockFromCodeBlock(int32 BlockId, int32 CblkId){
+    return BlockManager::getInstance().removeBlockFromCodeBlock(BlockId, CblkId);
+}
+
+bool UBlockManager::ReorderInCodeBlock(int32 BlockId, int32 RefBlockId, int32 CblkId, bool bInsertBefore){
+    return BlockManager::getInstance().reorderInCodeBlock(BlockId, RefBlockId, CblkId, bInsertBefore);
+}
