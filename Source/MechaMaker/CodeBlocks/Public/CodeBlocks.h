@@ -33,7 +33,8 @@
       NSTEXPR_SBLK,   // 16 — ( expr )
       VAR_REF,        // 17 — identifier  (stored in userInputVals[0])
       ARR_BLK,        // 18 — not implemented
-      AUG_ASSIGN_BLK  // 19 — x += expr;  (augmented op stored in userInputVals[0])
+      AUG_ASSIGN_BLK, // 19 — x += expr;  (varName in userInputVals[0], augOp in userInputVals[1])
+      INCR_BLK        // 20 — x++; / x--;  (varName in userInputVals[0], iterOp in userInputVals[1])
     };
 
     static std::array TypeNames = {
@@ -56,7 +57,8 @@
       "NestedExprSBlock",
       "VarRefBlock",
       "ArrayBlock",
-      "AugAssignBlock"
+      "AugAssignBlock",
+      "IncrementBlock"
     };
 
     // basic data types supported
