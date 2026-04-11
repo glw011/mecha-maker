@@ -36,6 +36,11 @@ class BlockManager {
     //  - Returns: true on success, else false
     bool moveBlockToArea(int blockId, int oldParentId, int oldSlotPos);
 
+    // Called from Unreal when a block already in the program area is re-dropped onto the area.
+    // Removes it from its current position and appends it to the end.
+    //  - Returns: true on success, else false
+    bool moveBlockToEndOfArea(int blockId);
+
     // Called from Unreal when a block is reordered within the program area
     //  - insertBefore: true = place before referenceBlockId, false = place after
     //  - Returns: true on success, else false

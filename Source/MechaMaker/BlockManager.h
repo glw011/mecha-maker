@@ -51,6 +51,13 @@ public:
     static bool MoveBlockToArea(int32 BlockId, int32 OldParentId, int32 OldSlotPos);
 
     /**
+     * Move a block that is already in the program area to the end of the area.
+     * Use this for OriginType=3 (Area→Area) drops until full reordering is implemented.
+     */
+    UFUNCTION(BlueprintCallable, Category="Blocks")
+    static bool MoveBlockToEndOfArea(int32 BlockId);
+
+    /**
      * Reorder a block within the program area relative to another block.
      * bInsertBefore = true places BlockId before ReferenceBlockId; false places it after.
      */

@@ -29,6 +29,10 @@ bool UBlockManager::MoveBlockToArea(int32 BlockId, int32 OldParentId, int32 OldS
     return BlockManager::getInstance().moveBlockToArea(BlockId, OldParentId, OldSlotPos);
 }
 
+bool UBlockManager::MoveBlockToEndOfArea(int32 BlockId){
+    return BlockManager::getInstance().moveBlockToEndOfArea(BlockId);
+}
+
 bool UBlockManager::ReorderInArea(int32 BlockId, int32 ReferenceBlockId, bool bInsertBefore){
     return BlockManager::getInstance().reorderInArea(BlockId, ReferenceBlockId, bInsertBefore);
 }

@@ -86,6 +86,13 @@ bool BlockManager::moveBlockToArea(int blockId, int oldParentId, int oldSlotPos)
   return mainBlock.insertBlock(blockRegistry[blockId].get());
 }
 
+bool BlockManager::moveBlockToEndOfArea(int blockId){
+  if(!blockRegistry.count(blockId)) return false;
+  Block* blk = blockRegistry[blockId].get();
+  mainBlock.removeBlock(blockId);    // detach from current position (no-op if not in area)
+  return mainBlock.insertBlock(blk); // append to tail
+}
+
 bool BlockManager::reorderInArea(int blockId, int referenceBlockId, bool insertBefore){
   return mainBlock.reorderBlock(blockId, referenceBlockId, insertBefore);
 }
