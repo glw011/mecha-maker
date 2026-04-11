@@ -12,8 +12,6 @@ struct SAVEBLOCK_API FSaveData
     FString Name;
 
     UPROPERTY(BlueprintReadWrite)
-    int32 Widget;
+    FString instructions;
 
-    UPROPERTY(BlueprintReadWrite)
-    int32 Depth;
 };

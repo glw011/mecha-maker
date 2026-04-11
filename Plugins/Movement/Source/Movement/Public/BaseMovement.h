@@ -19,6 +19,13 @@ public:
     UFUNCTION(BlueprintCallable)
     void StartMove(float FlLeftMotor, float FlRightMotor, float FlDuration, float FlSpeed, float FlSize);
 
+    // Manipulator Movement
+    UFUNCTION(BlueprintCallable)
+    void MoveClaw(float FlPower, float FlSpeed, float FlDuration, bool ClawCheck);
+
+    UFUNCTION(BlueprintCallable)
+    void MoveLift(float FlPower, float FlSpeed, float FlDuration, bool LiftCheck);
+
 private:
     ACharacter* Character;
 

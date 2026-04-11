@@ -67,3 +67,13 @@ void UBaseMovement::ExecuteMovement(float DeltaTime)
     Character->SetActorRotation(CurrentRot);
 
 }
+
+void UBaseMovement::MoveClaw(float Power, float Speed, float Duration, bool ClawCheck)
+{
+    if (!ClawCheck) return;
+}
+
+void UBaseMovement::MoveLift(float Power, float Speed, float Duration, bool LiftCheck)
+{
+    if (!LiftCheck) return;
+}
