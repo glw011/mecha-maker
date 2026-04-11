@@ -14,6 +14,13 @@ MainBlock::MainBlock(){
   this->SlotList = LinkedList();
 }
 
+void MainBlock::clear(){
+  SlotList.clearList();
+  SlotCount = 0;
+  isCompiled = false;
+  ProgramStr = "";
+}
+
 bool MainBlock::insertBlock(Block* droppedBlock){
   if(isCompiled){
     this->isCompiled = false;

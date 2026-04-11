@@ -97,6 +97,12 @@ bool BlockManager::reorderInArea(int blockId, int referenceBlockId, bool insertB
   return mainBlock.reorderBlock(blockId, referenceBlockId, insertBefore);
 }
 
+void BlockManager::reset(){
+  blockRegistry.clear();  // frees all Block instances (unique_ptr)
+  mainBlock.clear();      // clears the LinkedList of top-level slots
+  nextId = 0;
+}
+
 bool BlockManager::removeBlock(int blockId){
   if(!blockRegistry.count(blockId)) return false;
 

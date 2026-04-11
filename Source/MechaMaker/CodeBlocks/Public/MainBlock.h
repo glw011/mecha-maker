@@ -9,6 +9,7 @@
 class MainBlock{
   public:
     MainBlock();
+    void clear();  // wipe all top-level slots — called by BlockManager::reset()
     bool insertBlock(Block* droppedBlock);
     bool insertBlockBefore(Block* droppedBlock, BlockSlot* blockRef);
     bool insertBlockAfter(Block* droppedBlock, BlockSlot* blockRef);

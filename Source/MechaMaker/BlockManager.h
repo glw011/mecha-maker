@@ -20,6 +20,13 @@ class MECHAMAKER_API UBlockManager : public UBlueprintFunctionLibrary
     GENERATED_BODY()
 
 public:
+    /**
+     * Wipe all backend state. Call from your IDE widget's Construct event so the backend
+     * starts fresh each PIE session. Do NOT call this on compile.
+     */
+    UFUNCTION(BlueprintCallable, Category="Blocks")
+    static void ResetBackend();
+
     /** Drop a new block from the side menu into the program area. Returns assigned BlockId, or -1 on failure. */
     UFUNCTION(BlueprintCallable, Category="Blocks")
     static int32 NewBlockInArea(int32 BackendBlockType);

@@ -1,6 +1,10 @@
 #include "BlockManager.h"
 #include "CodeBlocks/Public/MainBlkManager.h"
 
+void UBlockManager::ResetBackend(){
+    BlockManager::getInstance().reset();
+}
+
 int32 UBlockManager::NewBlockInArea(int32 BackendBlockType){
     return BlockManager::getInstance().newBlockInArea(
         static_cast<CodeBlocks::BlockType>(BackendBlockType));

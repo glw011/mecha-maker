@@ -50,6 +50,9 @@ class BlockManager {
     //  - Returns: true on success, else false
     bool removeBlock(int blockId);
 
+    // Wipe all state — call from IDE widget Construct to reset between PIE sessions
+    void reset();
+
     // ----------------------------------------------------------------
     // Code block sequence (CBLK_SBLK / nested CodeAreaSlot)
     // ----------------------------------------------------------------
