@@ -8,7 +8,7 @@ BlockManager& BlockManager::getInstance(){
 
 BlockManager::BlockManager() : nextId(0), mainBlock() {}
 
-// --- Private helpers ---
+// --- Private Helper Functions ---
 
 int BlockManager::registerNewBlock(CodeBlocks::BlockType blkType){
   int id = ++nextId;
@@ -62,10 +62,15 @@ bool BlockManager::moveBlockToSlot(int blockId, int newParentId, int newSlotPos,
   if(!blockRegistry.count(blockId)) return false;
   if(!blockRegistry.count(newParentId)) return false;
 
-  // clear old parent slot (if block came from a slot, not the program area)
-  if(oldParentId >= 0 && blockRegistry.count(oldParentId)){
+  // clear old location
+  // IDs start at 1 (++nextId), so oldParentId > 0 means a real block slot origin
+  if(oldParentId > 0 && blockRegistry.count(oldParentId)){
     BlockSlot* oldSlot = blockRegistry[oldParentId]->getSlot(oldSlotPos);
     if(oldSlot) oldSlot->rmChild();
+  } 
+  else{
+    // came from the main program area — safe no-op if block isn't there
+    mainBlock.removeBlock(blockId);
   }
 
   Block* newParent = blockRegistry[newParentId].get();
@@ -77,8 +82,8 @@ bool BlockManager::moveBlockToSlot(int blockId, int newParentId, int newSlotPos,
 bool BlockManager::moveBlockToArea(int blockId, int oldParentId, int oldSlotPos){
   if(!blockRegistry.count(blockId)) return false;
 
-  // clear old parent slot (if block came from a slot, not the program area)
-  if(oldParentId >= 0 && blockRegistry.count(oldParentId)){
+  // IDs start at 1, so oldParentId > 0 means a real block slot origin
+  if(oldParentId > 0 && blockRegistry.count(oldParentId)){
     BlockSlot* oldSlot = blockRegistry[oldParentId]->getSlot(oldSlotPos);
     if(oldSlot) oldSlot->rmChild();
   }
@@ -98,24 +103,24 @@ bool BlockManager::reorderInArea(int blockId, int referenceBlockId, bool insertB
 }
 
 void BlockManager::reset(){
-  blockRegistry.clear();  // frees all Block instances (unique_ptr)
-  mainBlock.clear();      // clears the LinkedList of top-level slots
+  blockRegistry.clear();  // clears all block instances (frees ea unique_ptr)
+  mainBlock.clear();      // clears main LinkedList top-level slots
   nextId = 0;
 }
 
 bool BlockManager::removeBlock(int blockId){
   if(!blockRegistry.count(blockId)) return false;
 
-  // attempt to remove from program area (no-op if block is nested inside another block)
+  // remove from program area (no-op if block nested inside another block)
   mainBlock.removeBlock(blockId);
 
-  // remove from registry — this frees the Block
+  // remove from registry and free block instance
   blockRegistry.erase(blockId);
   return true;
 }
 
 // ----------------------------------------------------------------
-// Code block sequence (CBLK_SBLK / nested CodeAreaSlot)
+// Sequential code blocks (CBLK_SBLK/CodeAreaSlot embedded in block)
 // ----------------------------------------------------------------
 
 int BlockManager::newBlockInCodeBlock(CodeBlocks::BlockType blkType, int cblkId){
@@ -135,14 +140,16 @@ int BlockManager::newSizedBlockInCodeBlock(CodeBlocks::BlockType blkType, int ar
 bool BlockManager::moveBlockToCodeBlock(int blockId, int cblkId, int oldCblkId, int oldParentId, int oldSlotPos){
   if(!blockRegistry.count(blockId) || !blockRegistry.count(cblkId)) return false;
 
-  // clear old location
-  if(oldCblkId >= 0 && blockRegistry.count(oldCblkId)){
+  // clear origin (IDs start at 1, so ID > 0 => real block origin)
+  if(oldCblkId > 0 && blockRegistry.count(oldCblkId)){
     blockRegistry[oldCblkId]->removeFromCodeSeq(blockId);
-  } else if(oldParentId >= 0 && blockRegistry.count(oldParentId)){
+  } 
+  else if(oldParentId > 0 && blockRegistry.count(oldParentId)){
     BlockSlot* oldSlot = blockRegistry[oldParentId]->getSlot(oldSlotPos);
     if(oldSlot) oldSlot->rmChild();
-  } else {
-    // came from the main program area
+  } 
+  else{
+    // came from the main program area (safe no-op if block not there)
     mainBlock.removeBlock(blockId);
   }
 

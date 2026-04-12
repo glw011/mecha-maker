@@ -5,10 +5,10 @@
 #include <format>
 #include <unordered_map>
 
-// static member definition (must appear in exactly one .cpp)
+// static definition (i.e. must appear in exactly one .cpp)
 std::atomic<int> Block::nxtId(0);
 
-// file-scope helper declarations
+// helper declarations
 static std::string assignmentContStr(std::string idRefSlot, std::string exprSlot);
 static std::string augAssignContStr(std::string varRefSlot, std::string augOp, std::string exprSlot);
 static std::string funDefContStr(std::string funNameSlot, std::string paramListSlot, std::string cblkSlot);
@@ -31,7 +31,7 @@ static std::string nestExprContStr(std::string contStr);
 static std::string elseSBlkContStr(std::string contStr);
 
 
-// ---- Constructors / Destructor ----
+// ---- Constructors/Destructor ----
 
 Block::Block() : id(++nxtId), argCount(0), SlotCount(0), codeSeq(nullptr){
   this->BType = CodeBlocks::BlockType::NONE;
@@ -85,7 +85,7 @@ std::string Block::getUserInput(int slotPos){
   return "";
 }
 
-// ---- codeSeq operations (CBLK_SBLK only) ----
+// ---- sequential code block operations (CBLK_SBLK/CodeAreaSlots) ----
 
 bool Block::appendToCodeSeq(Block* block){
   if(!codeSeq || BType != CodeBlocks::BlockType::CBLK_SBLK) return false;
@@ -210,14 +210,18 @@ std::string Block::getContentStr(){
       bool hasElse = !Slots[2].isEmpty();
       std::string elseStr = "";
       if(hasElse){
-        // slot2 can be: WB_ElseCodeBlock (ELSE_SBLK), WB_IfBlock, or WB_IfElseBlock
-        // ELSE_SBLK returns just the cblk body; if/ifelse return their full "if..." string
+        // slot2 can be WB_ElseCodeBlock (ELSE_SBLK), WB_IfBlock, or WB_IfElseBlock
+        //  - ELSE_SBLK returns just the cblk body 
+        //  - If/IfElse return full "if ..." string
         CodeBlocks::BlockType slot2Type = Slots[2].getBlock()->getType();
         std::string slot2Str = Slots[2].getBlock()->getContentStr();
-        if(slot2Type == CodeBlocks::BlockType::ELSE_SBLK)
+        if(slot2Type == CodeBlocks::BlockType::ELSE_SBLK){
           elseStr = " else " + slot2Str;
-        else
-          elseStr = " else " + slot2Str;  // chained if/if-else: "else if (...) {...}"
+        }
+        // chained "if"/"else if" statements: "else if (...) {...}"
+        else{
+          elseStr = " else " + slot2Str;
+        }
       }
       fContStr = ifElseStmtContStr(
         Slots[0].getBlock()->getContentStr(),
@@ -228,7 +232,7 @@ std::string Block::getContentStr(){
     }
 
     case CodeBlocks::BlockType::ELSE_SBLK:
-      // returns just the cblk body — parent IFELSE_BLK prepends "else "
+      // return only cblk body & let parent IFELSE_BLK handle "else "
       fContStr = Slots[0].getBlock()->getContentStr();
       break;
 
@@ -304,7 +308,7 @@ void Block::setType(CodeBlocks::BlockType blkType, int runtimeArgCount){
   userInputVals.resize(SlotCount, "");
 }
 
-// ---- String builder helpers ----
+// ---- ContentString helpers ----
 
 static std::string assignmentContStr(std::string idRefSlot, std::string exprSlot){
   return stmtContStr(idRefSlot + " = " + exprSlot);
@@ -368,4 +372,4 @@ static std::string argListContStr(std::vector<BlockSlot>& args, int totlArgs){
 static std::string stmtContStr(std::string contStr){return contStr + "; ";}
 static std::string cblkContStr(std::string contStr){return " {" + contStr + "} ";}
 static std::string nestExprContStr(std::string contStr){return " (" + contStr + ") ";}
-static std::string elseSBlkContStr(std::string contStr){return contStr;}  // "else" prepended by IFELSE_BLK
+static std::string elseSBlkContStr(std::string contStr){return contStr;}  // "else" handled in IFELSE_BLK

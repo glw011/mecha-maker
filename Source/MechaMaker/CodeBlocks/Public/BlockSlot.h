@@ -17,7 +17,7 @@ class BlockSlot{
     Block* getBlock();
 
   private:
-    Block* ChildSlot;  // non-owning; BlockManager's registry is the sole owner
+    Block* ChildSlot;
     std::set<CodeBlocks::BlockType> AllowTypes;
     bool isValid(Block* droppedBlock);
     bool isValid(CodeBlocks::BlockType droppedType);
