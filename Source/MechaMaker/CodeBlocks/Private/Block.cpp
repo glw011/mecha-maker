@@ -31,7 +31,7 @@ static std::string nestExprContStr(std::string contStr);
 static std::string elseSBlkContStr(std::string contStr);
 
 
-// ---- Constructors/Destructor ----
+// ---- Constructors ----
 
 Block::Block() : id(++nxtId), argCount(0), SlotCount(0), codeSeq(nullptr){
   this->BType = CodeBlocks::BlockType::NONE;
