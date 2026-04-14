@@ -13,7 +13,7 @@ class SAVEBLOCK_API USaveManager : public UBlueprintFunctionLibrary
     public:
 
         UFUNCTION(BlueprintCallable, Category="Block Save")
-        static void AddSave(FString Name, int32 Widget, int32 Depth);
+        static void AddSave(FString Name, TArray<FString> ArgNames, TArray<int32> ArgTypes, FString ContentString);
 
         UFUNCTION(BlueprintCallable, Category="Block Save")
         static TArray<FSaveData> LoadAllSaves();

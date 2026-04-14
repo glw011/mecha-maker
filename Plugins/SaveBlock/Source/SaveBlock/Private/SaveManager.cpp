@@ -13,7 +13,7 @@ static FString GetFilePath()
     return FPaths::ProjectSavedDir() + "SaveData.json";
 }
 
-void USaveManager::AddSave(FString Name, int32 Widget, int32 Depth)
+void USaveManager::AddSave(FString Name, TArray<FString> ArgNames, TArray<int32> ArgTypes, FString ContentString)
 {
     FSaveDataArray SavedBlocks;
 
@@ -27,8 +27,9 @@ void USaveManager::AddSave(FString Name, int32 Widget, int32 Depth)
 
     FSaveData NewBlock;
     NewBlock.Name = Name;
-    NewBlock.Widget = Widget;
-    NewBlock.Depth = Depth;
+    NewBlock.ArgNames = ArgNames;
+    NewBlock.ArgTypes = ArgTypes;
+    NewBlock.ContentString = ContentString; 
 
     SavedBlocks.Saves.Add(NewBlock);
 
