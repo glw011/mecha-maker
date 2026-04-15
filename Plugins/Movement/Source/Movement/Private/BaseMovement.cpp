@@ -5,6 +5,8 @@
 #include "Components/SkeletalMeshComponent.h"
 #include "Components/PrimitiveComponent.h"
 #include "Components/BoxComponent.h"
+#include "Components/SceneComponent.h"
+#include "Components/MeshComponent.h"
 
 
 UBaseMovement::UBaseMovement()
@@ -15,6 +17,9 @@ UBaseMovement::UBaseMovement()
     bIsOpenClaw = false;
     bIsCloseClaw = false;
     GrabCollider = CreateDefaultSubobject<UBoxComponent>(TEXT("GrabCollider"));
+    
+    ## DELETE THIS IF STILL NOT SHOW UP
+    ClawRightPivot = CreateDefaultSubobject<USceneComponent>(TEXT("ClawRightPivot"));
 }
 
 void UBaseMovement::BeginPlay()
@@ -26,12 +31,42 @@ void UBaseMovement::BeginPlay()
     TArray<USkeletalMeshComponent*> Meshes;
     Character->GetComponents<USkeletalMeshComponent>(Meshes);
 
+    ## DELETE THIS IF STILL NOT SHOW UP
+    TArray<UMeshComponent*> RegMesh;
+    Character->GetComponents<UMeshComponent>(RegMesh);
+
     for (auto* Mesh : Meshes)
     {
         // CHANGE THIS WHEN CLAW GETS MADE
         if (Mesh->GetName() == "SKM_Arm") ArmMesh = Mesh;
         else if (Mesh->GetName() == "Claw_Right") ClawMeshRight = Mesh;
         else if (Mesh->GetName() == "Claw_Left") ClawMeshLeft = Mesh; 
+    }
+
+    ## DELETE THIS IF STILL NOT SHOW UP
+    for (auto* Mesh : RegMesh)
+    {
+        if (Mesh->GetName() == "ClawGuide") ClawGuide = Mesh;
+    }
+
+    ## DELETE THIS IF STILL NOT SHOW UP
+    if (ClawRightPivot && ClawGuide) 
+    {
+        ClawRightPivot->AttachToComponent(
+            ClawGuide,
+            FAttachmentTransformRules::SnapToTargetNotIncludingScale,
+            FName("Claw_Right")
+        );
+    }
+
+    ## DELETE THIS IF STILL NOT SHOW UP
+    if (ClawMeshRight && ClawRightPivot)
+    {
+        ClawMeshRight->AttachToComponent(
+            ClawRightPivot,
+            FAttachmentTransformRules::KeepRelativeTransform
+        );
+        ClawMeshRight->SetRelativeLocation(FVector(-0.3f,7.f,2.f));
     }
 
     if(GrabCollider && ArmMesh)
@@ -203,11 +238,11 @@ void UBaseMovement::ExecuteArmMovement(float DeltaTime)
 
 void UBaseMovement::ExecuteOpenClaw(float DeltaTime)
 {
-    ClawCurrentRight -= 30 * DeltaTime;
-    ClawCurrentRight = FMath::Clamp(ClawCurrentRight, -100.f, 100.f);
+    ClawCurrentRight += 30 * DeltaTime;
+    ClawCurrentRight = FMath::Clamp(ClawCurrentRight, -50.f, 20.f);
 
-    ClawCurrentLeft += 30 * DeltaTime;
-    ClawCurrentLeft = FMath::Clamp(ClawCurrentLeft, -100.f, 100.f);
+    ClawCurrentLeft -= 30 * DeltaTime;
+    ClawCurrentLeft = FMath::Clamp(ClawCurrentLeft, -50.f, 20.f);
 
     if (!ClawMeshRight || !ClawMeshLeft) return;
 
@@ -220,11 +255,11 @@ void UBaseMovement::ExecuteOpenClaw(float DeltaTime)
 
 void UBaseMovement::ExecuteCloseClaw(float DeltaTime)
 {
-    ClawCurrentRight += 30 * DeltaTime;
-    ClawCurrentRight = FMath::Clamp(ClawCurrentRight, -100.f, 100.f);
+    ClawCurrentRight -= 30 * DeltaTime;
+    ClawCurrentRight = FMath::Clamp(ClawCurrentRight, -50.f, 20.f);
 
-    ClawCurrentLeft -= 30 * DeltaTime;
-    ClawCurrentLeft = FMath::Clamp(ClawCurrentLeft, -100.f, 100.f);
+    ClawCurrentLeft += 30 * DeltaTime;
+    ClawCurrentLeft = FMath::Clamp(ClawCurrentLeft, -50.f, 20.f);
 
     if (!ClawMeshRight || !ClawMeshLeft) return;
 
@@ -249,7 +284,6 @@ void UBaseMovement::OnGrabOverlap(
         UE_LOG(LogTemp, Warning, TEXT("OVERLAP TRIGGERED"));
         OverlappingObject = OtherActor;
         UE_LOG(LogTemp, Warning, TEXT("Root: %s"), *OverlappingObject->GetRootComponent()->GetName());
-        //if (bIsCloseClaw) TryGrab();
     }
 }
 
@@ -284,9 +318,9 @@ void UBaseMovement::TryGrab()
 
     // CHANGE THIS WHEN CLAW GETS MADE
     OverlappingObject->AttachToComponent(
-        ClawMeshLeft,
+        ClawMeshRight,
         FAttachmentTransformRules::SnapToTargetNotIncludingScale,
-        FName("Claw_Right")
+        FName("Catcher")
     );
 
     UE_LOG(LogTemp, Warning, TEXT("GRABBED OBJECT"));
@@ -306,6 +340,8 @@ void UBaseMovement::ReleaseGrab()
     Comp->SetCollisionEnabled(ECollisionEnabled::QueryAndPhysics);
     Comp->SetSimulatePhysics(true);
     Comp->SetEnableGravity(true);
+
+    OverlappingObject = nullptr;
 
     UE_LOG(LogTemp, Warning, TEXT("RELEASED OBJECT"));
 

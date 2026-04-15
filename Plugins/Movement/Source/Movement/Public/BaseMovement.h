@@ -6,7 +6,9 @@
 #include "Components/SkeletalMeshComponent.h"
 #include "Components/PrimitiveComponent.h"
 #include "Components/BoxComponent.h"
+#include "Components/MeshComponent.h"
 
+#include "GameFramework/Character.h"
 #include "BaseMovement.generated.h"
 
 
@@ -33,6 +35,10 @@ public:
 
     UPROPERTY()
     AActor* OverlappingObject;
+
+    ## DELETE THIS IF STILL NOT SHOW UP
+    UPROPERTY()
+    USceneComponent* ClawRightPivot;
 
     UPROPERTY(EditAnywhere, BlueprintReadWrite, Category="Grab")
     UBoxComponent* GrabCollider;
@@ -62,6 +68,9 @@ private:
     USkeletalMeshComponent* ArmMesh;
     USkeletalMeshComponent* ClawMeshRight;
     USkeletalMeshComponent* ClawMeshLeft;
+    
+    ## DELETE THIS IF STILL NOT SHOW UP
+    UMeshComponent* ClawGuide;
 
     // Main Robot Move Vars
     float LeftMotor;
