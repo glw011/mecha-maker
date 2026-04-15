@@ -48,7 +48,7 @@ void URobotManager::ClearQueue(){
 // ---- helpers ----
 
 float URobotManager::GetConfigSpeed() const{
-    return (MotorSize == EConfigMotorSize::Large) ? LargeMotorSpeed : SmallMotorSpeed;
+    return MoveSpeed;
 }
 
 float URobotManager::GetConfigSize() const{

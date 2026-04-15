@@ -48,13 +48,11 @@ public:
     UPROPERTY(EditAnywhere, BlueprintReadWrite, Category="Robot Config")
     EConfigManipulator Manipulator = EConfigManipulator::None;
 
-    // move speed/size constants used by MotorSize based on current config
+    // fixed movement speed constant — adjust during testing to find the right feel, then leave it
     UPROPERTY(EditAnywhere, BlueprintReadWrite, Category="Robot Config|Speed")
-    float SmallMotorSpeed = 300.f;
+    float MoveSpeed = 300.f;
 
-    UPROPERTY(EditAnywhere, BlueprintReadWrite, Category="Robot Config|Speed")
-    float LargeMotorSpeed = 600.f;
-
+    // size scaling factors — each MotorSize config maps to one of these
     UPROPERTY(EditAnywhere, BlueprintReadWrite, Category="Robot Config|Speed")
     float SmallMotorSize = 50.f;
 
