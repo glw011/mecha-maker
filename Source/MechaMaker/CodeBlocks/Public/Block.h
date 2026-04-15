@@ -34,12 +34,12 @@ class Block{
     std::vector<BlockSlot> Slots;
     std::vector<std::string> userInputVals;
 
-    // sequence container for CBLK_SBLK — nullptr for all other block types
+    // sequence container for CBLK_SBLK (nullptr for other block types)
     LinkedList* codeSeq;
 
     bool validDynamSlotCount();
     std::string getEmptySlots();
-    std::string getCodeSeqStr();   // builds the body string for CBLK_SBLK
+    std::string getCodeSeqStr();   // builds string for CBLK_SBLK body
 
     static std::atomic<int> nxtId;
 };

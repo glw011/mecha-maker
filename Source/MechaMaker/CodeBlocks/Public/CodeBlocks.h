@@ -16,25 +16,25 @@
     enum class BlockType{
       NONE,           // 0
       MAIN,           // 1
-      ASSIGN_BLK,     // 2  — x = expr;
-      FUNDEF_BLK,     // 3  — def f(params) { body }   (skip for now)
-      FUNCALL_BLK,    // 4  — f(args);                 (skip for now)
-      RETURN_BLK,     // 5  — return; / return expr;   (sized: base=0, +1 for expr)
-      WHILE_LOOP,     // 6  — while (cond) { body }
-      FOR_LOOP,       // 7  — for (init; cond; iter) { body }
-      FOREA_LOOP,     // 8  — not implemented
-      IFELSE_BLK,     // 9  — if (cond) { body } [else { body }]  slot2 optional
-      BINARYOP_BLK,   // 10 — lhs op rhs  (op stored in userInputVals[0])
-      UNARYOP_BLK,    // 11 — op operand / operand op  (op in [0], pre/post in [1])
-      DATA_BLK,       // 12 — literal value (stored in userInputVals[0])
-      ARGLST_SBLK,    // 13 — (arg0, arg1, ...) sized
-      ELSE_SBLK,      // 14 — else { body }
-      CBLK_SBLK,      // 15 — { stmt* }  sequence container — uses internal LinkedList
-      NSTEXPR_SBLK,   // 16 — ( expr )
-      VAR_REF,        // 17 — identifier  (stored in userInputVals[0])
-      ARR_BLK,        // 18 — not implemented
-      AUG_ASSIGN_BLK, // 19 — x += expr;  (varName in userInputVals[0], augOp in userInputVals[1])
-      INCR_BLK        // 20 — x++; / x--;  (varName in userInputVals[0], iterOp in userInputVals[1])
+      ASSIGN_BLK,     // 2  --> x = expr;
+      FUNDEF_BLK,     // 3  --> def f(params) { body } (skipped for now)
+      FUNCALL_BLK,    // 4  --> f(args);
+      RETURN_BLK,     // 5  --> return; / return expr; (sized: base=0, +1 for expr)
+      WHILE_LOOP,     // 6  --> while (cond) { body }
+      FOR_LOOP,       // 7  --> for (init; cond; iter) { body }
+      FOREA_LOOP,     // 8  --> NOT IMPLEMENTED
+      IFELSE_BLK,     // 9  --> if (cond) { body } [else { body }]  **(slot2 is OPTIONAL)
+      BINARYOP_BLK,   // 10 --> lhs op rhs  **(op stored in userInputVals[0])
+      UNARYOP_BLK,    // 11 --> "pre": op operand / "post": operand op  **(op always in [0], pre/post always in [1])
+      DATA_BLK,       // 12 --> literal value **(stored in userInputVals[0])
+      ARGLST_SBLK,    // 13 --> (arg0, arg1, ...) **(sized block)
+      ELSE_SBLK,      // 14 --> else { body }
+      CBLK_SBLK,      // 15 --> { stmt* }  **(sequential container using LinkedList)
+      NSTEXPR_SBLK,   // 16 --> ( expr )
+      VAR_REF,        // 17 --> variable identifier  **(stored in userInputVals[0])
+      ARR_BLK,        // 18 --> NOT IMPLEMENTED
+      AUG_ASSIGN_BLK, // 19 --> x += expr;  **(varName: userInputVals[0], augOp: userInputVals[1])
+      INCR_BLK        // 20 --> x++; / x--;  **(varName: userInputVals[0], iterOp: userInputVals[1])
     };
 
     static std::array TypeNames = {
@@ -68,7 +68,7 @@
       FLOAT
     };
 
-    // derived data types supported (maybe in future)
+    // derived data types supported (maybe in future?)
     enum class DerivDataType{
       ARRAY
     };

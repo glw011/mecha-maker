@@ -86,18 +86,17 @@ bool MainBlock::reorderBlock(int blockId, int referenceBlockId, bool insertBefor
 
   if(isCompiled){ isCompiled = false; ProgramStr = ""; }
 
-  // get the block pointer before removing the slot (slot owns nothing, block still in registry)
+  // get block pointer before removing slot (slot owns nothing, but block still in registry)
   Block* blk = targetSlot->getBlock();
 
-  // remove target slot from list (this deletes the Node and the BlockSlot)
+  // remove target slot from list (deletes Node and BlockSlot)
   if(!SlotList.remove(targetSlot)) return false;
   this->SlotCount--;
 
-  // reinsert relative to reference; refSlot pointer is still valid (not affected by removal)
+  // reinsert relative to reference; refSlot pointer is still valid (i.e. not affected by removal)
   BlockSlot* newSlot = new BlockSlot();
   newSlot->setChild(blk);
-  bool ok = insertBefore ? SlotList.insertBefore(newSlot, refSlot)
-                         : SlotList.insertAfter(newSlot, refSlot);
+  bool ok = insertBefore ? SlotList.insertBefore(newSlot, refSlot) : SlotList.insertAfter(newSlot, refSlot);
   if(ok){
     this->SlotCount++;
     return true;

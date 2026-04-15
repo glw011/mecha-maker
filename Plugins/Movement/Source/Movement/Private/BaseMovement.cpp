@@ -180,8 +180,7 @@ void UBaseMovement::TickComponent(float DeltaTime, ELevelTick TickType, FActorCo
         ClawTime += DeltaTime;
         ExecuteOpenClaw(DeltaTime);
 
-        if (ClawTime >= ClawDuration)
-        {
+        if (ClawTime >= ClawDuration){
             bIsOpenClaw = false;
             ReleaseGrab();
         }

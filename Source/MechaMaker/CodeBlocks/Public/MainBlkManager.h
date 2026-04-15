@@ -50,38 +50,35 @@ class BlockManager {
     //  - Returns: true on success, else false
     bool removeBlock(int blockId);
 
-    // Wipe all state — call from IDE widget Construct to reset between PIE sessions
+    // Wipes all block states stored in backend
+    //  - Called from IDE widget during OnConstruct event to reset between PIE testing sessions
     void reset();
 
-    // ----------------------------------------------------------------
-    // Code block sequence (CBLK_SBLK / nested CodeAreaSlot)
-    // ----------------------------------------------------------------
-
-    // Create new block from side menu and append to a CBLK_SBLK sequence
+    // Create new block from side menu and append to cblk
     int newBlockInCodeBlock(CodeBlocks::BlockType blkType, int cblkId);
 
-    // Create new sized block from side menu and append to a CBLK_SBLK sequence
+    // Create new sized block from side menu and append to cblk
     int newSizedBlockInCodeBlock(CodeBlocks::BlockType blkType, int argCount, int cblkId);
 
-    // Move an existing block into a CBLK_SBLK sequence.
-    // oldCblkId != -1   → came from another CBLK_SBLK
-    // oldParentId != -1 → came from a single BlockSlot (supply oldSlotPos too)
-    // both == -1        → came from the main program area
+    // Move existing block into cblk
+    //  - oldCblkId != -1 --> came from another CodeAreaSlot
+    //  - oldParentId != -1 --> came from BlockSlot (needs oldSlotPos also)
+    //  - both == -1 --> came from main program area
     bool moveBlockToCodeBlock(int blockId, int cblkId, int oldCblkId, int oldParentId, int oldSlotPos);
 
-    // Remove a block from a CBLK_SBLK sequence (does not delete it from the registry)
+    // Remove block from cblk (does not delete cblk from registry)
     bool removeBlockFromCodeBlock(int blockId, int cblkId);
 
-    // Reorder within a CBLK_SBLK sequence — stub, implement later
+    // Reorder within cblk (not fully implement)
     bool reorderInCodeBlock(int blockId, int refBlockId, int cblkId, bool insertBefore);
 
-    // Store user-input string for a specific slot on a block (e.g. var name, data value)
+    // Store user input string for specific slot on block (e.g. var name/data value)
     void setUserInput(int blockId, int slotPos, std::string inputStr);
 
-    // Get user-input string for a specific slot on a block
+    // Get user input string for specific slot on block
     std::string getUserInput(int blockId, int slotPos);
 
-    // Get the full compiled ProgramString (or error message on failure)
+    // Get full ProgramString compiled from Block tree in back-end (or error message on fail)
     std::string getProgramString();
 
   private:

@@ -28,27 +28,27 @@ std::unordered_map<CodeBlocks::BlockType, int> CodeBlocks::SlotCountMap = {
 };
 
 std::unordered_map<CodeBlocks::BlockType, std::string> CodeBlocks::ContentStrMap = {
-  {BlockType::NONE,           ""},
-  {BlockType::MAIN,           "main(){"},
-  {BlockType::ASSIGN_BLK,     "{varIdSlot} = {exprSlot};"},
-  {BlockType::FUNDEF_BLK,     "def {funIdSlot}({paramListSlot}){cblkSlot}"},
-  {BlockType::FUNCALL_BLK,    "{funRefSlot}({argListSlot});"},
-  {BlockType::RETURN_BLK,     "return {exprSlot};"},
-  {BlockType::WHILE_LOOP,     "while ({varName} {condOp} {condRhsSlot}){cblkSlot}"},
-  {BlockType::FOR_LOOP,       "for ({varName} = {initValSlot}; {varName} {eqltyOp} {condValSlot}; {varName}{iterOp}){cblkSlot}"},
-  {BlockType::FOREA_LOOP,     "for each {idRefSlot} in {arrIdRefSlot}{cblkSlot}"},
-  {BlockType::IFELSE_BLK,     "if ({condSlot}){cblkSlot}{elseSBlkSlot}"},
-  {BlockType::BINARYOP_BLK,   "{lhsSlot} {op} {rhsSlot}"},
-  {BlockType::UNARYOP_BLK,    "{op}{operandSlot}"},
-  {BlockType::DATA_BLK,       "{dataVal}"},
-  {BlockType::ARGLST_SBLK,    "({argsSlot})"},
-  {BlockType::ELSE_SBLK,      "{cblkSlot}"},  // "else" keyword prepended by IFELSE_BLK's code gen
-  {BlockType::CBLK_SBLK,      "{ {stmts} }"},
-  {BlockType::NSTEXPR_SBLK,   "({exprSlot})"},
-  {BlockType::VAR_REF,        "{varName}"},
-  {BlockType::ARR_BLK,        ""},
+  {BlockType::NONE, ""},
+  {BlockType::MAIN, "main(){"},
+  {BlockType::ASSIGN_BLK, "{varIdSlot} = {exprSlot};"},
+  {BlockType::FUNDEF_BLK, "def {funIdSlot}({paramListSlot}){cblkSlot}"},
+  {BlockType::FUNCALL_BLK, "{funRefSlot}({argListSlot});"},
+  {BlockType::RETURN_BLK, "return {exprSlot};"},
+  {BlockType::WHILE_LOOP, "while ({varName} {condOp} {condRhsSlot}){cblkSlot}"},
+  {BlockType::FOR_LOOP, "for ({varName} = {initValSlot}; {varName} {eqltyOp} {condValSlot}; {varName}{iterOp}){cblkSlot}"},
+  {BlockType::FOREA_LOOP, "for each {idRefSlot} in {arrIdRefSlot}{cblkSlot}"},
+  {BlockType::IFELSE_BLK, "if ({condSlot}){cblkSlot}{elseSBlkSlot}"},
+  {BlockType::BINARYOP_BLK, "{lhsSlot} {op} {rhsSlot}"},
+  {BlockType::UNARYOP_BLK, "{op}{operandSlot}"},
+  {BlockType::DATA_BLK, "{dataVal}"},
+  {BlockType::ARGLST_SBLK, "({argsSlot})"},
+  {BlockType::ELSE_SBLK, "{cblkSlot}"},  // "else" keyword prepended by IFELSE_BLK's code gen
+  {BlockType::CBLK_SBLK, "{ {stmts} }"},
+  {BlockType::NSTEXPR_SBLK, "({exprSlot})"},
+  {BlockType::VAR_REF, "{varName}"},
+  {BlockType::ARR_BLK, ""},
   {BlockType::AUG_ASSIGN_BLK, "{varRefSlot} {augOp} {exprSlot};"},
-  {BlockType::INCR_BLK,       "{varName}{iterOp};"},
+  {BlockType::INCR_BLK, "{varName}{iterOp};"},
 };
 
 std::set<CodeBlocks::BlockType> CodeBlocks::SizedTypes = {

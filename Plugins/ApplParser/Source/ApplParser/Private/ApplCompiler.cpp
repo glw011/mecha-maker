@@ -14,8 +14,16 @@ bool UApplCompiler::CompileAndRun(const FString& Source, FApplParseResult& OutRe
     ApplParseResult parseResult;
     std::string utf8In(TCHAR_TO_UTF8(*Source));
 
-    // component dispatch lambda captures RobotInterface (UObject ptr) but type is std::function so it
-    // can safely be passed into ApplLang module
+    // clear queue from previous run
+    if(RobotInterface && RobotInterface->RobotManager){
+        RobotInterface->RobotManager->ClearQueue();
+    }
+
+    /**
+     * Component Dispatch (lambda)
+     *  - captures RobotInterface (UObject ptr) but type is std::function (can be passed into ApplLang safely) 
+     */
+    
     ComponentCallFn handler = nullptr;
     if(RobotInterface){
         URobotComponentInterface* iface = RobotInterface;
