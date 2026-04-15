@@ -27,7 +27,7 @@ public class ApplParser : ModuleRules{
 		
 		PublicDependencyModuleNames.AddRange(
 			new string[]{
-				"Core", "CoreUObject", "Engine", "Antlr4Runtime", "ApplLang"							
+				"Core", "CoreUObject", "Engine", "Antlr4Runtime", "ApplLang", "Movement"
 			}
 		);
 
