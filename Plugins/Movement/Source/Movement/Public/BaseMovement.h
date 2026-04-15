@@ -36,7 +36,7 @@ public:
     UPROPERTY()
     AActor* OverlappingObject;
 
-    ## DELETE THIS IF STILL NOT SHOW UP
+    // DELETE THIS IF STILL NOT SHOW UP
     UPROPERTY()
     USceneComponent* ClawRightPivot;
 
@@ -69,7 +69,7 @@ private:
     USkeletalMeshComponent* ClawMeshRight;
     USkeletalMeshComponent* ClawMeshLeft;
     
-    ## DELETE THIS IF STILL NOT SHOW UP
+    // DELETE THIS IF STILL NOT SHOW UP
     UMeshComponent* ClawGuide;
 
     // Main Robot Move Vars
