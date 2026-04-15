@@ -18,7 +18,7 @@ UBaseMovement::UBaseMovement()
     bIsCloseClaw = false;
     GrabCollider = CreateDefaultSubobject<UBoxComponent>(TEXT("GrabCollider"));
     
-    ## DELETE THIS IF STILL NOT SHOW UP
+    // DELETE THIS IF STILL NOT SHOW UP
     ClawRightPivot = CreateDefaultSubobject<USceneComponent>(TEXT("ClawRightPivot"));
 }
 
@@ -31,7 +31,7 @@ void UBaseMovement::BeginPlay()
     TArray<USkeletalMeshComponent*> Meshes;
     Character->GetComponents<USkeletalMeshComponent>(Meshes);
 
-    ## DELETE THIS IF STILL NOT SHOW UP
+    // DELETE THIS IF STILL NOT SHOW UP
     TArray<UMeshComponent*> RegMesh;
     Character->GetComponents<UMeshComponent>(RegMesh);
 
@@ -43,13 +43,13 @@ void UBaseMovement::BeginPlay()
         else if (Mesh->GetName() == "Claw_Left") ClawMeshLeft = Mesh; 
     }
 
-    ## DELETE THIS IF STILL NOT SHOW UP
+    // DELETE THIS IF STILL NOT SHOW UP
     for (auto* Mesh : RegMesh)
     {
         if (Mesh->GetName() == "ClawGuide") ClawGuide = Mesh;
     }
 
-    ## DELETE THIS IF STILL NOT SHOW UP
+    // DELETE THIS IF STILL NOT SHOW UP
     if (ClawRightPivot && ClawGuide) 
     {
         ClawRightPivot->AttachToComponent(
@@ -59,7 +59,7 @@ void UBaseMovement::BeginPlay()
         );
     }
 
-    ## DELETE THIS IF STILL NOT SHOW UP
+    // DELETE THIS IF STILL NOT SHOW UP
     if (ClawMeshRight && ClawRightPivot)
     {
         ClawMeshRight->AttachToComponent(
