@@ -13,7 +13,7 @@ struct ApplParseResult{
   int32_t stmtCount = 0;
 };
 
-class APPL_API ApplLangInterface {
+class APPL_API ApplLangInterface{
   public:
     // componentHandler can be nullptr for parse testing
     static bool StartParse(
