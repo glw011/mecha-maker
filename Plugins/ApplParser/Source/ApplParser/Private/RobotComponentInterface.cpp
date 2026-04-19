@@ -6,11 +6,21 @@ ApplValue URobotComponentInterface::Dispatch(const std::string& name, const std:
         throw ApplRuntimeError("No RobotManager set — assign the robot's RobotManager component before running the program");
     }
 
-    if(name == "startMove"){
-        if(args.size() != 3){
-            throw ApplRuntimeError("'startMove' expects 3 arguments (leftMotor, rightMotor, duration), got " + std::to_string(args.size()));
+    // ---- Movement ----
+
+    if(name == "moveForward"){
+        if(args.size() != 1){
+            throw ApplRuntimeError("'moveForward' expects 1 argument (duration), got " + std::to_string(args.size()));
         }
-        RobotManager->QueueStartMove(static_cast<float>(args[0].toDouble()), static_cast<float>(args[1].toDouble()), static_cast<float>(args[2].toDouble()));
+        RobotManager->EnqueueMoveForward(static_cast<float>(args[0].toDouble()));
+        return ApplValue(0);
+    }
+
+    if(name == "moveBackward"){
+        if(args.size() != 1){
+            throw ApplRuntimeError("'moveBackward' expects 1 argument (duration), got " + std::to_string(args.size()));
+        }
+        RobotManager->EnqueueMoveBackward(static_cast<float>(args[0].toDouble()));
         return ApplValue(0);
     }
 
@@ -18,48 +28,81 @@ ApplValue URobotComponentInterface::Dispatch(const std::string& name, const std:
         if(args.size() != 1){
             throw ApplRuntimeError("'turnLeft' expects 1 argument (duration), got " + std::to_string(args.size()));
         }
-        RobotManager->QueueTurnLeft(static_cast<float>(args[0].toDouble()));
+        RobotManager->EnqueueTurnLeft(static_cast<float>(args[0].toDouble()));
         return ApplValue(0);
     }
 
     if(name == "turnRight"){
-        if (args.size() != 1){
+        if(args.size() != 1){
             throw ApplRuntimeError("'turnRight' expects 1 argument (duration), got " + std::to_string(args.size()));
         }
-        RobotManager->QueueTurnRight(static_cast<float>(args[0].toDouble()));
+        RobotManager->EnqueueTurnRight(static_cast<float>(args[0].toDouble()));
         return ApplValue(0);
     }
 
-    if(name == "startArmMove"){
-        if(args.size() != 2){
-            throw ApplRuntimeError("'startArmMove' expects 2 arguments (armSpeed, duration), got " + std::to_string(args.size()));
+    // ---- Claw Arm ----
+
+    if(name == "raiseArm"){
+        if(args.size() != 0){
+            throw ApplRuntimeError("'raiseArm' expects no arguments, got " + std::to_string(args.size()));
         }
-        if(RobotManager->Manipulator != EConfigManipulator::ElevLift && RobotManager->Manipulator != EConfigManipulator::ScisLift){
-            throw ApplRuntimeError("'startArmMove' called but no arm manipulator is configured on this robot");
-        }
-        RobotManager->QueueStartArmMove(static_cast<float>(args[0].toDouble()), static_cast<float>(args[1].toDouble()));
+        RobotManager->EnqueueRaiseArm();
         return ApplValue(0);
     }
+
+    if(name == "lowerArm"){
+        if(args.size() != 0){
+            throw ApplRuntimeError("'lowerArm' expects no arguments, got " + std::to_string(args.size()));
+        }
+        RobotManager->EnqueueLowerArm();
+        return ApplValue(0);
+    }
+
+    // ---- Actual Claw ----
 
     if(name == "openClaw"){
-        if(args.size() != 1){
-            throw ApplRuntimeError("'openClaw' expects 1 argument (duration), got " + std::to_string(args.size()));
+        if(args.size() != 0){
+            throw ApplRuntimeError("'openClaw' expects no arguments, got " + std::to_string(args.size()));
         }
-        if(RobotManager->Manipulator != EConfigManipulator::Claw){
-            throw ApplRuntimeError("'openClaw' called but no claw is configured on this robot");
+        if(RobotManager->ManipType != EManipType::Claw){
+            throw ApplRuntimeError("'openClaw' called but this robot is not configured with a Claw");
         }
-        RobotManager->QueueStartClawMove(1, static_cast<float>(args[0].toDouble()));
+        RobotManager->EnqueueOpenClaw();
         return ApplValue(0);
     }
 
     if(name == "closeClaw"){
-        if(args.size() != 1){
-            throw ApplRuntimeError("'closeClaw' expects 1 argument (duration), got " + std::to_string(args.size()));
+        if(args.size() != 0){
+            throw ApplRuntimeError("'closeClaw' expects no arguments, got " + std::to_string(args.size()));
         }
-        if(RobotManager->Manipulator != EConfigManipulator::Claw){
-            throw ApplRuntimeError("'closeClaw' called but no claw is configured on this robot");
+        if(RobotManager->ManipType != EManipType::Claw){
+            throw ApplRuntimeError("'closeClaw' called but this robot is not configured with a Claw");
         }
-        RobotManager->QueueStartClawMove(0, static_cast<float>(args[0].toDouble()));
+        RobotManager->EnqueueCloseClaw();
+        return ApplValue(0);
+    }
+
+    // ---- Lift ----
+
+    if(name == "raiseLift"){
+        if(args.size() != 0){
+            throw ApplRuntimeError("'raiseLift' expects no arguments, got " + std::to_string(args.size()));
+        }
+        if(RobotManager->ManipType != EManipType::Lift){
+            throw ApplRuntimeError("'raiseLift' called but this robot is not configured with a Lift");
+        }
+        RobotManager->EnqueueRaiseLift();
+        return ApplValue(0);
+    }
+
+    if(name == "lowerLift"){
+        if(args.size() != 0){
+            throw ApplRuntimeError("'lowerLift' expects no arguments, got " + std::to_string(args.size()));
+        }
+        if(RobotManager->ManipType != EManipType::Lift){
+            throw ApplRuntimeError("'lowerLift' called but this robot is not configured with a Lift");
+        }
+        RobotManager->EnqueueLowerLift();
         return ApplValue(0);
     }
 

@@ -33,6 +33,10 @@ public:
     UFUNCTION(BlueprintCallable)
     void StartClawMove(int32 InDir, float FlArmDuration);
 
+    // Added so I can finish RobotManager (currently an empty function with no logic)
+    UFUNCTION(BlueprintCallable)
+    void StartLiftMove(int32 InDir, float LiftDuration);
+
     UPROPERTY()
     AActor* OverlappingObject;
 

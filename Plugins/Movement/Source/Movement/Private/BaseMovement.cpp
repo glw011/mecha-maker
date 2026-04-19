@@ -135,6 +135,16 @@ void UBaseMovement::StartArmMove(float FlArmSpeed, float FlArmDuration)
     bIsMovingArm = true;
 }
 
+void UBaseMovement::StartLiftMove(int32 InDir, float LiftDuration){
+    // TODO: implement 
+    /**
+     * - Logic on my end will use this function for calls to move lift up/down 
+     * - I assumed the call to move the lift will mirror StartClawMove function
+     * - If that isn't true just implement the function using a different name and I'll call it from in here
+     * - Do not change the signature of this function, will mess up RobotManager
+    */
+}
+
 void UBaseMovement::StartClawMove(int32 InDir, float FlClawDuration)
 {
     ClawDuration = FlClawDuration;
