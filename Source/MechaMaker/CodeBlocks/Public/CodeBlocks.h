@@ -33,8 +33,9 @@
       NSTEXPR_SBLK,   // 16 --> ( expr )
       VAR_REF,        // 17 --> variable identifier  **(stored in userInputVals[0])
       ARR_BLK,        // 18 --> NOT IMPLEMENTED
-      AUG_ASSIGN_BLK, // 19 --> x += expr;  **(varName: userInputVals[0], augOp: userInputVals[1])
-      INCR_BLK        // 20 --> x++; / x--;  **(varName: userInputVals[0], iterOp: userInputVals[1])
+      AUG_ASSIGN_BLK,    // 19 --> x += expr;  **(varName: userInputVals[0], augOp: userInputVals[1])
+      INCR_BLK,          // 20 --> x++; / x--;  **(varName: userInputVals[0], iterOp: userInputVals[1])
+      COMPFNCALL_BLK     // 21 --> fnName(args);  **(fnName: userInputVals[0], sized: argCount arg slots)
     };
 
     static std::array TypeNames = {
@@ -58,7 +59,8 @@
       "VarRefBlock",
       "ArrayBlock",
       "AugAssignBlock",
-      "IncrementBlock"
+      "IncrementBlock",
+      "CompFnCallBlock"
     };
 
     // basic data types supported

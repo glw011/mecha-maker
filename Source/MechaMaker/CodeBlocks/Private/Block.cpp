@@ -281,6 +281,21 @@ std::string Block::getContentStr(){
       );
       break;
 
+    case CodeBlocks::BlockType::COMPFNCALL_BLK:{
+      std::string fnName = userInputVals.empty() ? "" : userInputVals[0];
+      if(SlotCount == 0){
+        fContStr = stmtContStr(fnName + "()");
+      } else {
+        std::string argStr = "(";
+        for(int i = 0; i < SlotCount; i++){
+          if(i > 0) argStr += ", ";
+          argStr += Slots[i].getBlock()->getContentStr();
+        }
+        fContStr = stmtContStr(fnName + argStr + ")");
+      }
+      break;
+    }
+
     default:
       fContStr = "ERROR: Unhandled block type, id=" + std::to_string(id);
       break;

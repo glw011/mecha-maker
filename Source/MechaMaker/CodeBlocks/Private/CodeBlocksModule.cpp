@@ -25,6 +25,7 @@ std::unordered_map<CodeBlocks::BlockType, int> CodeBlocks::SlotCountMap = {
   {BlockType::ARR_BLK,        0},  // not implemented
   {BlockType::AUG_ASSIGN_BLK, 1},  // slot0=expr  (varName in userInputVals[0], augOp in userInputVals[1])
   {BlockType::INCR_BLK,       0},  // no slots — varName in userInputVals[0], iterOp in userInputVals[1]
+  {BlockType::COMPFNCALL_BLK, 0},  // base=0 fixed slots; fnName in userInputVals[0], all arg slots dynamic (+argCount)
 };
 
 std::unordered_map<CodeBlocks::BlockType, std::string> CodeBlocks::ContentStrMap = {
@@ -48,7 +49,8 @@ std::unordered_map<CodeBlocks::BlockType, std::string> CodeBlocks::ContentStrMap
   {BlockType::VAR_REF, "{varName}"},
   {BlockType::ARR_BLK, ""},
   {BlockType::AUG_ASSIGN_BLK, "{varRefSlot} {augOp} {exprSlot};"},
-  {BlockType::INCR_BLK, "{varName}{iterOp};"},
+  {BlockType::INCR_BLK,       "{varName}{iterOp};"},
+  {BlockType::COMPFNCALL_BLK, "{fnName}({args});"},
 };
 
 std::set<CodeBlocks::BlockType> CodeBlocks::SizedTypes = {
@@ -56,5 +58,6 @@ std::set<CodeBlocks::BlockType> CodeBlocks::SizedTypes = {
   BlockType::FUNDEF_BLK,
   BlockType::ARGLST_SBLK,
   BlockType::ARR_BLK,
-  BlockType::RETURN_BLK,   // base=0 slots (void return), sized+1 = expr return
+  BlockType::RETURN_BLK,      // base=0 slots (void return), sized+1 = expr return
+  BlockType::COMPFNCALL_BLK,  // base=0 slots; argCount=1 for duration-based fns, 0 for toggle fns
 };
