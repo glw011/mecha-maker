@@ -374,7 +374,7 @@ std::any ApplLangInterp::visitWhile_loop(APPL_Parse::While_loopContext* ctx){
     return {};
 }
 
-// for_loop : KW_FOR LPAREN assign SC expr SC iteratn RPAREN cblk
+// for_loop : KW_FOR LPAREN assign SC expr SC operatn RPAREN cblk
 std::any ApplLangInterp::visitFor_loop(APPL_Parse::For_loopContext* ctx){
     pushScope();
     try{
@@ -387,11 +387,11 @@ std::any ApplLangInterp::visitFor_loop(APPL_Parse::For_loopContext* ctx){
             }
 
             execCblk(ctx->cblk());
-            visitIteratn(ctx->iteratn());
+            visitOperatn(ctx->operatn());
         }
     }
     catch(...){
-        popScope(); 
+        popScope();
         throw;
     }
 
