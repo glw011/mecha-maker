@@ -17,9 +17,14 @@ UBaseMovement::UBaseMovement()
     bIsOpenClaw = false;
     bIsCloseClaw = false;
     GrabCollider = CreateDefaultSubobject<UBoxComponent>(TEXT("GrabCollider"));
+
+    bIsLiftMoving = false;
+    LiftCurrentPos = 0.f;
+    LiftTargetPos = 0.f;
     
-    // DELETE THIS IF STILL NOT SHOW UP
-    ClawRightPivot = CreateDefaultSubobject<USceneComponent>(TEXT("ClawRightPivot"));
+
+    static ConstructorHelpers::FObjectFinder<UAnimSequence> LiftAnimFinder(TEXT("/Game/RobotAssets/ElevatorV2/Anim_ElevatorSequence"));
+    if (LiftAnimFinder.Succeeded()) LiftAnim = LiftAnimFinder.Object;
 }
 
 void UBaseMovement::BeginPlay()
@@ -31,9 +36,6 @@ void UBaseMovement::BeginPlay()
     TArray<USkeletalMeshComponent*> Meshes;
     Character->GetComponents<USkeletalMeshComponent>(Meshes);
 
-    // DELETE THIS IF STILL NOT SHOW UP
-    TArray<UMeshComponent*> RegMesh;
-    Character->GetComponents<UMeshComponent>(RegMesh);
 
     for (auto* Mesh : Meshes)
     {
@@ -41,33 +43,9 @@ void UBaseMovement::BeginPlay()
         if (Mesh->GetName() == "SKM_Arm") ArmMesh = Mesh;
         else if (Mesh->GetName() == "Claw_Right") ClawMeshRight = Mesh;
         else if (Mesh->GetName() == "Claw_Left") ClawMeshLeft = Mesh; 
+        else if (Mesh->GetName() == "Lift") LiftMesh = Mesh;
     }
 
-    // DELETE THIS IF STILL NOT SHOW UP
-    for (auto* Mesh : RegMesh)
-    {
-        if (Mesh->GetName() == "ClawGuide") ClawGuide = Mesh;
-    }
-
-    // DELETE THIS IF STILL NOT SHOW UP
-    if (ClawRightPivot && ClawGuide) 
-    {
-        ClawRightPivot->AttachToComponent(
-            ClawGuide,
-            FAttachmentTransformRules::SnapToTargetNotIncludingScale,
-            FName("Claw_Right")
-        );
-    }
-
-    // DELETE THIS IF STILL NOT SHOW UP
-    if (ClawMeshRight && ClawRightPivot)
-    {
-        ClawMeshRight->AttachToComponent(
-            ClawRightPivot,
-            FAttachmentTransformRules::KeepRelativeTransform
-        );
-        ClawMeshRight->SetRelativeLocation(FVector(-0.3f,7.f,2.f));
-    }
 
     if(GrabCollider && ArmMesh)
     {
@@ -87,6 +65,14 @@ void UBaseMovement::BeginPlay()
         // SET PICKUP AREA
         GrabCollider->SetBoxExtent(FVector(30.f,30.f,30.f));
         GrabCollider->SetRelativeLocation(FVector(-15.f, 0.f, 0.f));
+    }
+
+    if (LiftMesh && LiftAnim) 
+    {
+        LiftMesh->SetAnimationMode(EAnimationMode::AnimationSingleNode);
+        LiftMesh->SetAnimation(LiftAnim);
+        LiftMesh->SetPosition(0.f); // start fully down
+        LiftMesh->Stop();
     }
 
     // DEBUGGING
@@ -135,14 +121,32 @@ void UBaseMovement::StartArmMove(float FlArmSpeed, float FlArmDuration)
     bIsMovingArm = true;
 }
 
-void UBaseMovement::StartLiftMove(int32 InDir, float LiftDuration){
-    // TODO: implement 
-    /**
-     * - Logic on my end will use this function for calls to move lift up/down 
-     * - I assumed the call to move the lift will mirror StartClawMove function
-     * - If that isn't true just implement the function using a different name and I'll call it from in here
-     * - Do not change the signature of this function, will mess up RobotManager
-    */
+void UBaseMovement::StartLiftMove(int32 InDir, float LiftDuration)
+{
+    LiftDur = LiftDuration;
+    LiftTime = 0.f;
+    LiftTargetPos = (InDir == 1) ? 1.0f : 0.0f; // 1 = up, -1 = down
+    bIsLiftMoving = true;
+}
+
+void UBaseMovement::ExecuteLiftMovement(float DeltaTime)
+{
+    if (!LiftMesh || !LiftAnim) return;
+
+    // Move current position toward target over LiftDuration seconds
+    float LiftSpeed = 1.0f / LiftDur;
+    LiftCurrentPos = FMath::FInterpConstantTo(LiftCurrentPos, LiftTargetPos, DeltaTime, LiftSpeed);
+
+    // Scrub the animation to match
+    float AnimLength = LiftAnim->GetPlayLength();
+    LiftMesh->SetPosition(LiftCurrentPos * AnimLength);
+
+    // Stop when reached target
+    if (FMath::IsNearlyEqual(LiftCurrentPos, LiftTargetPos, 0.01f))
+    {
+        LiftCurrentPos = LiftTargetPos;
+        bIsLiftMoving = false;
+    }
 }
 
 void UBaseMovement::StartClawMove(int32 InDir, float FlClawDuration)
@@ -209,6 +213,19 @@ void UBaseMovement::TickComponent(float DeltaTime, ELevelTick TickType, FActorCo
     }
 
     if(bIsCloseClaw && OverlappingObject) 
+    {
+        TryGrab();
+    }
+
+    if(bIsLiftMoving && OverlappingObject) TryGrab();
+
+    if (bIsLiftMoving)
+    {
+        LiftTime += DeltaTime;
+        ExecuteLiftMovement(DeltaTime);
+    }
+
+    if(bIsLiftMoving && OverlappingObject) 
     {
         TryGrab();
     }
