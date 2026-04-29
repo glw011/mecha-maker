@@ -3,6 +3,8 @@ Binaries/
 DerivedDataCache/
 Intermediate/
 Saved/
+BlenderFBX/
+Imports/*.fbx
 
 # VSCode gen'd dirs
 .vs/
