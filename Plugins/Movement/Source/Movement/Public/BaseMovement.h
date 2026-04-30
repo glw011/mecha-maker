@@ -8,6 +8,7 @@
 #include "Components/BoxComponent.h"
 #include "Components/MeshComponent.h"
 
+#include "Animation/AnimSequence.h"
 #include "GameFramework/Character.h"
 #include "BaseMovement.generated.h"
 
@@ -75,6 +76,19 @@ private:
     
     // DELETE THIS IF STILL NOT SHOW UP
     UMeshComponent* ClawGuide;
+
+    USkeletalMeshComponent* LiftMesh;
+
+    UPROPERTY(EditAnywhere, Category = "Animation")
+    UAnimSequence* LiftAnim;
+
+    float LiftCurrentPos;
+    float LiftTargetPos;
+    float LiftDur;
+    float LiftTime;
+    bool bIsLiftMoving;
+
+    void ExecuteLiftMovement(float DeltaTime);
 
     // Main Robot Move Vars
     float LeftMotor;
