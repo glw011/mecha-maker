@@ -9,6 +9,11 @@ URobotManager::URobotManager(){
 void URobotManager::BeginPlay(){
     Super::BeginPlay();
 
+    RobotPawn = Cast<ARobotPawnBase>(GetOwner());
+    if(!RobotPawn){
+        UE_LOG(LogTemp, Warning, TEXT("URobotManager: owner is not an ARobotPawnBase — commands will not execute"));
+    }
+
     if(AActor* Owner = GetOwner()){
         BaseMovementComp = Owner->FindComponentByClass<UBaseMovement>();
         if(!BaseMovementComp){
@@ -20,166 +25,172 @@ void URobotManager::BeginPlay(){
 void URobotManager::TickComponent(float DeltaTime, ELevelTick TickType, FActorComponentTickFunction* ThisTickFunction){
     Super::TickComponent(DeltaTime, TickType, ThisTickFunction);
 
-    if(!BaseMovementComp || ActionQueue.Num() == 0 || QueueIndex >= ActionQueue.Num()){return;}
+    if(!RobotPawn || !BaseMovementComp) return;
 
-    const FRobotAction& Current = ActionQueue[QueueIndex];
+    // Nothing queued — idle
+    if(QueueIndex >= ActionQueue.Num()) return;
 
-    if(!bActionStarted){
-        DispatchAction(Current);
-        bActionStarted = true;
-    }
+    if(CanExecuteCommand){
+        // ---- Dequeue and dispatch next command ----
+        const FRobotAction& Action = ActionQueue[QueueIndex];
 
-    ElapsedTime += DeltaTime;
+        CanExecuteCommand = false;
 
-    if(ElapsedTime >= GetActionWaitTime(Current.Type, Current.Duration)){
-        ElapsedTime    = 0.f;
-        bActionStarted = false;
+        // Reset per-command pawn state before dispatch
+        RobotPawn->DistanceTraveled = 0.f;
+        RobotPawn->AngleTurned = 0.f;
+        RobotPawn->CommandTimer = 0.f;
+
+        LastTick = GetWorld()->GetTimeSeconds();
+
+        DispatchAction(Action);
         QueueIndex++;
+    }
+    else{
+        // ---- Poll completion of the running command ----
+        CurrTick = GetWorld()->GetTimeSeconds();
+        float Delta = CurrTick - LastTick;
+        LastTick = CurrTick;
+
+        CanExecuteCommand = RobotPawn->IsCommandCompleted(Delta);
+
+        if(CanExecuteCommand){
+            // Return loco state to Idle for movement commands
+            ERobotCommand Cmd = RobotPawn->CurrCommand;
+            if(Cmd == ERobotCommand::MoveForward || Cmd == ERobotCommand::MoveReverse || Cmd == ERobotCommand::TurnLeft    || Cmd == ERobotCommand::TurnRight){
+                RobotPawn->TargetMoveState = EBaseMoveState::Idle;
+            }
+        }
     }
 }
 
-// --- Config ---
+// ---- Config ----
 
 void URobotManager::SetCurrConfig(int32 InMotorType, int32 InManipSlot){
     MotorType = (InMotorType == 1) ? EMotorType::HiSpeedLoTorque : EMotorType::Balanced;
     ManipType = (InManipSlot == 1) ? EManipType::Lift : EManipType::Claw;
 }
 
+// ---- Queue management ----
 
 void URobotManager::ClearQueue(){
     ActionQueue.Empty();
-    QueueIndex    = 0;
-    ElapsedTime   = 0.f;
-    bActionStarted = false;
-    // Reset binary states to initial positions so each new run starts clean
-    bArmIsUp    = true;
-    bClawIsOpen = false;
-    bLiftIsUp   = false;
+    QueueIndex        = 0;
+    CanExecuteCommand = true;
+
+    if(RobotPawn){
+        RobotPawn->DistanceTraveled = 0.f;
+        RobotPawn->AngleTurned = 0.f;
+        RobotPawn->CommandTimer = 0.f;
+        RobotPawn->TargetMoveState = EBaseMoveState::Idle;
+    }
+
+    if(BaseMovementComp){
+        BaseMovementComp->StopMovement();
+    }
 }
 
-float URobotManager::GetConfigSize() const{
-    return (MotorType == EMotorType::HiSpeedLoTorque) ? HiSpeedMotorSize : BalancedMotorSize;
-}
-
-float URobotManager::GetActionWaitTime(EActionType ActionType, float Duration) const{
-    // Returns the time (seconds) to wait after dispatching this action before moving to the next.
-    // Currently equals the action's own Duration; future implementations may scale by config.
-    return Duration;
-}
+// ---- Dispatch ----
 
 void URobotManager::DispatchAction(const FRobotAction& Action){
-    if(!BaseMovementComp){return;}
+    if(!RobotPawn || !BaseMovementComp) return;
 
     switch(Action.Type){
-        case EActionType::Move:
-            BaseMovementComp->StartMove(Action.Arg0, Action.Arg1, Action.Duration, MoveSpeed, GetConfigSize());
+
+        case EActionType::MoveRob:
+            if(Action.Arg0 >= 0.f){
+                RobotPawn->CurrCommand = ERobotCommand::MoveForward;
+                RobotPawn->TargetMoveState = EBaseMoveState::MoveForward;
+                RobotPawn->TargetMoveDistance = Action.Arg0;
+            } else {
+                RobotPawn->CurrCommand = ERobotCommand::MoveReverse;
+                RobotPawn->TargetMoveState = EBaseMoveState::MoveReverse;
+                RobotPawn->TargetMoveDistance = FMath::Abs(Action.Arg0);
+            }
+            BaseMovementComp->MoveRob(Action.Arg0);
             break;
-        case EActionType::ArmMove:
-            BaseMovementComp->StartArmMove(Action.Arg0, Action.Duration);
+
+        case EActionType::TurnRob:
+            if(Action.Arg0 >= 0.f){
+                RobotPawn->CurrCommand = ERobotCommand::TurnLeft;
+                RobotPawn->TargetMoveState = EBaseMoveState::TurnLeft;
+                RobotPawn->TargetTurnAngle = Action.Arg0;
+            } else {
+                RobotPawn->CurrCommand = ERobotCommand::TurnRight;
+                RobotPawn->TargetMoveState = EBaseMoveState::TurnRight;
+                RobotPawn->TargetTurnAngle = FMath::Abs(Action.Arg0);
+            }
+            BaseMovementComp->TurnRob(Action.Arg0);
             break;
-        case EActionType::ClawMove:
-            BaseMovementComp->StartClawMove(Action.IArg0, Action.Duration);
+
+        case EActionType::ClawArm:
+            RobotPawn->CurrCommand = ERobotCommand::Cmpnt_Claw_Arm;
+            BaseMovementComp->Claw_Arm(Action.Arg0);
             break;
-        case EActionType::LiftMove:
-            BaseMovementComp->StartLiftMove(Action.IArg0, Action.Duration);
+
+        case EActionType::ClawClaw:
+            RobotPawn->CurrCommand = ERobotCommand::Cmpnt_Claw_GrabClaw;
+            BaseMovementComp->Claw_Claw(Action.Arg0);
+            break;
+
+        case EActionType::LiftArm:
+            RobotPawn->CurrCommand = ERobotCommand::Cmpnt_Lift_Arm;
+            BaseMovementComp->Lift_Arm(Action.Arg0);
+            break;
+
+        case EActionType::LiftClaw:
+            RobotPawn->CurrCommand = ERobotCommand::Cmpnt_Lift_GrabClaw;
+            BaseMovementComp->Lift_Claw(Action.Arg0);
             break;
     }
 }
 
-// ---- Enqueue Functions (add user's ComponentFunction to queue) ----
+// ---- Enqueue functions ----
 
-void URobotManager::EnqueueMoveForward(float Duration){
-    FRobotAction A;
-    A.Type     = EActionType::Move;
-    A.Arg0     = 100.f;
-    A.Arg1     = 100.f;
-    A.Duration = Duration;
-    ActionQueue.Add(A);
+void URobotManager::EnqueueMoveForward(float Distance){
+    ActionQueue.Add({EActionType::MoveRob, Distance});
 }
 
-void URobotManager::EnqueueMoveBackward(float Duration){
-    FRobotAction A;
-    A.Type     = EActionType::Move;
-    A.Arg0     = -100.f;
-    A.Arg1     = -100.f;
-    A.Duration = Duration;
-    ActionQueue.Add(A);
+void URobotManager::EnqueueMoveBackward(float Distance){
+    ActionQueue.Add({EActionType::MoveRob, -Distance});  // neg -> backward
 }
 
-void URobotManager::EnqueueTurnLeft(float Duration){
-    FRobotAction A;
-    A.Type     = EActionType::Move;
-    A.Arg0     = -TurnMotorDiff;
-    A.Arg1     =  TurnMotorDiff;
-    A.Duration = Duration;
-    ActionQueue.Add(A);
+void URobotManager::EnqueueTurnLeft(float Degrees){
+    ActionQueue.Add({EActionType::TurnRob, Degrees});    // pos -> CCW/turnLeft
 }
 
-void URobotManager::EnqueueTurnRight(float Duration){
-    FRobotAction A;
-    A.Type     = EActionType::Move;
-    A.Arg0     =  TurnMotorDiff;
-    A.Arg1     = -TurnMotorDiff;
-    A.Duration = Duration;
-    ActionQueue.Add(A);
+void URobotManager::EnqueueTurnRight(float Degrees){
+    ActionQueue.Add({EActionType::TurnRob, -Degrees});   // neg -> CW/turnRight
 }
 
-void URobotManager::EnqueueRaiseArm(){
-    if(bArmIsUp){return;}
-    FRobotAction A;
-    A.Type     = EActionType::ArmMove;
-    A.Arg0     = -ArmRotationAmount;  // negative = counter-clockwise = up ??
-    A.Duration = RaiseArmDuration;
-    ActionQueue.Add(A);
-    bArmIsUp = true;
+void URobotManager::EnqueueClawRaiseArm(){
+    ActionQueue.Add({EActionType::ClawArm, 1.f});
 }
 
-void URobotManager::EnqueueLowerArm(){
-    if(!bArmIsUp){return;}
-    FRobotAction A;
-    A.Type     = EActionType::ArmMove;
-    A.Arg0     = ArmRotationAmount;   // positive = clockwise = down ??
-    A.Duration = LowerArmDuration;
-    ActionQueue.Add(A);
-    bArmIsUp = false;
+void URobotManager::EnqueueClawLowerArm(){
+    ActionQueue.Add({EActionType::ClawArm, 0.f});
 }
 
-void URobotManager::EnqueueOpenClaw(){
-    if(bClawIsOpen){return;}
-    FRobotAction A;
-    A.Type     = EActionType::ClawMove;
-    A.IArg0    = 1;   // 1 = open
-    A.Duration = OpenClawDuration;
-    ActionQueue.Add(A);
-    bClawIsOpen = true;
+void URobotManager::EnqueueClawOpenClaw(){
+    ActionQueue.Add({EActionType::ClawClaw, 1.f});
 }
 
-void URobotManager::EnqueueCloseClaw(){
-    if(!bClawIsOpen){return;}
-    FRobotAction A;
-    A.Type     = EActionType::ClawMove;
-    A.IArg0    = 0;   // 0 = close
-    A.Duration = CloseClawDuration;
-    ActionQueue.Add(A);
-    bClawIsOpen = false;
+void URobotManager::EnqueueClawCloseClaw(){
+    ActionQueue.Add({EActionType::ClawClaw, 0.f});
 }
 
-void URobotManager::EnqueueRaiseLift(){
-    if(bLiftIsUp){return;}
-    FRobotAction A;
-    A.Type     = EActionType::LiftMove;
-    A.IArg0    = 1;   // 1 = raise
-    A.Duration = RaiseLiftDuration;
-    ActionQueue.Add(A);
-    bLiftIsUp = true;
+void URobotManager::EnqueueLiftRaiseArm(){
+    ActionQueue.Add({EActionType::LiftArm, 1.f});
 }
 
-void URobotManager::EnqueueLowerLift(){
-    if(!bLiftIsUp){return;}
-    FRobotAction A;
-    A.Type     = EActionType::LiftMove;
-    A.IArg0    = 0;   // 0 = lower
-    A.Duration = LowerLiftDuration;
-    ActionQueue.Add(A);
-    bLiftIsUp = false;
+void URobotManager::EnqueueLiftLowerArm(){
+    ActionQueue.Add({EActionType::LiftArm, 0.f});
+}
+
+void URobotManager::EnqueueLiftOpenClaw(){
+    ActionQueue.Add({EActionType::LiftClaw, 1.f});
+}
+
+void URobotManager::EnqueueLiftCloseClaw(){
+    ActionQueue.Add({EActionType::LiftClaw, 0.f});
 }

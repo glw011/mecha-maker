@@ -2,10 +2,12 @@
 
 #include "CoreMinimal.h"
 #include "Components/ActorComponent.h"
+#include "RobotPawnBase.h"
 #include "RobotManager.generated.h"
 
 class UBaseMovement;
 
+// Reserved for future differential steering (FourWheel vs TankTread turn calculations)
 UENUM(BlueprintType)
 enum class EConfigDriveType : uint8{
     FourWheel UMETA(DisplayName="Four Wheel"),
@@ -14,7 +16,7 @@ enum class EConfigDriveType : uint8{
 
 UENUM(BlueprintType)
 enum class EMotorType : uint8{
-    Balanced        UMETA(DisplayName="Balanced"),
+    Balanced UMETA(DisplayName="Balanced"),
     HiSpeedLoTorque UMETA(DisplayName="Hi-Speed / Lo-Torque")
 };
 
@@ -35,7 +37,7 @@ public:
     virtual void BeginPlay() override;
     virtual void TickComponent(float DeltaTime, ELevelTick TickType, FActorComponentTickFunction* ThisTickFunction) override;
 
-    // --- Curr Robot Config (set via SetCurrConfig call or panel in Unreal) ---
+    // ---- Robot Config ----
 
     UPROPERTY(EditAnywhere, BlueprintReadWrite, Category="RobotConfig")
     EMotorType MotorType = EMotorType::Balanced;
@@ -43,91 +45,50 @@ public:
     UPROPERTY(EditAnywhere, BlueprintReadWrite, Category="RobotConfig")
     EManipType ManipType = EManipType::Claw;
 
-    // Called by the 'Accept Config' button in the RobotConfig menu
-    UFUNCTION(BlueprintCallable, Category="Robot Config")
+    UFUNCTION(BlueprintCallable, Category="RobotConfig")
     void SetCurrConfig(int32 InMotorType, int32 InManipSlot);
 
-    // --- Movement Constants ---
-    // move speed
-    UPROPERTY(EditAnywhere, BlueprintReadWrite, Category="RobotConfig Speed")
-    float MoveSpeed = 300.f;
+    // ---- Component Function Enqueue API ----
+    // Called by RobotComponentInterface::Dispatch when the interpreter encounters these calls.
 
-    // scaling factor for motor types used for AngularSpeed calc
-    UPROPERTY(EditAnywhere, BlueprintReadWrite, Category="RobotConfig Speed")
-    float BalancedMotorSize = 50.f;
-
-    UPROPERTY(EditAnywhere, BlueprintReadWrite, Category="RobotConfig Speed")
-    float HiSpeedMotorSize = 100.f;
-
-    // differential used for TurnLeft/TurnRight ComponentFunction calls
-    UPROPERTY(EditAnywhere, BlueprintReadWrite, Category="RobotConfig Turn")
-    float TurnMotorDiff = 100.f;
-
-    // degrees arm rotates for RaiseArm/LowerArm calls (+X=clockwise/down, -X=counter-clockwise/up)
-    UPROPERTY(EditAnywhere, BlueprintReadWrite, Category="RobotConfig Arm")
-    float ArmRotationAmount = 45.f;
-
-    // --- Duration Constants for ComponentFunctions ---
-    UPROPERTY(EditAnywhere, BlueprintReadWrite, Category="RobotConfig Duration")
-    float RaiseArmDuration = 1.5f;
-
-    UPROPERTY(EditAnywhere, BlueprintReadWrite, Category="RobotConfig Duration")
-    float LowerArmDuration = 1.5f;
-
-    UPROPERTY(EditAnywhere, BlueprintReadWrite, Category="RobotConfig Duration")
-    float OpenClawDuration = 0.8f;
-
-    UPROPERTY(EditAnywhere, BlueprintReadWrite, Category="RobotConfig Duration")
-    float CloseClawDuration = 0.8f;
-
-    UPROPERTY(EditAnywhere, BlueprintReadWrite, Category="RobotConfig Duration")
-    float RaiseLiftDuration = 1.5f;
-
-    UPROPERTY(EditAnywhere, BlueprintReadWrite, Category="RobotConfig Duration")
-    float LowerLiftDuration = 1.5f;
-
-    // --- Enqueue Functions ---
-    // * called by RobotComponentInterface::Dispatch when interpreter encounters ComponentFunction calls by player
-    // * component actions skipped if component already up/down/open/closed
-    void EnqueueMoveForward(float Duration);
-    void EnqueueMoveBackward(float Duration);
-    void EnqueueTurnLeft(float Duration);
-    void EnqueueTurnRight(float Duration);
-    void EnqueueRaiseArm();
-    void EnqueueLowerArm();
-    void EnqueueOpenClaw();
-    void EnqueueCloseClaw();
-    void EnqueueRaiseLift();
-    void EnqueueLowerLift();
+    void EnqueueMoveForward(float Distance);
+    void EnqueueMoveBackward(float Distance);   // stored as negative distance → MoveRob(-distance)
+    void EnqueueTurnLeft(float Degrees);
+    void EnqueueTurnRight(float Degrees);       // stored as negative degrees → TurnRob(-degrees)
+    void EnqueueClawRaiseArm();
+    void EnqueueClawLowerArm();
+    void EnqueueClawOpenClaw();
+    void EnqueueClawCloseClaw();
+    void EnqueueLiftRaiseArm();
+    void EnqueueLiftLowerArm();
+    void EnqueueLiftOpenClaw();
+    void EnqueueLiftCloseClaw();
 
     UFUNCTION(BlueprintCallable, Category="Robot")
     void ClearQueue();
 
 private:
-    enum class EActionType : uint8{ Move, ArmMove, ClawMove, LiftMove };
+    // Action types mapped to the 6 BaseMovement execution functions
+    enum class EActionType : uint8{ MoveRob, TurnRob, ClawArm, ClawClaw, LiftArm, LiftClaw };
 
     struct FRobotAction{
-        EActionType Type = EActionType::Move;
-        float Arg0 = 0.f; // Robot Move: LMotorPower or ArmMove: rotation degrees
-        float Arg1 = 0.f; // Robot Move: RMotorPower
-        float Duration = 0.f;
-        int32 IArg0 = 0; // ClawMove/LiftMove: direction (0=close/lower, 1=open/raise)
+        EActionType Type = EActionType::MoveRob;
+        float Arg0 = 0.f;  // MoveRob: signed distance | TurnRob: signed degrees | others: alpha
     };
+
+    UPROPERTY()
+    ARobotPawnBase* RobotPawn = nullptr;
 
     UPROPERTY()
     UBaseMovement* BaseMovementComp = nullptr;
 
     TArray<FRobotAction> ActionQueue;
-    int32 QueueIndex    = 0;
-    float ElapsedTime   = 0.f;
-    bool  bActionStarted = false;
+    int32 QueueIndex = 0;
+    bool CanExecuteCommand = true;  // true = queue idle, ready to dispatch next command
 
-    // curr component state on robot
-    bool bArmIsUp    = true;   // arm starts in up state (??)
-    bool bClawIsOpen = false;  // claw starts closed (??)
-    bool bLiftIsUp   = false;  // lift starts in down state (??)
+    // Tick timing (tracks real seconds for DeltaTime passed to IsCommandCompleted)
+    float LastTick = 0.f;
+    float CurrTick = 0.f;
 
-    float GetConfigSize() const;
-    float GetActionWaitTime(EActionType ActionType, float Duration) const;
-    void  DispatchAction(const FRobotAction& Action);
+    void DispatchAction(const FRobotAction& Action);
 };
