@@ -23,7 +23,8 @@ enum class EMotorType : uint8{
 UENUM(BlueprintType)
 enum class EManipType : uint8{
     Claw UMETA(DisplayName="Claw"),
-    Lift UMETA(DisplayName="Lift")
+    Lift UMETA(DisplayName="Lift"),
+    None UMETA(DisplayName="None")
 };
 
 
@@ -49,12 +50,12 @@ public:
     void SetCurrConfig(int32 InMotorType, int32 InManipSlot);
 
     // ---- Component Function Enqueue API ----
-    // Called by RobotComponentInterface::Dispatch when the interpreter encounters these calls.
+    // Called by RobotComponentInterface::Dispatch when interpreter encounters these calls
 
     void EnqueueMoveForward(float Distance);
-    void EnqueueMoveBackward(float Distance);   // stored as negative distance → MoveRob(-distance)
+    void EnqueueMoveBackward(float Distance);   // stored as negative distance -> MoveRob(-distance)
     void EnqueueTurnLeft(float Degrees);
-    void EnqueueTurnRight(float Degrees);       // stored as negative degrees → TurnRob(-degrees)
+    void EnqueueTurnRight(float Degrees);       // stored as negative degrees -> TurnRob(-degrees)
     void EnqueueClawRaiseArm();
     void EnqueueClawLowerArm();
     void EnqueueClawOpenClaw();
@@ -68,12 +69,12 @@ public:
     void ClearQueue();
 
 private:
-    // Action types mapped to the 6 BaseMovement execution functions
+    // Action types mapped to 6 BaseMovement execution functions
     enum class EActionType : uint8{ MoveRob, TurnRob, ClawArm, ClawClaw, LiftArm, LiftClaw };
 
     struct FRobotAction{
         EActionType Type = EActionType::MoveRob;
-        float Arg0 = 0.f;  // MoveRob: signed distance | TurnRob: signed degrees | others: alpha
+        float Arg0 = 0.f;
     };
 
     UPROPERTY()
@@ -86,7 +87,7 @@ private:
     int32 QueueIndex = 0;
     bool CanExecuteCommand = true;  // true = queue idle, ready to dispatch next command
 
-    // Tick timing (tracks real seconds for DeltaTime passed to IsCommandCompleted)
+    // tick timing to track seconds for DeltaTime passed to IsCommandCompleted
     float LastTick = 0.f;
     float CurrTick = 0.f;
 

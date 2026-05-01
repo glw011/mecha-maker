@@ -12,24 +12,20 @@ void URobotManager::BeginPlay(){
     Super::BeginPlay();
 
     RobotPawn = Cast<ARobotPawnBase>(GetOwner());
-    UE_LOG(RobotManagerLog, Warning, TEXT("[DBG] RobotManager BeginPlay — RobotPawn is %s"),
-        RobotPawn ? TEXT("VALID") : TEXT("NULL (owner is not ARobotPawnBase)"));
+    UE_LOG(RobotManagerLog, Warning, TEXT("[DBG] RobotManager BeginPlay — RobotPawn is %s"), RobotPawn ? TEXT("VALID") : TEXT("NULL (owner is not ARobotPawnBase)"));
 
     if(!RobotPawn){
-        UE_LOG(RobotManagerLog, Error, TEXT("[DBG] Owner class: %s"),
-            GetOwner() ? *GetOwner()->GetClass()->GetName() : TEXT("(no owner)"));
+        UE_LOG(RobotManagerLog, Error, TEXT("[DBG] Owner class: %s"), GetOwner() ? *GetOwner()->GetClass()->GetName() : TEXT("(no owner)"));
         return;
     }
 
     BaseMovementComp = RobotPawn->BaseMovementComp;
-    UE_LOG(RobotManagerLog, Warning, TEXT("[DBG] RobotManager BeginPlay — BaseMovementComp is %s"),
-        BaseMovementComp ? TEXT("VALID") : TEXT("NULL (BaseMovementComp not found on pawn)"));
+    UE_LOG(RobotManagerLog, Warning, TEXT("[DBG] RobotManager BeginPlay — BaseMovementComp is %s"), BaseMovementComp ? TEXT("VALID") : TEXT("NULL (BaseMovementComp not found on pawn)"));
 }
 
 void URobotManager::TickComponent(float DeltaTime, ELevelTick TickType, FActorComponentTickFunction* ThisTickFunction){
     Super::TickComponent(DeltaTime, TickType, ThisTickFunction);
 
-    // Log first 3 ticks unconditionally so we know tick is running
     static int32 TickCount = 0;
     if(TickCount < 3){
         UE_LOG(RobotManagerLog, Warning,
@@ -43,7 +39,6 @@ void URobotManager::TickComponent(float DeltaTime, ELevelTick TickType, FActorCo
     }
 
     if(!RobotPawn || !BaseMovementComp){
-        // Log once if we hit the null guard after ticks start
         static bool bNullGuardLogged = false;
         if(!bNullGuardLogged){
             UE_LOG(RobotManagerLog, Error,
@@ -56,7 +51,7 @@ void URobotManager::TickComponent(float DeltaTime, ELevelTick TickType, FActorCo
     }
 
     if(CanExecuteCommand){
-        if(QueueIndex >= ActionQueue.Num()) return;
+        if(QueueIndex >= ActionQueue.Num()){return;}
 
         const FRobotAction& Action = ActionQueue[QueueIndex];
         UE_LOG(RobotManagerLog, Warning,
@@ -75,24 +70,21 @@ void URobotManager::TickComponent(float DeltaTime, ELevelTick TickType, FActorCo
         QueueIndex++;
     }
     else{
-        CurrTick          = GetWorld()->GetTimeSeconds();
-        float Delta       = CurrTick - LastTick;
-        LastTick          = CurrTick;
+        CurrTick = GetWorld()->GetTimeSeconds();
+        float Delta = CurrTick - LastTick;
+        LastTick = CurrTick;
 
         bool bDone = RobotPawn->IsCommandCompleted(Delta);
 
-        // Log completion transition once
         if(bDone && !CanExecuteCommand){
-            UE_LOG(RobotManagerLog, Warning,
-                TEXT("[DBG] IsCommandCompleted returned true — command finished"));
+            UE_LOG(RobotManagerLog, Warning, TEXT("[DBG] IsCommandCompleted returned true — command finished"));
         }
 
         CanExecuteCommand = bDone;
 
         if(CanExecuteCommand){
             ERobotCommand Cmd = RobotPawn->CurrCommand;
-            if(Cmd == ERobotCommand::MoveForward || Cmd == ERobotCommand::MoveReverse ||
-               Cmd == ERobotCommand::TurnLeft    || Cmd == ERobotCommand::TurnRight){
+            if(Cmd == ERobotCommand::MoveForward || Cmd == ERobotCommand::MoveReverse || Cmd == ERobotCommand::TurnLeft || Cmd == ERobotCommand::TurnRight){
                 RobotPawn->TargetMoveState = EBaseMoveState::Idle;
                 UE_LOG(RobotManagerLog, Warning, TEXT("[DBG] TargetMoveState reset to Idle"));
             }
@@ -105,6 +97,13 @@ void URobotManager::TickComponent(float DeltaTime, ELevelTick TickType, FActorCo
 void URobotManager::SetCurrConfig(int32 InMotorType, int32 InManipSlot){
     MotorType = (InMotorType == 1) ? EMotorType::HiSpeedLoTorque : EMotorType::Balanced;
     ManipType = (InManipSlot == 1) ? EManipType::Lift : EManipType::Claw;
+    if(InManipSlot == 2){
+        ManipType = EManipType::Lift;
+    }
+    else if(InManipSlot == 1){
+        ManipType = EManipType::Claw;
+    }
+    else{ManipType = EManipType::None;}
 }
 
 // ---- Queue management ----
@@ -119,9 +118,9 @@ void URobotManager::ClearQueue(){
 
     if(RobotPawn){
         RobotPawn->DistanceTraveled = 0.f;
-        RobotPawn->AngleTurned      = 0.f;
-        RobotPawn->CommandTimer     = 0.f;
-        RobotPawn->TargetMoveState  = EBaseMoveState::Idle;
+        RobotPawn->AngleTurned = 0.f;
+        RobotPawn->CommandTimer = 0.f;
+        RobotPawn->TargetMoveState = EBaseMoveState::Idle;
     }
 
     if(BaseMovementComp){
@@ -134,7 +133,7 @@ void URobotManager::ClearQueue(){
 void URobotManager::DispatchAction(const FRobotAction& Action){
     if(!RobotPawn || !BaseMovementComp){
         UE_LOG(RobotManagerLog, Error, TEXT("[DBG] DispatchAction early-return — RobotPawn=%s BaseMovementComp=%s"),
-            RobotPawn        ? TEXT("valid") : TEXT("NULL"),
+            RobotPawn ? TEXT("valid") : TEXT("NULL"),
             BaseMovementComp ? TEXT("valid") : TEXT("NULL"));
         return;
     }
@@ -143,12 +142,12 @@ void URobotManager::DispatchAction(const FRobotAction& Action){
 
         case EActionType::MoveRob:
             if(Action.Arg0 >= 0.f){
-                RobotPawn->CurrCommand        = ERobotCommand::MoveForward;
-                RobotPawn->TargetMoveState    = EBaseMoveState::MoveForward;
+                RobotPawn->CurrCommand = ERobotCommand::MoveForward;
+                RobotPawn->TargetMoveState = EBaseMoveState::MoveForward;
                 RobotPawn->TargetMoveDistance = Action.Arg0;
             } else {
-                RobotPawn->CurrCommand        = ERobotCommand::MoveReverse;
-                RobotPawn->TargetMoveState    = EBaseMoveState::MoveReverse;
+                RobotPawn->CurrCommand = ERobotCommand::MoveReverse;
+                RobotPawn->TargetMoveState = EBaseMoveState::MoveReverse;
                 RobotPawn->TargetMoveDistance = FMath::Abs(Action.Arg0);
             }
             UE_LOG(RobotManagerLog, Warning,
@@ -159,11 +158,11 @@ void URobotManager::DispatchAction(const FRobotAction& Action){
 
         case EActionType::TurnRob:
             if(Action.Arg0 >= 0.f){
-                RobotPawn->CurrCommand     = ERobotCommand::TurnLeft;
+                RobotPawn->CurrCommand = ERobotCommand::TurnLeft;
                 RobotPawn->TargetMoveState = EBaseMoveState::TurnLeft;
                 RobotPawn->TargetTurnAngle = Action.Arg0;
             } else {
-                RobotPawn->CurrCommand     = ERobotCommand::TurnRight;
+                RobotPawn->CurrCommand = ERobotCommand::TurnRight;
                 RobotPawn->TargetMoveState = EBaseMoveState::TurnRight;
                 RobotPawn->TargetTurnAngle = FMath::Abs(Action.Arg0);
             }
