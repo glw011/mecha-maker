@@ -3,10 +3,6 @@
 #include "CoreMinimal.h"
 #include "Components/ActorComponent.h"
 #include "Components/BoxComponent.h"
-#include "Components/MeshComponent.h"
-
-#include "Animation/AnimSequence.h"
-#include "GameFramework/Character.h"
 #include "RobotPawnBase.h"
 #include "BaseMovement.generated.h"
 
@@ -21,11 +17,8 @@ public:
     virtual void BeginPlay() override;
     virtual void TickComponent(float DeltaTime, ELevelTick TickType, FActorComponentTickFunction* ThisTickFunction) override;
 
-    // ---- Command execution functions (called by RobotManager) ----
+    // ---- Command execution functions (called by RobotManager on dequeue) ----
 
-    UFUNCTION(BlueprintCallable)
-    void StartArmMove(float InDir, float FlArmDuration);
-  
     // Move pawn forward (+distance) or backward (-distance) at MoveSpeed until target reached
     UFUNCTION(BlueprintCallable, Category="RobotCommand")
     void MoveRob(float Distance);
@@ -91,77 +84,6 @@ public:
     );
 
 private:
-    ACharacter* Character;
-
-    USkeletalMeshComponent* ArmMesh;
-    USkeletalMeshComponent* ClawMesh;
-
-    // Might be able to delete these
-    USkeletalMeshComponent* ClawMeshRight;
-    USkeletalMeshComponent* ClawMeshLeft;
-    
-    // DELETE THIS IF STILL NOT SHOW UP
-    UMeshComponent* ClawGuide;
-
-    USkeletalMeshComponent* LiftMesh;
-
-    UPROPERTY(EditAnywhere, Category = "Animation")
-    UAnimSequence* LiftAnim;
-
-    float LiftCurrentPos;
-    float LiftTargetPos;
-    float LiftDur;
-    float LiftTime;
-    bool bIsLiftMoving;
-
-    void ExecuteLiftMovement(float DeltaTime);
-
-    // Main Robot Move Vars
-    float LeftMotor;
-    float RightMotor;
-    float Duration;
-    float Speed;
-
-    bool bIsMoving;
-
-    void ExecuteMovement(float DeltaTime);
-
-    // Turning vars
-    float StartYaw;
-    float FinishedYaw;
-    float CurrentTime;
-    float AngularSpeed;
-
-    // Arm Vars
-    UPROPERTY(EditAnywhere, Category = "Animation")
-    UAnimSequence* ArmAnim;
-
-    //float ArmSpeed;
-    float ArmCurrent;
-    float ArmDur;
-    float ArmTime;
-
-    float ArmCurrentPos;
-    float ArmTargetPos;
-
-    bool bIsMovingArm;
-
-    void ExecuteArmMovement(float DeltaTime);
-
-    // Claw Vars
-    UPROPERTY(EditAnywhere, Category = "Animation")
-    UAnimSequence* ClawAnim;
-
-    float ClawCurrentRight;
-    float ClawCurrentLeft;
-    float ClawDur;
-    float ClawTime;
-
-    float ClawCurrentPos;
-    float ClawTargetPos;
-
-    bool bIsOpenClaw;
-    bool bIsCloseClaw;
     UPROPERTY()
     ARobotPawnBase* RobotPawn = nullptr;
 
