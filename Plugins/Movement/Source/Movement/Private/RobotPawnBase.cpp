@@ -1,8 +1,20 @@
 #include "RobotPawnBase.h"
+#include "BaseMovement.h"
+#include "GameFramework/CharacterMovementComponent.h"
 
 
 ARobotPawnBase::ARobotPawnBase(){
     PrimaryActorTick.bCanEverTick = false;
+    BaseMovementComp = CreateDefaultSubobject<UBaseMovement>(TEXT("BaseMovement"));
+
+    bUseControllerRotationYaw   = false;
+    bUseControllerRotationPitch = false;
+    bUseControllerRotationRoll  = false;
+
+    if(UCharacterMovementComponent* CMC = GetCharacterMovement()){
+        CMC->bOrientRotationToMovement    = false;
+        CMC->bUseControllerDesiredRotation = false;
+    }
 }
 
 bool ARobotPawnBase::IsCommandCompleted_Implementation(float DeltaTime){

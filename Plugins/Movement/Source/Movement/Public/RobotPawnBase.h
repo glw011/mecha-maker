@@ -4,6 +4,8 @@
 #include "GameFramework/Character.h"
 #include "RobotPawnBase.generated.h"
 
+class UBaseMovement;
+
 
 UENUM(BlueprintType)
 enum class EBaseMoveState : uint8{
@@ -85,6 +87,10 @@ public:
     // Command currently being executed — used by IsCommandCompleted to branch completion logic
     UPROPERTY(EditAnywhere, BlueprintReadWrite, Category="RobotState")
     ERobotCommand CurrCommand = ERobotCommand::MoveForward;
+
+    // BaseMovement component — created here so BP_RoboRob inherits it automatically
+    UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category="Robot")
+    UBaseMovement* BaseMovementComp = nullptr;
 
     // ---- IsCommandCompleted ----
     //   - Increments CommandTimer by DeltaTime then returns true if curr command finished
