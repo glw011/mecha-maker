@@ -29,7 +29,7 @@ public:
     void StartMove(float FlLeftMotor, float FlRightMotor, float FlDuration, float FlSpeed, float FlSize);
 
     UFUNCTION(BlueprintCallable)
-    void StartArmMove(float FlArmSpeed, float FlArmDuration);
+    void StartArmMove(float InDir, float FlArmDuration);
 
     UFUNCTION(BlueprintCallable)
     void StartClawMove(int32 InDir, float FlArmDuration);
@@ -41,9 +41,6 @@ public:
     UPROPERTY()
     AActor* OverlappingObject;
 
-    // DELETE THIS IF STILL NOT SHOW UP
-    UPROPERTY()
-    USceneComponent* ClawRightPivot;
 
     UPROPERTY(EditAnywhere, BlueprintReadWrite, Category="Grab")
     UBoxComponent* GrabCollider;
@@ -71,6 +68,9 @@ private:
     ACharacter* Character;
 
     USkeletalMeshComponent* ArmMesh;
+    USkeletalMeshComponent* ClawMesh;
+
+    // Might be able to delete these
     USkeletalMeshComponent* ClawMeshRight;
     USkeletalMeshComponent* ClawMeshLeft;
     
@@ -107,20 +107,32 @@ private:
     float AngularSpeed;
 
     // Arm Vars
-    float ArmSpeed;
+    UPROPERTY(EditAnywhere, Category = "Animation")
+    UAnimSequence* ArmAnim;
+
+    //float ArmSpeed;
     float ArmCurrent;
-    float ArmDuration;
+    float ArmDur;
     float ArmTime;
+
+    float ArmCurrentPos;
+    float ArmTargetPos;
 
     bool bIsMovingArm;
 
     void ExecuteArmMovement(float DeltaTime);
 
     // Claw Vars
+    UPROPERTY(EditAnywhere, Category = "Animation")
+    UAnimSequence* ClawAnim;
+
     float ClawCurrentRight;
     float ClawCurrentLeft;
-    float ClawDuration;
+    float ClawDur;
     float ClawTime;
+
+    float ClawCurrentPos;
+    float ClawTargetPos;
 
     bool bIsOpenClaw;
     bool bIsCloseClaw;

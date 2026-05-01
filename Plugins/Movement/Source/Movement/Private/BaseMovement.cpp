@@ -25,6 +25,12 @@ UBaseMovement::UBaseMovement()
 
     static ConstructorHelpers::FObjectFinder<UAnimSequence> LiftAnimFinder(TEXT("/Game/RobotAssets/ElevatorV2/Anim_ElevatorSequence"));
     if (LiftAnimFinder.Succeeded()) LiftAnim = LiftAnimFinder.Object;
+
+    static ConstructorHelpers::FObjectFinder<UAnimSequence> ClawAnimFinder(TEXT("/Game/RobotAssets/Animations/Anim_Claw_Sequence"));
+    if (ClawAnimFinder.Succeeded()) ClawAnim = ClawAnimFinder.Object;
+
+    static ConstructorHelpers::FObjectFinder<UAnimSequence> ArmAnimFinder(TEXT("/Game/RobotAssets/Animations/Anim_Arm_Sequence"));
+    if (ArmAnimFinder.Succeeded()) ArmAnim = ArmAnimFinder.Object;
 }
 
 void UBaseMovement::BeginPlay()
@@ -40,9 +46,9 @@ void UBaseMovement::BeginPlay()
     for (auto* Mesh : Meshes)
     {
         // CHANGE THIS WHEN CLAW GETS MADE
-        if (Mesh->GetName() == "SKM_Arm") ArmMesh = Mesh;
-        else if (Mesh->GetName() == "Claw_Right") ClawMeshRight = Mesh;
-        else if (Mesh->GetName() == "Claw_Left") ClawMeshLeft = Mesh; 
+        if (Mesh->GetName() == "ArmMesh") ArmMesh = Mesh;
+        //else if (Mesh->GetName() == "Claw_Right") ClawMeshRight = Mesh;
+        //else if (Mesh->GetName() == "Claw_Left") ClawMeshLeft = Mesh; 
         else if (Mesh->GetName() == "Lift") LiftMesh = Mesh;
     }
 
@@ -52,7 +58,7 @@ void UBaseMovement::BeginPlay()
         // CHANGE THIS WHEN CLAW GETS MADE
         GrabCollider->AttachToComponent(ArmMesh, 
             FAttachmentTransformRules::SnapToTargetNotIncludingScale,
-            FName("Claw_Right"));
+            FName("Cmpnt_Claw_Arm_Claw_L"));
 
         GrabCollider->OnComponentBeginOverlap.AddDynamic(this, &UBaseMovement::OnGrabOverlap);
         GrabCollider->OnComponentEndOverlap.AddDynamic(this, &UBaseMovement::OnGrabEndOverlap);
@@ -74,6 +80,15 @@ void UBaseMovement::BeginPlay()
         LiftMesh->SetPosition(0.f); // start fully down
         LiftMesh->Stop();
     }
+
+    if(ArmMesh && ArmAnim)
+    {
+        ArmMesh->SetAnimationMode(EAnimationMode::AnimationSingleNode);
+        ArmMesh->SetAnimation(ArmAnim);
+        ArmMesh->SetPosition(0.f); // start fully down
+        ArmMesh->Stop();
+    }
+
 
     // DEBUGGING
     if (!GrabCollider)
@@ -109,14 +124,17 @@ void UBaseMovement::StartMove(float FlLeftMotor, float FlRightMotor, float FlDur
     bIsMoving = true;
 }
 
-void UBaseMovement::StartArmMove(float FlArmSpeed, float FlArmDuration)
+void UBaseMovement::StartArmMove(float InDir, float FlArmDuration)
 {
-    ArmSpeed = FlArmSpeed;
+    if(ArmMesh && ArmAnim)
+    {
+        ArmMesh->SetAnimationMode(EAnimationMode::AnimationSingleNode);
+        ArmMesh->SetAnimation(ArmAnim);
+    }
 
-    ArmDuration = FlArmDuration;
+    ArmDur = FlArmDuration;
     ArmTime = 0.f;
-
-    Character = Cast<ACharacter>(GetOwner());
+    ArmTargetPos = (InDir == 1) ? 1.0f : 0.0f;
 
     bIsMovingArm = true;
 }
@@ -151,18 +169,19 @@ void UBaseMovement::ExecuteLiftMovement(float DeltaTime)
 
 void UBaseMovement::StartClawMove(int32 InDir, float FlClawDuration)
 {
-    ClawDuration = FlClawDuration;
+    if(ArmMesh && ClawAnim)
+    {
+        ArmMesh->SetAnimationMode(EAnimationMode::AnimationSingleNode);
+        ArmMesh->SetAnimation(ClawAnim);
+    }
+
+    ClawDur = FlClawDuration;
     ClawTime = 0.f;
-
-    Character = Cast<ACharacter>(GetOwner());
+    ClawTargetPos = (InDir == 1) ? 1.0f : 0.0f; // 1 = up, -1 = down
     
-    if (InDir == 1) {
-        bIsOpenClaw = true;
-    }
+    if (InDir == 1) bIsOpenClaw = true;
 
-    else {
-        bIsCloseClaw = true;
-    }
+    if (InDir == -1) bIsCloseClaw = true;
 }
 
 void UBaseMovement::TickComponent(float DeltaTime, ELevelTick TickType, FActorComponentTickFunction* ThisTickFunction)
@@ -185,7 +204,7 @@ void UBaseMovement::TickComponent(float DeltaTime, ELevelTick TickType, FActorCo
         ArmTime += DeltaTime;
         ExecuteArmMovement(DeltaTime);
 
-        if (ArmTime >= ArmDuration)
+        if (ArmTime >= ArmDur)
             bIsMovingArm = false;
     }
 
@@ -194,7 +213,7 @@ void UBaseMovement::TickComponent(float DeltaTime, ELevelTick TickType, FActorCo
         ClawTime += DeltaTime;
         ExecuteOpenClaw(DeltaTime);
 
-        if (ClawTime >= ClawDuration){
+        if (ClawTime >= ClawDur){
             bIsOpenClaw = false;
             ReleaseGrab();
         }
@@ -206,7 +225,7 @@ void UBaseMovement::TickComponent(float DeltaTime, ELevelTick TickType, FActorCo
         ClawTime += DeltaTime;
         ExecuteCloseClaw(DeltaTime);
 
-        if (ClawTime >= ClawDuration)
+        if (ClawTime >= ClawDur)
         {
             bIsCloseClaw = false;
         }
@@ -223,11 +242,6 @@ void UBaseMovement::TickComponent(float DeltaTime, ELevelTick TickType, FActorCo
     {
         LiftTime += DeltaTime;
         ExecuteLiftMovement(DeltaTime);
-    }
-
-    if(bIsLiftMoving && OverlappingObject) 
-    {
-        TryGrab();
     }
 
 
@@ -253,31 +267,44 @@ void UBaseMovement::ExecuteMovement(float DeltaTime)
 
 void UBaseMovement::ExecuteArmMovement(float DeltaTime)
 {
-    ArmCurrent += ArmSpeed * DeltaTime;
-    ArmCurrent = FMath::Clamp(ArmCurrent, -100.f, 100.f);
+    if (!ArmMesh || !ArmAnim) return;
 
-    if(!ArmMesh) return;
+    // Move current position toward target over LiftDuration seconds
+    float ArmSpeed = 1.0f / ArmDur;
+    ArmCurrentPos = FMath::FInterpConstantTo(ArmCurrentPos, ArmTargetPos, DeltaTime, ArmSpeed);
 
-    FRotator NewRot = FRotator(0.f, -90.f, ArmCurrent);
-    ArmMesh->SetRelativeRotation(NewRot);
+    // Scrub the animation to match
+    float AnimLength = ArmAnim->GetPlayLength();
+    ArmMesh->SetPosition(ArmCurrentPos * AnimLength);
+
+    // Stop when reached target
+    if (FMath::IsNearlyEqual(ArmCurrentPos, ArmTargetPos, 0.01f))
+    {
+        ArmCurrentPos = ArmTargetPos;
+        bIsMovingArm = false;
+    }
 
 }
 
 void UBaseMovement::ExecuteOpenClaw(float DeltaTime)
 {
-    ClawCurrentRight += 30 * DeltaTime;
-    ClawCurrentRight = FMath::Clamp(ClawCurrentRight, -50.f, 20.f);
+    if (!ArmMesh || !ClawAnim) return;
 
-    ClawCurrentLeft -= 30 * DeltaTime;
-    ClawCurrentLeft = FMath::Clamp(ClawCurrentLeft, -50.f, 20.f);
+    // Move current position toward target over LiftDuration seconds
+    float ClawSpeed = 1.0f / ClawDur;
+    ClawCurrentPos = FMath::FInterpConstantTo(ClawCurrentPos, ClawTargetPos, DeltaTime, ClawSpeed);
 
-    if (!ClawMeshRight || !ClawMeshLeft) return;
+    // Scrub the animation to match
+    float AnimLength = ClawAnim->GetPlayLength();
+    ArmMesh->SetPosition(ClawCurrentPos * AnimLength);
 
-    FRotator NewRotRight = FRotator(0.f, ClawCurrentRight, 0.f);
-    ClawMeshRight->SetRelativeRotation(NewRotRight);
-
-    FRotator NewRotLeft = FRotator(0.f, ClawCurrentLeft, 0.f);
-    ClawMeshLeft->SetRelativeRotation(NewRotLeft);
+    // Stop when reached target
+    if (FMath::IsNearlyEqual(ClawCurrentPos, ClawTargetPos, 0.01f))
+    {
+        ClawCurrentPos = ClawTargetPos;
+        bIsOpenClaw = false;
+        bIsCloseClaw = false;
+    }
 }
 
 void UBaseMovement::ExecuteCloseClaw(float DeltaTime)
@@ -288,13 +315,13 @@ void UBaseMovement::ExecuteCloseClaw(float DeltaTime)
     ClawCurrentLeft += 30 * DeltaTime;
     ClawCurrentLeft = FMath::Clamp(ClawCurrentLeft, -50.f, 20.f);
 
-    if (!ClawMeshRight || !ClawMeshLeft) return;
+    if (!ArmMesh) return;
 
-    FRotator NewRotRight = FRotator(0.f, ClawCurrentRight, 0.f);
-    ClawMeshRight->SetRelativeRotation(NewRotRight);
+    //FRotator NewRotRight = FRotator(0.f, ClawCurrentRight, 0.f);
+    //ClawMeshRight->SetRelativeRotation(NewRotRight);
 
-    FRotator NewRotLeft = FRotator(0.f, ClawCurrentLeft, 0.f);
-    ClawMeshLeft->SetRelativeRotation(NewRotLeft);
+    //FRotator NewRotLeft = FRotator(0.f, ClawCurrentLeft, 0.f);
+    //ClawMeshLeft->SetRelativeRotation(NewRotLeft);
 
 }
 
@@ -345,9 +372,9 @@ void UBaseMovement::TryGrab()
 
     // CHANGE THIS WHEN CLAW GETS MADE
     OverlappingObject->AttachToComponent(
-        ClawMeshRight,
+        ArmMesh,
         FAttachmentTransformRules::SnapToTargetNotIncludingScale,
-        FName("Catcher")
+        FName("Cmpnt_Claw_Arm_Claw_L")
     );
 
     UE_LOG(LogTemp, Warning, TEXT("GRABBED OBJECT"));
