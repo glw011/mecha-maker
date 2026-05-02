@@ -1,0 +1,32 @@
+using UnrealBuildTool;
+using System.IO;
+
+public class ApplLang : ModuleRules{
+  public ApplLang(ReadOnlyTargetRules Target) : base(Target){
+    Type = ModuleType.CPlusPlus;
+
+    PCHUsage = PCHUsageMode.UseExplicitOrSharedPCHs;
+
+    // antlr needs dynamic cast
+    bUseRTTI = true;
+    // antlr needs exceptions
+    bEnableExceptions = true;
+
+    // project standard *(? need to confirm/set in MM build file) 
+    CppStandard = CppStandardVersion.Cpp20;
+
+    // antlr runtime source don't order included .h files correctly so unreal whines
+    IWYUSupport = IWYUSupport.None;
+
+    PublicIncludePaths.Add(Path.Combine(ModuleDirectory, "Public"));
+    PrivateIncludePaths.Add(Path.Combine(ModuleDirectory, "Private"));
+
+    PublicDependencyModuleNames.AddRange(new string[]{"Core", "Antlr4Runtime"});
+    
+    if(Target.Platform == UnrealTargetPlatform.Win64){
+      PrivateDefinitions.Add("APPL_LANG_EXPORTS");
+    }
+
+    bWarningsAsErrors = false; // stop 'warnings = errors'
+  }
+}

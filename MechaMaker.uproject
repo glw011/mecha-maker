@@ -3,12 +3,37 @@
 	"EngineAssociation": "5.7",
 	"Category": "",
 	"Description": "",
+	"Modules": [
+		{
+			"Name": "MechaMaker",
+			"Type": "Runtime",
+			"LoadingPhase": "Default",
+			"AdditionalDependencies": [
+				"UMG"
+			]
+		}
+	],
 	"Plugins": [
 		{
 			"Name": "ModelingToolsEditorMode",
 			"Enabled": true,
 			"TargetAllowList": [
 				"Editor"
+			]
+		},
+		{
+			"Name": "ApplParser",
+			"Enabled": true,
+			"TargetAllowList": [
+				"Editor"
+			]
+		},
+		{
+			"Name": "DatasmithCADImporter",
+			"Enabled": true,
+			"SupportedTargetPlatforms": [
+				"Win64",
+				"Linux"
 			]
 		}
 	]
