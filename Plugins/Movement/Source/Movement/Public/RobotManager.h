@@ -17,14 +17,15 @@ enum class EConfigDriveType : uint8{
 UENUM(BlueprintType)
 enum class EMotorType : uint8{
     Balanced UMETA(DisplayName="Balanced"),
-    HiSpeedLoTorque UMETA(DisplayName="Hi-Speed / Lo-Torque")
+    HiTorque UMETA(DisplayName="Hi-Torque/Lo-Speed"),
+    HiSpeed UMETA(DisplayName="Hi-Speed/Lo-Torque")
 };
 
 UENUM(BlueprintType)
 enum class EManipType : uint8{
+    None UMETA(DisplayName="None"),
     Claw UMETA(DisplayName="Claw"),
-    Lift UMETA(DisplayName="Lift"),
-    None UMETA(DisplayName="None")
+    Lift UMETA(DisplayName="Lift")
 };
 
 
@@ -40,11 +41,12 @@ public:
 
     // ---- Robot Config ----
 
+    // Defaults
     UPROPERTY(EditAnywhere, BlueprintReadWrite, Category="RobotConfig")
     EMotorType MotorType = EMotorType::Balanced;
 
     UPROPERTY(EditAnywhere, BlueprintReadWrite, Category="RobotConfig")
-    EManipType ManipType = EManipType::Claw;
+    EManipType ManipType = EManipType::None;
 
     UFUNCTION(BlueprintCallable, Category="RobotConfig")
     void SetCurrConfig(int32 InMotorType, int32 InManipSlot);
@@ -69,9 +71,10 @@ public:
     void ClearQueue();
 
 private:
-    // Action types mapped to 6 BaseMovement execution functions
+    // Enum of action types based on BaseMovement's 6 Execution Functions
     enum class EActionType : uint8{ MoveRob, TurnRob, ClawArm, ClawClaw, LiftArm, LiftClaw };
 
+    // Struct used for action queue
     struct FRobotAction{
         EActionType Type = EActionType::MoveRob;
         float Arg0 = 0.f;
@@ -85,9 +88,9 @@ private:
 
     TArray<FRobotAction> ActionQueue;
     int32 QueueIndex = 0;
-    bool CanExecuteCommand = true;  // true = queue idle, ready to dispatch next command
+    bool CanExecuteCommand = true;  // true = queue is idle/ready to dispatch next command
 
-    // tick timing to track seconds for DeltaTime passed to IsCommandCompleted
+    // tick timing to track seconds for DeltaTime passed to IsCommandCompleted function
     float LastTick = 0.f;
     float CurrTick = 0.f;
 

@@ -1,6 +1,8 @@
 #include "RobotManager.h"
 #include "BaseMovement.h"
 
+#define DEBUG true
+
 DEFINE_LOG_CATEGORY_STATIC(RobotManagerLog, Log, All);
 
 
@@ -12,22 +14,22 @@ void URobotManager::BeginPlay(){
     Super::BeginPlay();
 
     RobotPawn = Cast<ARobotPawnBase>(GetOwner());
-    UE_LOG(RobotManagerLog, Warning, TEXT("[DBG] RobotManager BeginPlay — RobotPawn is %s"), RobotPawn ? TEXT("VALID") : TEXT("NULL (owner is not ARobotPawnBase)"));
+    if(DEBUG) UE_LOG(RobotManagerLog, Warning, TEXT("[DBG] RobotManager BeginPlay — RobotPawn is %s"), RobotPawn ? TEXT("VALID") : TEXT("NULL (owner is not ARobotPawnBase)"));
 
-    if(!RobotPawn){
+    if(DEBUG && !RobotPawn){
         UE_LOG(RobotManagerLog, Error, TEXT("[DBG] Owner class: %s"), GetOwner() ? *GetOwner()->GetClass()->GetName() : TEXT("(no owner)"));
         return;
     }
 
     BaseMovementComp = RobotPawn->BaseMovementComp;
-    UE_LOG(RobotManagerLog, Warning, TEXT("[DBG] RobotManager BeginPlay — BaseMovementComp is %s"), BaseMovementComp ? TEXT("VALID") : TEXT("NULL (BaseMovementComp not found on pawn)"));
+    if(DEBUG) UE_LOG(RobotManagerLog, Warning, TEXT("[DBG] RobotManager BeginPlay — BaseMovementComp is %s"), BaseMovementComp ? TEXT("VALID") : TEXT("NULL (BaseMovementComp not found on pawn)"));
 }
 
 void URobotManager::TickComponent(float DeltaTime, ELevelTick TickType, FActorComponentTickFunction* ThisTickFunction){
     Super::TickComponent(DeltaTime, TickType, ThisTickFunction);
 
     static int32 TickCount = 0;
-    if(TickCount < 3){
+    if(DEBUG && TickCount < 3){
         UE_LOG(RobotManagerLog, Warning,
             TEXT("[DBG] RobotManager Tick #%d — RobotPawn=%s BaseMovementComp=%s CanExec=%s QueueIdx=%d QueueSize=%d"),
             TickCount,
@@ -40,7 +42,7 @@ void URobotManager::TickComponent(float DeltaTime, ELevelTick TickType, FActorCo
 
     if(!RobotPawn || !BaseMovementComp){
         static bool bNullGuardLogged = false;
-        if(!bNullGuardLogged){
+        if(DEBUG && !bNullGuardLogged){
             UE_LOG(RobotManagerLog, Error,
                 TEXT("[DBG] Tick null-guard triggered every frame — RobotPawn=%s BaseMovementComp=%s"),
                 RobotPawn        ? TEXT("valid") : TEXT("NULL"),
@@ -54,9 +56,11 @@ void URobotManager::TickComponent(float DeltaTime, ELevelTick TickType, FActorCo
         if(QueueIndex >= ActionQueue.Num()){return;}
 
         const FRobotAction& Action = ActionQueue[QueueIndex];
-        UE_LOG(RobotManagerLog, Warning,
-            TEXT("[DBG] Dispatching action — Type=%d Arg0=%.2f (QueueIdx=%d of %d)"),
-            (int)Action.Type, Action.Arg0, QueueIndex, ActionQueue.Num());
+        if(DEBUG){
+            UE_LOG(RobotManagerLog, Warning,
+                TEXT("[DBG] Dispatching action — Type=%d Arg0=%.2f (QueueIdx=%d of %d)"),
+                (int)Action.Type, Action.Arg0, QueueIndex, ActionQueue.Num());
+        }
 
         CanExecuteCommand = false;
 
@@ -77,7 +81,7 @@ void URobotManager::TickComponent(float DeltaTime, ELevelTick TickType, FActorCo
         bool bDone = RobotPawn->IsCommandCompleted(Delta);
 
         if(bDone && !CanExecuteCommand){
-            UE_LOG(RobotManagerLog, Warning, TEXT("[DBG] IsCommandCompleted returned true — command finished"));
+            if(DEBUG) UE_LOG(RobotManagerLog, Warning, TEXT("[DBG] IsCommandCompleted returned true — command finished"));
         }
 
         CanExecuteCommand = bDone;
@@ -86,7 +90,7 @@ void URobotManager::TickComponent(float DeltaTime, ELevelTick TickType, FActorCo
             ERobotCommand Cmd = RobotPawn->CurrCommand;
             if(Cmd == ERobotCommand::MoveForward || Cmd == ERobotCommand::MoveReverse || Cmd == ERobotCommand::TurnLeft || Cmd == ERobotCommand::TurnRight){
                 RobotPawn->TargetMoveState = EBaseMoveState::Idle;
-                UE_LOG(RobotManagerLog, Warning, TEXT("[DBG] TargetMoveState reset to Idle"));
+                if(DEBUG) UE_LOG(RobotManagerLog, Warning, TEXT("[DBG] TargetMoveState reset to Idle"));
             }
         }
     }
@@ -95,22 +99,37 @@ void URobotManager::TickComponent(float DeltaTime, ELevelTick TickType, FActorCo
 // ---- Config ----
 
 void URobotManager::SetCurrConfig(int32 InMotorType, int32 InManipSlot){
-    MotorType = (InMotorType == 1) ? EMotorType::HiSpeedLoTorque : EMotorType::Balanced;
-    ManipType = (InManipSlot == 1) ? EManipType::Lift : EManipType::Claw;
-    if(InManipSlot == 2){
-        ManipType = EManipType::Lift;
+    if(InMotorType == 2){MotorType = EMotorType::HiSpeed;}
+    else if(InMotorType == 1){MotorType = EMotorType::HiTorque;}
+    else{MotorType = EMotorType::Balanced;}
+    
+    float newMovSpeed = 200.f;
+
+    switch(MotorType){
+    case EMotorType::HiSpeed:
+        newMovSpeed = 300.f;
+        break;
+    case EMotorType::HiTorque:
+        newMovSpeed = 100.f;
+        break;
+    case EMotorType::Balanced:
+        newMovSpeed = 200.f;
+        break;
+    default:
+        break;
     }
-    else if(InManipSlot == 1){
-        ManipType = EManipType::Claw;
-    }
+    //TODO: Change speed based on MotorType once options implemented in robot
+    //if(BaseMovementComp) BaseMovementComp->SetMoveSpeed(newMovSpeed);
+
+    if(InManipSlot == 2){ManipType = EManipType::Lift;}
+    else if(InManipSlot == 1){ManipType = EManipType::Claw;}
     else{ManipType = EManipType::None;}
 }
 
 // ---- Queue management ----
 
 void URobotManager::ClearQueue(){
-    UE_LOG(RobotManagerLog, Warning,
-        TEXT("[DBG] ClearQueue called — had %d actions, QueueIdx was %d"), ActionQueue.Num(), QueueIndex);
+    if(DEBUG) UE_LOG(RobotManagerLog, Warning, TEXT("[DBG] ClearQueue called — had %d actions, QueueIdx was %d"), ActionQueue.Num(), QueueIndex);
 
     ActionQueue.Empty();
     QueueIndex        = 0;
@@ -132,9 +151,11 @@ void URobotManager::ClearQueue(){
 
 void URobotManager::DispatchAction(const FRobotAction& Action){
     if(!RobotPawn || !BaseMovementComp){
-        UE_LOG(RobotManagerLog, Error, TEXT("[DBG] DispatchAction early-return — RobotPawn=%s BaseMovementComp=%s"),
-            RobotPawn ? TEXT("valid") : TEXT("NULL"),
-            BaseMovementComp ? TEXT("valid") : TEXT("NULL"));
+        if(DEBUG){
+            UE_LOG(RobotManagerLog, Error, TEXT("[DBG] DispatchAction early-return — RobotPawn=%s BaseMovementComp=%s"),
+                RobotPawn ? TEXT("valid") : TEXT("NULL"),
+                BaseMovementComp ? TEXT("valid") : TEXT("NULL"));
+        }
         return;
     }
 
@@ -145,14 +166,18 @@ void URobotManager::DispatchAction(const FRobotAction& Action){
                 RobotPawn->CurrCommand = ERobotCommand::MoveForward;
                 RobotPawn->TargetMoveState = EBaseMoveState::MoveForward;
                 RobotPawn->TargetMoveDistance = Action.Arg0;
-            } else {
+            } 
+            else{
                 RobotPawn->CurrCommand = ERobotCommand::MoveReverse;
                 RobotPawn->TargetMoveState = EBaseMoveState::MoveReverse;
                 RobotPawn->TargetMoveDistance = FMath::Abs(Action.Arg0);
             }
-            UE_LOG(RobotManagerLog, Warning,
-                TEXT("[DBG] DispatchAction MoveRob — TargetMoveState set to %d (0=Idle 1=Fwd 2=Rev), dist=%.2f"),
-                (int)RobotPawn->TargetMoveState, RobotPawn->TargetMoveDistance);
+            if(DEBUG){
+                UE_LOG(RobotManagerLog, Warning,
+                    TEXT("[DBG] DispatchAction MoveRob — TargetMoveState set to %d (0=Idle 1=Fwd 2=Rev), dist=%.2f"),
+                    (int)RobotPawn->TargetMoveState, RobotPawn->TargetMoveDistance);
+            }
+            
             BaseMovementComp->MoveRob(Action.Arg0);
             break;
 
@@ -161,37 +186,41 @@ void URobotManager::DispatchAction(const FRobotAction& Action){
                 RobotPawn->CurrCommand = ERobotCommand::TurnLeft;
                 RobotPawn->TargetMoveState = EBaseMoveState::TurnLeft;
                 RobotPawn->TargetTurnAngle = Action.Arg0;
-            } else {
+            }
+            else{
                 RobotPawn->CurrCommand = ERobotCommand::TurnRight;
                 RobotPawn->TargetMoveState = EBaseMoveState::TurnRight;
                 RobotPawn->TargetTurnAngle = FMath::Abs(Action.Arg0);
             }
-            UE_LOG(RobotManagerLog, Warning,
-                TEXT("[DBG] DispatchAction TurnRob — TargetMoveState set to %d (3=Left 4=Right), deg=%.2f"),
-                (int)RobotPawn->TargetMoveState, RobotPawn->TargetTurnAngle);
+            if(DEBUG){
+                UE_LOG(RobotManagerLog, Warning,
+                    TEXT("[DBG] DispatchAction TurnRob — TargetMoveState set to %d (3=Left 4=Right), deg=%.2f"),
+                    (int)RobotPawn->TargetMoveState, RobotPawn->TargetTurnAngle);
+            }
+
             BaseMovementComp->TurnRob(Action.Arg0);
             break;
 
         case EActionType::ClawArm:
-            UE_LOG(RobotManagerLog, Warning, TEXT("[DBG] DispatchAction → Claw_Arm(%.2f)"), Action.Arg0);
+            if(DEBUG) UE_LOG(RobotManagerLog, Warning, TEXT("[DBG] DispatchAction → Claw_Arm(%.2f)"), Action.Arg0);
             RobotPawn->CurrCommand = ERobotCommand::Cmpnt_Claw_Arm;
             BaseMovementComp->Claw_Arm(Action.Arg0);
             break;
 
         case EActionType::ClawClaw:
-            UE_LOG(RobotManagerLog, Warning, TEXT("[DBG] DispatchAction → Claw_Claw(%.2f)"), Action.Arg0);
+            if(DEBUG) UE_LOG(RobotManagerLog, Warning, TEXT("[DBG] DispatchAction → Claw_Claw(%.2f)"), Action.Arg0);
             RobotPawn->CurrCommand = ERobotCommand::Cmpnt_Claw_GrabClaw;
             BaseMovementComp->Claw_Claw(Action.Arg0);
             break;
 
         case EActionType::LiftArm:
-            UE_LOG(RobotManagerLog, Warning, TEXT("[DBG] DispatchAction → Lift_Arm(%.2f)"), Action.Arg0);
+            if(DEBUG) UE_LOG(RobotManagerLog, Warning, TEXT("[DBG] DispatchAction → Lift_Arm(%.2f)"), Action.Arg0);
             RobotPawn->CurrCommand = ERobotCommand::Cmpnt_Lift_Arm;
             BaseMovementComp->Lift_Arm(Action.Arg0);
             break;
 
         case EActionType::LiftClaw:
-            UE_LOG(RobotManagerLog, Warning, TEXT("[DBG] DispatchAction → Lift_Claw(%.2f)"), Action.Arg0);
+            if(DEBUG) UE_LOG(RobotManagerLog, Warning, TEXT("[DBG] DispatchAction → Lift_Claw(%.2f)"), Action.Arg0);
             RobotPawn->CurrCommand = ERobotCommand::Cmpnt_Lift_GrabClaw;
             BaseMovementComp->Lift_Claw(Action.Arg0);
             break;
@@ -202,60 +231,60 @@ void URobotManager::DispatchAction(const FRobotAction& Action){
 
 void URobotManager::EnqueueMoveForward(float Distance){
     ActionQueue.Add({EActionType::MoveRob, Distance});
-    UE_LOG(RobotManagerLog, Warning, TEXT("[DBG] EnqueueMoveForward(%.2f) — queue size now %d"), Distance, ActionQueue.Num());
+    if(DEBUG) UE_LOG(RobotManagerLog, Warning, TEXT("[DBG] EnqueueMoveForward(%.2f) — queue size now %d"), Distance, ActionQueue.Num());
 }
 
 void URobotManager::EnqueueMoveBackward(float Distance){
     ActionQueue.Add({EActionType::MoveRob, -Distance});
-    UE_LOG(RobotManagerLog, Warning, TEXT("[DBG] EnqueueMoveBackward(%.2f) — queue size now %d"), Distance, ActionQueue.Num());
+    if(DEBUG) UE_LOG(RobotManagerLog, Warning, TEXT("[DBG] EnqueueMoveBackward(%.2f) — queue size now %d"), Distance, ActionQueue.Num());
 }
 
 void URobotManager::EnqueueTurnLeft(float Degrees){
     ActionQueue.Add({EActionType::TurnRob, Degrees});
-    UE_LOG(RobotManagerLog, Warning, TEXT("[DBG] EnqueueTurnLeft(%.2f) — queue size now %d"), Degrees, ActionQueue.Num());
+    if(DEBUG) UE_LOG(RobotManagerLog, Warning, TEXT("[DBG] EnqueueTurnLeft(%.2f) — queue size now %d"), Degrees, ActionQueue.Num());
 }
 
 void URobotManager::EnqueueTurnRight(float Degrees){
     ActionQueue.Add({EActionType::TurnRob, -Degrees});
-    UE_LOG(RobotManagerLog, Warning, TEXT("[DBG] EnqueueTurnRight(%.2f) — queue size now %d"), Degrees, ActionQueue.Num());
+    if(DEBUG) UE_LOG(RobotManagerLog, Warning, TEXT("[DBG] EnqueueTurnRight(%.2f) — queue size now %d"), Degrees, ActionQueue.Num());
 }
 
 void URobotManager::EnqueueClawRaiseArm(){
     ActionQueue.Add({EActionType::ClawArm, 1.f});
-    UE_LOG(RobotManagerLog, Warning, TEXT("[DBG] EnqueueClawRaiseArm — queue size now %d"), ActionQueue.Num());
+    if(DEBUG) UE_LOG(RobotManagerLog, Warning, TEXT("[DBG] EnqueueClawRaiseArm — queue size now %d"), ActionQueue.Num());
 }
 
 void URobotManager::EnqueueClawLowerArm(){
     ActionQueue.Add({EActionType::ClawArm, 0.f});
-    UE_LOG(RobotManagerLog, Warning, TEXT("[DBG] EnqueueClawLowerArm — queue size now %d"), ActionQueue.Num());
+    if(DEBUG) UE_LOG(RobotManagerLog, Warning, TEXT("[DBG] EnqueueClawLowerArm — queue size now %d"), ActionQueue.Num());
 }
 
 void URobotManager::EnqueueClawOpenClaw(){
     ActionQueue.Add({EActionType::ClawClaw, 1.f});
-    UE_LOG(RobotManagerLog, Warning, TEXT("[DBG] EnqueueClawOpenClaw — queue size now %d"), ActionQueue.Num());
+    if(DEBUG) UE_LOG(RobotManagerLog, Warning, TEXT("[DBG] EnqueueClawOpenClaw — queue size now %d"), ActionQueue.Num());
 }
 
 void URobotManager::EnqueueClawCloseClaw(){
     ActionQueue.Add({EActionType::ClawClaw, 0.f});
-    UE_LOG(RobotManagerLog, Warning, TEXT("[DBG] EnqueueClawCloseClaw — queue size now %d"), ActionQueue.Num());
+    if(DEBUG) UE_LOG(RobotManagerLog, Warning, TEXT("[DBG] EnqueueClawCloseClaw — queue size now %d"), ActionQueue.Num());
 }
 
 void URobotManager::EnqueueLiftRaiseArm(){
     ActionQueue.Add({EActionType::LiftArm, 1.f});
-    UE_LOG(RobotManagerLog, Warning, TEXT("[DBG] EnqueueLiftRaiseArm — queue size now %d"), ActionQueue.Num());
+    if(DEBUG) UE_LOG(RobotManagerLog, Warning, TEXT("[DBG] EnqueueLiftRaiseArm — queue size now %d"), ActionQueue.Num());
 }
 
 void URobotManager::EnqueueLiftLowerArm(){
     ActionQueue.Add({EActionType::LiftArm, 0.f});
-    UE_LOG(RobotManagerLog, Warning, TEXT("[DBG] EnqueueLiftLowerArm — queue size now %d"), ActionQueue.Num());
+    if(DEBUG) UE_LOG(RobotManagerLog, Warning, TEXT("[DBG] EnqueueLiftLowerArm — queue size now %d"), ActionQueue.Num());
 }
 
 void URobotManager::EnqueueLiftOpenClaw(){
     ActionQueue.Add({EActionType::LiftClaw, 1.f});
-    UE_LOG(RobotManagerLog, Warning, TEXT("[DBG] EnqueueLiftOpenClaw — queue size now %d"), ActionQueue.Num());
+    if(DEBUG) UE_LOG(RobotManagerLog, Warning, TEXT("[DBG] EnqueueLiftOpenClaw — queue size now %d"), ActionQueue.Num());
 }
 
 void URobotManager::EnqueueLiftCloseClaw(){
     ActionQueue.Add({EActionType::LiftClaw, 0.f});
-    UE_LOG(RobotManagerLog, Warning, TEXT("[DBG] EnqueueLiftCloseClaw — queue size now %d"), ActionQueue.Num());
+    if(DEBUG) UE_LOG(RobotManagerLog, Warning, TEXT("[DBG] EnqueueLiftCloseClaw — queue size now %d"), ActionQueue.Num());
 }

@@ -17,47 +17,51 @@ public:
     virtual void BeginPlay() override;
     virtual void TickComponent(float DeltaTime, ELevelTick TickType, FActorComponentTickFunction* ThisTickFunction) override;
 
-    // ---- Command execution functions (called by RobotManager on dequeue) ----
+    // ---- Command Execution Functions (called by RobotManager) ----
 
-    // Move pawn forward (+distance) or backward (-distance) at MoveSpeed until target reached
+    // Moves robot forward (+distance) or backward (-distance) at MoveSpeed until target reached
     UFUNCTION(BlueprintCallable, Category="RobotCommand")
     void MoveRob(float Distance);
 
-    // Rotate pawn left (+degrees, CCW) or right (-degrees, CW) at AngularSpeed until target reached
+    // Rotates robot left (+degrees, CCW) or right (-degrees, CW) at AngularSpeed until target reached
     UFUNCTION(BlueprintCallable, Category="RobotCommand")
     void TurnRob(float Degrees);
 
-    // Set TargetArmAlpha on pawn for Claw attachment (validates AttachedComponent == 1)
+    // Sets TargetArmAlpha on robot for Claw attachment (validates AttachedComponent == 1)
     UFUNCTION(BlueprintCallable, Category="RobotCommand")
     void Claw_Arm(float Alpha);
 
-    // Set TargetClawAlpha on pawn for Claw attachment (validates AttachedComponent == 1)
+    // Sets TargetClawAlpha on robot for Claw attachment (validates AttachedComponent == 1)
     UFUNCTION(BlueprintCallable, Category="RobotCommand")
     void Claw_Claw(float Alpha);
 
-    // Set TargetArmAlpha on pawn for Lift attachment (validates AttachedComponent == 2)
+    // Sets TargetArmAlpha on robot for Lift attachment (validates AttachedComponent == 2)
     UFUNCTION(BlueprintCallable, Category="RobotCommand")
     void Lift_Arm(float Alpha);
 
-    // Set TargetClawAlpha on pawn for Lift attachment (validates AttachedComponent == 2)
+    // Sets TargetClawAlpha on robot for Lift attachment (validates AttachedComponent == 2)
     UFUNCTION(BlueprintCallable, Category="RobotCommand")
     void Lift_Claw(float Alpha);
 
-    // Reset all active movement execution state (called by RobotManager::ClearQueue)
+    // Resets active movement execution states (called by RobotManager::ClearQueue)
     UFUNCTION(BlueprintCallable, Category="RobotCommand")
     void StopMovement();
 
-    // ---- Movement speed constants ----
+    // ---- Default Robot Speed Values ----
 
-    // Units per second the pawn moves during MoveRob execution
+    // Units (centimeters) per second robot moves during MoveRob execution
     UPROPERTY(EditAnywhere, BlueprintReadWrite, Category="RobotConfig")
-    float MoveSpeed = 400.f;
+    float MoveSpeed = 300.f;
 
-    // Degrees per second the pawn rotates during TurnRob execution
+    // Degrees per second robot rotates during TurnRob execution
     UPROPERTY(EditAnywhere, BlueprintReadWrite, Category="RobotConfig")
     float AngularSpeed = 90.f;
+    
+    // Callable function to set robot's move and angular speed based on motor (AngularSpeed = 0.3*MoveSpeed)
+    UFUNCTION(BlueprintCallable, Category="RobotConfig")
+    void SetMoveSpeed(float InSpeed);
 
-    // ---- Grab interaction ----
+    // ---- Grab Interaction ----
 
     UPROPERTY()
     AActor* OverlappingObject;
@@ -87,11 +91,11 @@ private:
     UPROPERTY()
     ARobotPawnBase* RobotPawn = nullptr;
 
-    // ---- curr move state ----
+    // ---- Curr Move State ----
     bool bMoving = false;
     float MoveSign = 1.f;   // +1 = forward, -1 = backward
 
-    // ---- curr turn state ----
+    // ---- Curr Turn State ----
     bool bTurning = false;
     float TurnSign = 1.f;   // +1 = left (CCW/+Yaw in UE), -1 = right (CW/-Yaw in UE)
 

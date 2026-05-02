@@ -1,26 +1,36 @@
 #include "BaseMovement.h"
 #include "Components/PrimitiveComponent.h"
 
+#define DEBUG true
+
 DEFINE_LOG_CATEGORY_STATIC(BaseMovementLog, Log, All);
 
 
 UBaseMovement::UBaseMovement(){
     PrimaryComponentTick.bCanEverTick = true;
-    // GrabCollider is intentionally NOT created here — UBoxComponent is a scene component and
-    // must be created/attached in the owning actor (ARobotPawnBase), not inside a non-scene component.
-    // Wire GrabCollider attachment once the claw mesh socket is finalised.
+
+    // NOT creating GrabCollider here like before since UBoxComponent is scene component & created/attached
+    // in owning actor (ARobotPawnBase > RoboRob) within Unreal, not in this non-scene component
+    
+    // Will wire GrabCollider once everything is finalised
+
 }
 
 void UBaseMovement::BeginPlay(){
     Super::BeginPlay();
 
     RobotPawn = Cast<ARobotPawnBase>(GetOwner());
-    UE_LOG(BaseMovementLog, Warning, TEXT("[DBG] BaseMovement BeginPlay — RobotPawn is %s (owner class: %s)"),
-        RobotPawn ? TEXT("VALID") : TEXT("NULL"),
-        GetOwner() ? *GetOwner()->GetClass()->GetName() : TEXT("(no owner)"));
+
+    if(DEBUG){
+        UE_LOG(BaseMovementLog, Warning, TEXT("[DBG] BaseMovement BeginPlay — RobotPawn is %s (owner class: %s)"),
+            RobotPawn ? TEXT("VALID") : TEXT("NULL"),
+            GetOwner() ? *GetOwner()->GetClass()->GetName() : TEXT("(no owner)"));
+    }
 
     if(GrabCollider){
-        UE_LOG(BaseMovementLog, Warning, TEXT("[DBG] BaseMovement BeginPlay — GrabCollider found, binding overlap events"));
+
+        if(DEBUG) UE_LOG(BaseMovementLog, Warning, TEXT("[DBG] BaseMovement BeginPlay — GrabCollider found, binding overlap events"));
+
         GrabCollider->OnComponentBeginOverlap.AddDynamic(this, &UBaseMovement::OnGrabOverlap);
         GrabCollider->OnComponentEndOverlap.AddDynamic(this, &UBaseMovement::OnGrabEndOverlap);
         GrabCollider->SetCollisionEnabled(ECollisionEnabled::QueryOnly);
@@ -33,9 +43,9 @@ void UBaseMovement::BeginPlay(){
 void UBaseMovement::TickComponent(float DeltaTime, ELevelTick TickType, FActorComponentTickFunction* ThisTickFunction){
     Super::TickComponent(DeltaTime, TickType, ThisTickFunction);
 
-    // Log first 3 ticks to confirm tick is running and show state
+    // Avoids flooding log during DEBUG
     static int32 BMTickCount = 0;
-    if(BMTickCount < 3){
+    if(DEBUG && BMTickCount < 3){
         UE_LOG(BaseMovementLog, Warning,
             TEXT("[DBG] BaseMovement Tick #%d — RobotPawn=%s bMoving=%s bTurning=%s"),
             BMTickCount,
@@ -47,14 +57,14 @@ void UBaseMovement::TickComponent(float DeltaTime, ELevelTick TickType, FActorCo
 
     if(!RobotPawn){
         static bool bBMNullLogged = false;
-        if(!bBMNullLogged){
+        if(DEBUG && !bBMNullLogged){
             UE_LOG(BaseMovementLog, Error, TEXT("[DBG] BaseMovement Tick — RobotPawn NULL every frame, movement blocked"));
             bBMNullLogged = true;
         }
         return;
     }
 
-    // ---- Execute active move command ----
+    // ---- Execute Active Move Command ----
     if(bMoving){
         float Remaining = RobotPawn->TargetMoveDistance - RobotPawn->DistanceTraveled;
         float Step = FMath::Min(MoveSpeed * DeltaTime, Remaining);
@@ -69,7 +79,7 @@ void UBaseMovement::TickComponent(float DeltaTime, ELevelTick TickType, FActorCo
         }
     }
 
-    // ---- Execute active turn command ----
+    // ---- Execute Active Turn Command ----
     if(bTurning){
         float Remaining = RobotPawn->TargetTurnAngle - RobotPawn->AngleTurned;
         float Step = FMath::Min(AngularSpeed * DeltaTime, Remaining);
@@ -86,30 +96,28 @@ void UBaseMovement::TickComponent(float DeltaTime, ELevelTick TickType, FActorCo
     }
 }
 
-// ---- Command execution functions ----
+// ---- Command Execution Functions ----
 
 void UBaseMovement::MoveRob(float Distance){
-    UE_LOG(BaseMovementLog, Warning, TEXT("[DBG] MoveRob called — Distance=%.2f RobotPawn=%s"),
-        Distance, RobotPawn ? TEXT("valid") : TEXT("NULL"));
+    if(DEBUG) UE_LOG(BaseMovementLog, Warning, TEXT("[DBG] MoveRob called — Distance=%.2f RobotPawn=%s"), Distance, RobotPawn ? TEXT("valid") : TEXT("NULL"));
     if(!RobotPawn) return;
     MoveSign = (Distance >= 0.f) ? 1.f : -1.f;
     bMoving = true;
-    UE_LOG(BaseMovementLog, Warning, TEXT("[DBG] MoveRob — bMoving set to true, MoveSign=%.1f"), MoveSign);
+    if(DEBUG) UE_LOG(BaseMovementLog, Warning, TEXT("[DBG] MoveRob — bMoving set to true, MoveSign=%.1f"), MoveSign);
 }
 
 void UBaseMovement::TurnRob(float Degrees){
-    UE_LOG(BaseMovementLog, Warning, TEXT("[DBG] TurnRob called — Degrees=%.2f RobotPawn=%s"),
-        Degrees, RobotPawn ? TEXT("valid") : TEXT("NULL"));
+    if(DEBUG) UE_LOG(BaseMovementLog, Warning, TEXT("[DBG] TurnRob called — Degrees=%.2f RobotPawn=%s"), Degrees, RobotPawn ? TEXT("valid") : TEXT("NULL"));
     if(!RobotPawn) return;
     TurnSign = (Degrees >= 0.f) ? 1.f : -1.f;
     bTurning = true;
-    UE_LOG(BaseMovementLog, Warning, TEXT("[DBG] TurnRob — bTurning set to true, TurnSign=%.1f"), TurnSign);
+    if(DEBUG) UE_LOG(BaseMovementLog, Warning, TEXT("[DBG] TurnRob — bTurning set to true, TurnSign=%.1f"), TurnSign);
 }
 
 void UBaseMovement::Claw_Arm(float Alpha){
     if(!RobotPawn) return;
     if(RobotPawn->AttachedComponent != 1){
-        UE_LOG(LogTemp, Warning, TEXT("Claw_Arm: Claw not attached (AttachedComponent=%d)"), RobotPawn->AttachedComponent);
+        if(DEBUG) UE_LOG(LogTemp, Warning, TEXT("Claw_Arm: Claw not attached (AttachedComponent=%d)"), RobotPawn->AttachedComponent);
         return;
     }
     RobotPawn->TargetArmAlpha = FMath::Clamp(Alpha, 0.f, 1.f);
@@ -118,7 +126,7 @@ void UBaseMovement::Claw_Arm(float Alpha){
 void UBaseMovement::Claw_Claw(float Alpha){
     if(!RobotPawn) return;
     if(RobotPawn->AttachedComponent != 1){
-        UE_LOG(LogTemp, Warning, TEXT("Claw_Claw: Claw not attached (AttachedComponent=%d)"), RobotPawn->AttachedComponent);
+        if(DEBUG) UE_LOG(LogTemp, Warning, TEXT("Claw_Claw: Claw not attached (AttachedComponent=%d)"), RobotPawn->AttachedComponent);
         return;
     }
     RobotPawn->TargetClawAlpha = FMath::Clamp(Alpha, 0.f, 1.f);
@@ -127,7 +135,7 @@ void UBaseMovement::Claw_Claw(float Alpha){
 void UBaseMovement::Lift_Arm(float Alpha){
     if(!RobotPawn) return;
     if(RobotPawn->AttachedComponent != 2){
-        UE_LOG(LogTemp, Warning, TEXT("Lift_Arm: Lift not attached (AttachedComponent=%d)"), RobotPawn->AttachedComponent);
+        if(DEBUG) UE_LOG(LogTemp, Warning, TEXT("Lift_Arm: Lift not attached (AttachedComponent=%d)"), RobotPawn->AttachedComponent);
         return;
     }
     RobotPawn->TargetArmAlpha = FMath::Clamp(Alpha, 0.f, 1.f);
@@ -136,7 +144,7 @@ void UBaseMovement::Lift_Arm(float Alpha){
 void UBaseMovement::Lift_Claw(float Alpha){
     if(!RobotPawn) return;
     if(RobotPawn->AttachedComponent != 2){
-        UE_LOG(LogTemp, Warning, TEXT("Lift_Claw: Lift not attached (AttachedComponent=%d)"), RobotPawn->AttachedComponent);
+        if(DEBUG) UE_LOG(LogTemp, Warning, TEXT("Lift_Claw: Lift not attached (AttachedComponent=%d)"), RobotPawn->AttachedComponent);
         return;
     }
     RobotPawn->TargetClawAlpha = FMath::Clamp(Alpha, 0.f, 1.f);
@@ -145,6 +153,15 @@ void UBaseMovement::Lift_Claw(float Alpha){
 void UBaseMovement::StopMovement(){
     bMoving = false;
     bTurning = false;
+}
+
+void UBaseMovement::SetMoveSpeed(float InSpeed){
+    if(bMoving || bTurning) return;
+
+    if(InSpeed > 1.f && InSpeed < 400.f){
+        MoveSpeed = InSpeed;
+        AngularSpeed = 0.1f * InSpeed;
+    }
 }
 
 // ---- Grab interaction ----
@@ -159,7 +176,7 @@ void UBaseMovement::OnGrabOverlap(
 {
     if(OtherActor && OtherActor != RobotPawn){
         OverlappingObject = OtherActor;
-        UE_LOG(LogTemp, Warning, TEXT("UBaseMovement: grab overlap — %s"), *OtherActor->GetName());
+        if(DEBUG) UE_LOG(LogTemp, Warning, TEXT("UBaseMovement: grab overlap — %s"), *OtherActor->GetName());
     }
 }
 
@@ -171,7 +188,7 @@ void UBaseMovement::OnGrabEndOverlap(
 {
     if(OtherActor == OverlappingObject){
         OverlappingObject = nullptr;
-        UE_LOG(LogTemp, Warning, TEXT("UBaseMovement: grab overlap ended"));
+        if(DEBUG) UE_LOG(LogTemp, Warning, TEXT("UBaseMovement: grab overlap ended"));
     }
 }
 
@@ -185,13 +202,14 @@ void UBaseMovement::TryGrab(){
     Comp->SetEnableGravity(false);
     Comp->SetCollisionEnabled(ECollisionEnabled::NoCollision);
 
-    // Attach to pawn root — TODO: update socket/component once claw mesh is finalised
+    // Attach to pawn root 
+    // TODO: update socket/component once claw mesh is finalised
     OverlappingObject->AttachToActor(
         RobotPawn,
         FAttachmentTransformRules::KeepWorldTransform
     );
 
-    UE_LOG(LogTemp, Warning, TEXT("UBaseMovement: grabbed %s"), *OverlappingObject->GetName());
+    if(DEBUG) UE_LOG(LogTemp, Warning, TEXT("UBaseMovement: grabbed %s"), *OverlappingObject->GetName());
 }
 
 void UBaseMovement::ReleaseGrab(){
@@ -207,6 +225,6 @@ void UBaseMovement::ReleaseGrab(){
         Comp->SetEnableGravity(true);
     }
 
-    UE_LOG(LogTemp, Warning, TEXT("UBaseMovement: released grab"));
+    if(DEBUG) UE_LOG(LogTemp, Warning, TEXT("UBaseMovement: released grab"));
     OverlappingObject = nullptr;
 }
