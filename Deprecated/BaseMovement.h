@@ -3,6 +3,10 @@
 #include "CoreMinimal.h"
 #include "Components/ActorComponent.h"
 #include "Components/BoxComponent.h"
+#include "Components/MeshComponent.h"
+
+#include "Animation/AnimSequence.h"
+#include "GameFramework/Character.h"
 #include "RobotPawnBase.h"
 #include "BaseMovement.generated.h"
 
@@ -19,11 +23,14 @@ public:
 
     // ---- Command execution functions (called by RobotManager) ----
 
-    // Moves pawn forward (+distance) or backward (-distance) at MoveSpeed until target reached
+    UFUNCTION(BlueprintCallable)
+    void StartArmMove(float InDir, float FlArmDuration);
+  
+    // Move pawn forward (+distance) or backward (-distance) at MoveSpeed until target reached
     UFUNCTION(BlueprintCallable, Category="RobotCommand")
     void MoveRob(float Distance);
 
-    // Rotates pawn left (+degrees/CCW) or right (-degrees/CW) at AngularSpeed until target reached
+    // Rotate pawn left (+degrees, CCW) or right (-degrees, CW) at AngularSpeed until target reached
     UFUNCTION(BlueprintCallable, Category="RobotCommand")
     void TurnRob(float Degrees);
 
@@ -43,7 +50,7 @@ public:
     UFUNCTION(BlueprintCallable, Category="RobotCommand")
     void Lift_Claw(float Alpha);
 
-    // Reset all active movement execution states (called by RobotManager::ClearQueue)
+    // Reset all active movement execution state (called by RobotManager::ClearQueue)
     UFUNCTION(BlueprintCallable, Category="RobotCommand")
     void StopMovement();
 
@@ -51,11 +58,11 @@ public:
 
     // Units per second the pawn moves during MoveRob execution
     UPROPERTY(EditAnywhere, BlueprintReadWrite, Category="RobotConfig")
-    float MoveSpeed = 300.f;
+    float MoveSpeed = 400.f;
 
     // Degrees per second the pawn rotates during TurnRob execution
     UPROPERTY(EditAnywhere, BlueprintReadWrite, Category="RobotConfig")
-    float AngularSpeed = 45.f;
+    float AngularSpeed = 90.f;
 
     // ---- Grab interaction ----
 
@@ -84,14 +91,85 @@ public:
     );
 
 private:
+    ACharacter* Character;
+
+    USkeletalMeshComponent* ArmMesh;
+    USkeletalMeshComponent* ClawMesh;
+
+    // Might be able to delete these
+    USkeletalMeshComponent* ClawMeshRight;
+    USkeletalMeshComponent* ClawMeshLeft;
+    
+    // DELETE THIS IF STILL NOT SHOW UP
+    UMeshComponent* ClawGuide;
+
+    USkeletalMeshComponent* LiftMesh;
+
+    UPROPERTY(EditAnywhere, Category = "Animation")
+    UAnimSequence* LiftAnim;
+
+    float LiftCurrentPos;
+    float LiftTargetPos;
+    float LiftDur;
+    float LiftTime;
+    bool bIsLiftMoving;
+
+    void ExecuteLiftMovement(float DeltaTime);
+
+    // Main Robot Move Vars
+    float LeftMotor;
+    float RightMotor;
+    float Duration;
+    float Speed;
+
+    bool bIsMoving;
+
+    void ExecuteMovement(float DeltaTime);
+
+    // Turning vars
+    float StartYaw;
+    float FinishedYaw;
+    float CurrentTime;
+    float AngularSpeed;
+
+    // Arm Vars
+    UPROPERTY(EditAnywhere, Category = "Animation")
+    UAnimSequence* ArmAnim;
+
+    //float ArmSpeed;
+    float ArmCurrent;
+    float ArmDur;
+    float ArmTime;
+
+    float ArmCurrentPos;
+    float ArmTargetPos;
+
+    bool bIsMovingArm;
+
+    void ExecuteArmMovement(float DeltaTime);
+
+    // Claw Vars
+    UPROPERTY(EditAnywhere, Category = "Animation")
+    UAnimSequence* ClawAnim;
+
+    float ClawCurrentRight;
+    float ClawCurrentLeft;
+    float ClawDur;
+    float ClawTime;
+
+    float ClawCurrentPos;
+    float ClawTargetPos;
+
+    bool bIsOpenClaw;
+    bool bIsCloseClaw;
     UPROPERTY()
     ARobotPawnBase* RobotPawn = nullptr;
 
-    // ---- Curr Move State ----
+    // ---- curr move state ----
     bool bMoving = false;
     float MoveSign = 1.f;   // +1 = forward, -1 = backward
 
-    // ---- Curr Turn State ----
+    // ---- curr turn state ----
     bool bTurning = false;
     float TurnSign = 1.f;   // +1 = left (CCW/+Yaw in UE), -1 = right (CW/-Yaw in UE)
 

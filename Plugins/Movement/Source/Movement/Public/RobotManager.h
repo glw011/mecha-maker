@@ -44,7 +44,7 @@ public:
     EMotorType MotorType = EMotorType::Balanced;
 
     UPROPERTY(EditAnywhere, BlueprintReadWrite, Category="RobotConfig")
-    EManipType ManipType = EManipType::Claw;
+    EManipType ManipType = EManipType::None;
 
     UFUNCTION(BlueprintCallable, Category="RobotConfig")
     void SetCurrConfig(int32 InMotorType, int32 InManipSlot);

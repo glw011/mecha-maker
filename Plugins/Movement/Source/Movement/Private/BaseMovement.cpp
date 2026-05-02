@@ -6,9 +6,10 @@ DEFINE_LOG_CATEGORY_STATIC(BaseMovementLog, Log, All);
 
 UBaseMovement::UBaseMovement(){
     PrimaryComponentTick.bCanEverTick = true;
-    // GrabCollider is intentionally NOT created here — UBoxComponent is a scene component and
-    // must be created/attached in the owning actor (ARobotPawnBase), not inside a non-scene component.
-    // Wire GrabCollider attachment once the claw mesh socket is finalised.
+    
+    // I'm intentionally NOT creating GrabCollider here like before since UBoxComponent is a scene component and
+    // is created/attached in owning actor (ARobotPawnBase > RoboRob) within Unreal, not in this non-scene component
+    // Will wire GrabCollider once everything is finalised
 }
 
 void UBaseMovement::BeginPlay(){
@@ -86,7 +87,7 @@ void UBaseMovement::TickComponent(float DeltaTime, ELevelTick TickType, FActorCo
     }
 }
 
-// ---- Command execution functions ----
+// ---- Command Execution Functions ----
 
 void UBaseMovement::MoveRob(float Distance){
     UE_LOG(BaseMovementLog, Warning, TEXT("[DBG] MoveRob called — Distance=%.2f RobotPawn=%s"),
@@ -147,7 +148,7 @@ void UBaseMovement::StopMovement(){
     bTurning = false;
 }
 
-// ---- Grab interaction ----
+// ---- Grab Interaction ----
 
 void UBaseMovement::OnGrabOverlap(
     UPrimitiveComponent* OverlappedComp,
@@ -185,7 +186,8 @@ void UBaseMovement::TryGrab(){
     Comp->SetEnableGravity(false);
     Comp->SetCollisionEnabled(ECollisionEnabled::NoCollision);
 
-    // Attach to pawn root — TODO: update socket/component once claw mesh is finalised
+    // Attach to pawn root 
+    // TODO: update once claw finalised
     OverlappingObject->AttachToActor(
         RobotPawn,
         FAttachmentTransformRules::KeepWorldTransform
