@@ -516,23 +516,25 @@ std::any ApplLangInterp::visitLogic_or_expr(APPL_Parse::Logic_or_exprContext* ct
     for(size_t i = 1; i < clauses.size(); ++i){
         // break on true clause if/when found
         if(result.toBool()) break;
-
         result = valueFrom(visitLogic_and_expr(clauses[i]));
     }
-    return ApplValue(result.toBool());
+
+    if(clauses.size() > 1) return ApplValue(result.toBool());
+    return result;
 }
 
 // logic_and_expr : comparison_expr ( ( KW_AND | LGCL_AND ) comparison_expr )*
 std::any ApplLangInterp::visitLogic_and_expr(APPL_Parse::Logic_and_exprContext* ctx){
     const auto clauses = ctx->comparison_expr();
     ApplValue result = valueFrom(visitComparison_expr(clauses[0]));
-    for (size_t i = 1; i < clauses.size(); ++i){
+    for(size_t i = 1; i < clauses.size(); ++i){
         // break on false clause if/when found
-        if (!result.toBool()) break;
-
+        if(!result.toBool()) break;
         result = valueFrom(visitComparison_expr(clauses[i]));
     }
-    return ApplValue(result.toBool());
+    // Same guard as visitLogic_or_expr — only coerce when AND operators were present.
+    if(clauses.size() > 1) return ApplValue(result.toBool());
+    return result;
 }
 
 // comparison_expr : add_expr ( ( LT | LTE | GT | GTE | EQUAL | NOT_EQUAL ) add_expr )*
