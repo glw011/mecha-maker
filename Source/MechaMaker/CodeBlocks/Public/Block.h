@@ -20,6 +20,7 @@ class Block{
     CodeBlocks::BlockType getType();
     int getId();
     int getSlotCount();
+    static void resetIdCounter();
     BlockSlot* getSlot(int slotPos);
     void setUserInput(int slotPos, std::string val);
     std::string getUserInput(int slotPos);

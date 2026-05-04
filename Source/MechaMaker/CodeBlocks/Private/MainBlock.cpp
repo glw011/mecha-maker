@@ -141,3 +141,8 @@ bool MainBlock::compileMainBlock(std::string* failMsgOut){
 }
 
 std::string MainBlock::getProgramStr(){return this->ProgramStr;}
+
+void MainBlock::invalidateCache(){
+  isCompiled = false;
+  ProgramStr = "";
+}

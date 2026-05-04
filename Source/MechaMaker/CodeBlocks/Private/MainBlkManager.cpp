@@ -103,9 +103,10 @@ bool BlockManager::reorderInArea(int blockId, int referenceBlockId, bool insertB
 }
 
 void BlockManager::reset(){
-  blockRegistry.clear();  // clears all block instances (frees ea unique_ptr)
-  mainBlock.clear();      // clears main LinkedList top-level slots
-  nextId = 0;
+  blockRegistry.clear();    // clears all block instances (frees ea unique_ptr)
+  mainBlock.clear();        // clears main LinkedList top-level slots
+  nextId = 0;               // registry key counter
+  Block::resetIdCounter();  // block internal id counter — must stay in sync with nextId
 }
 
 bool BlockManager::removeBlock(int blockId){
@@ -181,6 +182,7 @@ bool BlockManager::reorderInCodeBlock(int blockId, int refBlockId, int cblkId, b
 void BlockManager::setUserInput(int blockId, int slotPos, std::string inputStr){
   if(!blockRegistry.count(blockId)) return;
   blockRegistry[blockId]->setUserInput(slotPos, inputStr);
+  mainBlock.invalidateCache();
 }
 
 std::string BlockManager::getUserInput(int blockId, int slotPos){
