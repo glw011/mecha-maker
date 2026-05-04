@@ -22,14 +22,14 @@ void UBaseMovement::BeginPlay(){
     RobotPawn = Cast<ARobotPawnBase>(GetOwner());
 
     if(DEBUG){
-        UE_LOG(BaseMovementLog, Warning, TEXT("[DBG] BaseMovement BeginPlay — RobotPawn is %s (owner class: %s)"),
+        UE_LOG(BaseMovementLog, Warning, TEXT("[DBG] BaseMovement BeginPlay: RobotPawn is %s (owner class: %s)"),
             RobotPawn ? TEXT("VALID") : TEXT("NULL"),
             GetOwner() ? *GetOwner()->GetClass()->GetName() : TEXT("(no owner)"));
     }
 
     if(GrabCollider){
 
-        if(DEBUG) UE_LOG(BaseMovementLog, Warning, TEXT("[DBG] BaseMovement BeginPlay — GrabCollider found, binding overlap events"));
+        if(DEBUG) UE_LOG(BaseMovementLog, Warning, TEXT("[DBG] BaseMovement BeginPlay: GrabCollider found, binding overlap events"));
 
         GrabCollider->OnComponentBeginOverlap.AddDynamic(this, &UBaseMovement::OnGrabOverlap);
         GrabCollider->OnComponentEndOverlap.AddDynamic(this, &UBaseMovement::OnGrabEndOverlap);
@@ -47,7 +47,7 @@ void UBaseMovement::TickComponent(float DeltaTime, ELevelTick TickType, FActorCo
     static int32 BMTickCount = 0;
     if(DEBUG && BMTickCount < 3){
         UE_LOG(BaseMovementLog, Warning,
-            TEXT("[DBG] BaseMovement Tick #%d — RobotPawn=%s bMoving=%s bTurning=%s"),
+            TEXT("[DBG] BaseMovement Tick #%d: RobotPawn=%s bMoving=%s bTurning=%s"),
             BMTickCount,
             RobotPawn ? TEXT("valid") : TEXT("NULL"),
             bMoving   ? TEXT("true")  : TEXT("false"),
@@ -58,7 +58,7 @@ void UBaseMovement::TickComponent(float DeltaTime, ELevelTick TickType, FActorCo
     if(!RobotPawn){
         static bool bBMNullLogged = false;
         if(DEBUG && !bBMNullLogged){
-            UE_LOG(BaseMovementLog, Error, TEXT("[DBG] BaseMovement Tick — RobotPawn NULL every frame, movement blocked"));
+            UE_LOG(BaseMovementLog, Error, TEXT("[DBG] BaseMovement Tick: RobotPawn NULL every frame, movement blocked"));
             bBMNullLogged = true;
         }
         return;
@@ -99,19 +99,19 @@ void UBaseMovement::TickComponent(float DeltaTime, ELevelTick TickType, FActorCo
 // ---- Command Execution Functions ----
 
 void UBaseMovement::MoveRob(float Distance){
-    if(DEBUG) UE_LOG(BaseMovementLog, Warning, TEXT("[DBG] MoveRob called — Distance=%.2f RobotPawn=%s"), Distance, RobotPawn ? TEXT("valid") : TEXT("NULL"));
+    if(DEBUG) UE_LOG(BaseMovementLog, Warning, TEXT("[DBG] MoveRob called: Distance=%.2f RobotPawn=%s"), Distance, RobotPawn ? TEXT("valid") : TEXT("NULL"));
     if(!RobotPawn) return;
     MoveSign = (Distance >= 0.f) ? 1.f : -1.f;
     bMoving = true;
-    if(DEBUG) UE_LOG(BaseMovementLog, Warning, TEXT("[DBG] MoveRob — bMoving set to true, MoveSign=%.1f"), MoveSign);
+    if(DEBUG) UE_LOG(BaseMovementLog, Warning, TEXT("[DBG] MoveRob: bMoving set to true, MoveSign=%.1f"), MoveSign);
 }
 
 void UBaseMovement::TurnRob(float Degrees){
-    if(DEBUG) UE_LOG(BaseMovementLog, Warning, TEXT("[DBG] TurnRob called — Degrees=%.2f RobotPawn=%s"), Degrees, RobotPawn ? TEXT("valid") : TEXT("NULL"));
+    if(DEBUG) UE_LOG(BaseMovementLog, Warning, TEXT("[DBG] TurnRob called: Degrees=%.2f RobotPawn=%s"), Degrees, RobotPawn ? TEXT("valid") : TEXT("NULL"));
     if(!RobotPawn) return;
-    TurnSign = (Degrees >= 0.f) ? 1.f : -1.f;
+    TurnSign = (Degrees >= 0.f) ? -1.f : 1.f;  // oops, CW/CCW are reversed so inverting sign here to correct
     bTurning = true;
-    if(DEBUG) UE_LOG(BaseMovementLog, Warning, TEXT("[DBG] TurnRob — bTurning set to true, TurnSign=%.1f"), TurnSign);
+    if(DEBUG) UE_LOG(BaseMovementLog, Warning, TEXT("[DBG] TurnRob: bTurning set to true, TurnSign=%.1f"), TurnSign);
 }
 
 void UBaseMovement::Claw_Arm(float Alpha){
@@ -176,7 +176,7 @@ void UBaseMovement::OnGrabOverlap(
 {
     if(OtherActor && OtherActor != RobotPawn){
         OverlappingObject = OtherActor;
-        if(DEBUG) UE_LOG(LogTemp, Warning, TEXT("UBaseMovement: grab overlap — %s"), *OtherActor->GetName());
+        if(DEBUG) UE_LOG(LogTemp, Warning, TEXT("UBaseMovement: grab overlap: %s"), *OtherActor->GetName());
     }
 }
 

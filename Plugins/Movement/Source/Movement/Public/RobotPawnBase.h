@@ -38,11 +38,11 @@ public:
 
     // ---- Float state variables ----
 
-    // Interpolation target for arm (0=lowest, 1=highest) — read by Animation Blueprint
+    // Interpolation target for arm (0=lowest, 1=highest) read by Animation Blueprint
     UPROPERTY(EditAnywhere, BlueprintReadWrite, Category="RobotState")
     float TargetArmAlpha = 0.f;
 
-    // Interpolation target for grab claw (0=closed, 1=open) — read by Animation Blueprint
+    // Interpolation target for grab claw (0=closed, 1=open) read by Animation Blueprint
     UPROPERTY(EditAnywhere, BlueprintReadWrite, Category="RobotState")
     float TargetClawAlpha = 0.f;
 
@@ -62,21 +62,21 @@ public:
     UPROPERTY(EditAnywhere, BlueprintReadWrite, Category="RobotState")
     float AngleTurned = 0.f;
 
-    // Elapsed time for the current command — used as fallback timeout for component commands
+    // Elapsed time for the current command used as fallback timeout for component commands
     UPROPERTY(EditAnywhere, BlueprintReadWrite, Category="RobotState")
     float CommandTimer = 0.f;
 
-    // Current interpolated arm alpha — written back by Animation Blueprint each frame via FInterpTo
+    // Current interpolated arm alpha written back by Animation Blueprint each frame via FInterpTo
     UPROPERTY(EditAnywhere, BlueprintReadWrite, Category="RobotState")
     float CurrArmAlpha = 0.f;
 
-    // Current interpolated claw alpha — written back by Animation Blueprint each frame via FInterpTo
+    // Current interpolated claw alpha written back by Animation Blueprint each frame via FInterpTo
     UPROPERTY(EditAnywhere, BlueprintReadWrite, Category="RobotState")
     float CurrClawAlpha = 0.f;
 
     // ---- Enum/integer state variables ----
 
-    // Current locomotion state — drives animation blueprint state machine
+    // Current locomotion state drives animation blueprint state machine
     UPROPERTY(EditAnywhere, BlueprintReadWrite, Category="RobotState")
     EBaseMoveState TargetMoveState = EBaseMoveState::Idle;
 
@@ -84,11 +84,11 @@ public:
     UPROPERTY(EditAnywhere, BlueprintReadWrite, Category="RobotState")
     int32 AttachedComponent = 0;
 
-    // Command currently being executed — used by IsCommandCompleted to branch completion logic
+    // Command currently being executed used by IsCommandCompleted to branch completion logic
     UPROPERTY(EditAnywhere, BlueprintReadWrite, Category="RobotState")
     ERobotCommand CurrCommand = ERobotCommand::MoveForward;
 
-    // BaseMovement component — created here so BP_RoboRob inherits it automatically
+    // BaseMovement component created here so BP_RoboRob inherits it automatically
     UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category="Robot")
     UBaseMovement* BaseMovementComp = nullptr;
 
