@@ -67,6 +67,7 @@ Block::~Block(){
 // ---- Accessors ----
 
 int Block::getId(){return this->id;}
+int Block::getSlotCount(){return this->SlotCount;}
 CodeBlocks::BlockType Block::getType(){return this->BType;}
 
 BlockSlot* Block::getSlot(int slotPos){

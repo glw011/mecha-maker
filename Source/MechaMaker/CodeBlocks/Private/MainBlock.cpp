@@ -125,6 +125,7 @@ bool MainBlock::compileMainBlock(std::string* failMsgOut){
 
   try{
     for(int i = 0; i < (int)slotArr.size(); i++){
+      if(!slotArr.at(i) || slotArr.at(i)->isEmpty()) continue;
       bodyStr += slotArr.at(i)->getBlock()->getContentStr();
     }
     bodyStr += EndStr;

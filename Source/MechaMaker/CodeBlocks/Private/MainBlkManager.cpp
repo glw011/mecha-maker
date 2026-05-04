@@ -111,8 +111,20 @@ void BlockManager::reset(){
 bool BlockManager::removeBlock(int blockId){
   if(!blockRegistry.count(blockId)) return false;
 
-  // remove from program area (no-op if block nested inside another block)
+  // remove from top-level program area (no-op if block nested inside another block)
   mainBlock.removeBlock(blockId);
+
+  // clear any raw BlockSlot pointers in other blocks that reference this block —
+  // prevents dangling pointer access if a child was removed independently of its parent
+  Block* dying = blockRegistry[blockId].get();
+  for(auto& [id, blk] : blockRegistry){
+    if(id == blockId) continue;
+    int n = blk->getSlotCount();
+    for(int i = 0; i < n; i++){
+      BlockSlot* s = blk->getSlot(i);
+      if(s && !s->isEmpty() && s->getBlock() == dying) s->rmChild();
+    }
+  }
 
   // remove from registry and free block instance
   blockRegistry.erase(blockId);
