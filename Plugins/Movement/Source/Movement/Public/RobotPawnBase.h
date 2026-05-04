@@ -99,4 +99,16 @@ public:
     UFUNCTION(BlueprintCallable, BlueprintNativeEvent, Category="RobotState")
     bool IsCommandCompleted(float DeltaTime);
     virtual bool IsCommandCompleted_Implementation(float DeltaTime);
+
+    // Called by RobotManager after a close-claw command completes — attempts to grab a
+    // grabbable actor inside the grab collider. Override in BP_RoboRob for full grab logic.
+    UFUNCTION(BlueprintCallable, BlueprintNativeEvent, Category="RobotAction")
+    void TryGrab();
+    virtual void TryGrab_Implementation();
+
+    // Called by RobotManager when an open-claw command is dispatched — releases any
+    // currently held actor. Override in BP_RoboRob for full release logic.
+    UFUNCTION(BlueprintCallable, BlueprintNativeEvent, Category="RobotAction")
+    void TryRelease();
+    virtual void TryRelease_Implementation();
 };

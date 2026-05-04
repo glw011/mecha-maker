@@ -17,6 +17,14 @@ ARobotPawnBase::ARobotPawnBase(){
     }
 }
 
+void ARobotPawnBase::TryGrab_Implementation(){
+    if(BaseMovementComp) BaseMovementComp->TryGrab();
+}
+
+void ARobotPawnBase::TryRelease_Implementation(){
+    if(BaseMovementComp) BaseMovementComp->ReleaseGrab();
+}
+
 bool ARobotPawnBase::IsCommandCompleted_Implementation(float DeltaTime){
     CommandTimer += DeltaTime;
 

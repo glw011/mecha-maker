@@ -92,6 +92,11 @@ void URobotManager::TickComponent(float DeltaTime, ELevelTick TickType, FActorCo
                 RobotPawn->TargetMoveState = EBaseMoveState::Idle;
                 if(DEBUG) UE_LOG(RobotManagerLog, Warning, TEXT("[DBG] TargetMoveState reset to Idle"));
             }
+            if(bTryClawGrab){
+                if(DEBUG) UE_LOG(RobotManagerLog, Warning, TEXT("[DBG] Close-claw completed — calling TryGrab"));
+                RobotPawn->TryGrab();
+                bTryClawGrab = false;
+            }
         }
     }
 }
@@ -134,6 +139,7 @@ void URobotManager::ClearQueue(){
     ActionQueue.Empty();
     QueueIndex        = 0;
     CanExecuteCommand = true;
+    bTryClawGrab      = false;
 
     if(RobotPawn){
         RobotPawn->DistanceTraveled = 0.f;
@@ -211,6 +217,11 @@ void URobotManager::DispatchAction(const FRobotAction& Action){
             if(DEBUG) UE_LOG(RobotManagerLog, Warning, TEXT("[DBG] DispatchAction → Claw_Claw(%.2f)"), Action.Arg0);
             RobotPawn->CurrCommand = ERobotCommand::Cmpnt_Claw_GrabClaw;
             BaseMovementComp->Claw_Claw(Action.Arg0);
+            if(Action.Arg0 <= 0.f){
+                bTryClawGrab = true;  // close — attempt grab after animation completes
+            } else {
+                RobotPawn->TryRelease();  // open — release immediately as claw begins opening
+            }
             break;
 
         case EActionType::LiftArm:
@@ -223,6 +234,11 @@ void URobotManager::DispatchAction(const FRobotAction& Action){
             if(DEBUG) UE_LOG(RobotManagerLog, Warning, TEXT("[DBG] DispatchAction → Lift_Claw(%.2f)"), Action.Arg0);
             RobotPawn->CurrCommand = ERobotCommand::Cmpnt_Lift_GrabClaw;
             BaseMovementComp->Lift_Claw(Action.Arg0);
+            if(Action.Arg0 <= 0.f){
+                bTryClawGrab = true;  // close — attempt grab after animation completes
+            } else {
+                RobotPawn->TryRelease();  // open — release immediately as claw begins opening
+            }
             break;
     }
 }

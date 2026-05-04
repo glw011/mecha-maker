@@ -89,6 +89,7 @@ private:
     TArray<FRobotAction> ActionQueue;
     int32 QueueIndex = 0;
     bool CanExecuteCommand = true;  // true = queue is idle/ready to dispatch next command
+    bool bTryClawGrab = false;      // set when close-claw dispatched; TryGrab called on next completion
 
     // tick timing to track seconds for DeltaTime passed to IsCommandCompleted function
     float LastTick = 0.f;

@@ -87,6 +87,9 @@ public:
         int32 OtherBodyIndex
     );
 
+    void TryGrab();
+    void ReleaseGrab();
+
 private:
     UPROPERTY()
     ARobotPawnBase* RobotPawn = nullptr;
@@ -98,7 +101,4 @@ private:
     // ---- Curr Turn State ----
     bool bTurning = false;
     float TurnSign = 1.f;   // +1 = left (CCW/+Yaw in UE), -1 = right (CW/-Yaw in UE)
-
-    void TryGrab();
-    void ReleaseGrab();
 };
