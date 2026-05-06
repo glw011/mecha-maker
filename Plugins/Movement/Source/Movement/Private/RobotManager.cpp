@@ -1,7 +1,7 @@
 #include "RobotManager.h"
 #include "BaseMovement.h"
 
-#define DEBUG true
+#define DEBUG false
 
 DEFINE_LOG_CATEGORY_STATIC(RobotManagerLog, Log, All);
 

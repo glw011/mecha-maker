@@ -1,7 +1,7 @@
 #include "BaseMovement.h"
 #include "Components/PrimitiveComponent.h"
 
-#define DEBUG true
+#define DEBUG false
 
 DEFINE_LOG_CATEGORY_STATIC(BaseMovementLog, Log, All);
 
@@ -9,11 +9,8 @@ DEFINE_LOG_CATEGORY_STATIC(BaseMovementLog, Log, All);
 UBaseMovement::UBaseMovement(){
     PrimaryComponentTick.bCanEverTick = true;
 
-    // NOT creating GrabCollider here like before since UBoxComponent is scene component & created/attached
-    // in owning actor (ARobotPawnBase > RoboRob) within Unreal, not in this non-scene component
-    
-    // Will wire GrabCollider once everything is finalised
-
+    // NOT creating GrabCollider here since UBoxComponent is scene component & created/attached
+    // in owning actor (ARobotPawnBase > RoboRob) within Unreal
 }
 
 void UBaseMovement::BeginPlay(){

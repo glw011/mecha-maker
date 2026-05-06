@@ -23,18 +23,15 @@
 		},
 		{
 			"Name": "ApplParser",
-			"Enabled": true,
-			"TargetAllowList": [
-				"Editor"
-			]
+			"Enabled": true
+		},
+		{
+			"Name": "Movement",
+			"Enabled": true
 		},
 		{
 			"Name": "DatasmithCADImporter",
-			"Enabled": true,
-			"SupportedTargetPlatforms": [
-				"Win64",
-				"Linux"
-			]
+			"Enabled": false
 		},
 		{
 			"Name": "SaveBlock",
@@ -43,8 +40,6 @@
 	],
 	"TargetPlatforms": [
 		"Linux",
-		"Mac",
-		"Windows",
-		"LinuxArm64"
+		"Windows"
 	]
 }
