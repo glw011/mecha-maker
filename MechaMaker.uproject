@@ -35,6 +35,16 @@
 				"Win64",
 				"Linux"
 			]
+		},
+		{
+			"Name": "SaveBlock",
+			"Enabled": false
 		}
+	],
+	"TargetPlatforms": [
+		"Linux",
+		"Mac",
+		"Windows",
+		"LinuxArm64"
 	]
 }
