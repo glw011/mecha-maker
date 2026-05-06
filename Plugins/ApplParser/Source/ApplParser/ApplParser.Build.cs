@@ -5,6 +5,8 @@ public class ApplParser : ModuleRules{
 	public ApplParser(ReadOnlyTargetRules Target) : base(Target){
 		PCHUsage = ModuleRules.PCHUsageMode.UseExplicitOrSharedPCHs;
 
+		bEnableExceptions = true;  // ApplTypes.h, ApplCompiler.cpp and RobotComponentInterface.cpp use throw/try
+
 
 		//string ThirdPartyPath = Path.GetFullPath(Path.Combine(ModuleDirectory, "..", "ThirdParty"));
 		//string AntlrPath = Path.Combine(ThirdPartyPath, "antlr4runtime");
