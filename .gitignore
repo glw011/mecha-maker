@@ -3,6 +3,7 @@ Binaries/
 DerivedDataCache/
 Intermediate/
 Saved/
+Packaged/
 BlenderFBX/
 Content/Imports/*.fbx
 
