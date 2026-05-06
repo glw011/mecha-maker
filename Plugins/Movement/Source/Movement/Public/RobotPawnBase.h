@@ -84,6 +84,14 @@ public:
     UPROPERTY(EditAnywhere, BlueprintReadWrite, Category="RobotState")
     int32 AttachedComponent = 0;
 
+    // Set true by overlap trigger when a grabbable actor enters the grab zone; cleared on exit or after grab
+    UPROPERTY(EditAnywhere, BlueprintReadWrite, Category="RobotState")
+    bool bHasGrabbableTarget = false;
+
+    // TargetClawAlpha used for close-claw when bHasGrabbableTarget is true — prevents claw crushing the object
+    UPROPERTY(EditAnywhere, BlueprintReadWrite, Category="RobotState")
+    float GrabClampAlpha = 0.7f;
+
     // Command currently being executed used by IsCommandCompleted to branch completion logic
     UPROPERTY(EditAnywhere, BlueprintReadWrite, Category="RobotState")
     ERobotCommand CurrCommand = ERobotCommand::MoveForward;

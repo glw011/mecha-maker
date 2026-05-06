@@ -30,5 +30,12 @@
 			"Type": "Runtime",
 			"LoadingPhase": "Default"
 		}
+	],
+	"Plugins": [
+		{
+			"Name": "Movement",
+			"Enabled": true,
+			"Optional": false
+		}
 	]
 }

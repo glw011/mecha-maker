@@ -129,7 +129,9 @@ void UBaseMovement::Claw_Claw(float Alpha){
         if(DEBUG) UE_LOG(LogTemp, Warning, TEXT("Claw_Claw: Claw not attached (AttachedComponent=%d)"), RobotPawn->AttachedComponent);
         return;
     }
-    RobotPawn->TargetClawAlpha = FMath::Clamp(Alpha, 0.f, 1.f);
+    // when closing and a grabbable is in the zone, stop at GrabClampAlpha instead of fully closed
+    float EffectiveAlpha = (Alpha <= 0.f && RobotPawn->bHasGrabbableTarget) ? RobotPawn->GrabClampAlpha : Alpha;
+    RobotPawn->TargetClawAlpha = FMath::Clamp(EffectiveAlpha, 0.f, 1.f);
 }
 
 void UBaseMovement::Lift_Arm(float Alpha){
@@ -147,7 +149,8 @@ void UBaseMovement::Lift_Claw(float Alpha){
         if(DEBUG) UE_LOG(LogTemp, Warning, TEXT("Lift_Claw: Lift not attached (AttachedComponent=%d)"), RobotPawn->AttachedComponent);
         return;
     }
-    RobotPawn->TargetClawAlpha = FMath::Clamp(Alpha, 0.f, 1.f);
+    float EffectiveAlpha = (Alpha <= 0.f && RobotPawn->bHasGrabbableTarget) ? RobotPawn->GrabClampAlpha : Alpha;
+    RobotPawn->TargetClawAlpha = FMath::Clamp(EffectiveAlpha, 0.f, 1.f);
 }
 
 void UBaseMovement::StopMovement(){
