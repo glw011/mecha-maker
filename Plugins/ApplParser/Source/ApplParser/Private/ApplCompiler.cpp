@@ -11,26 +11,39 @@ bool UApplCompiler::CompileAndRun(const FString& Source, FApplParseResult& OutRe
     OutResult = FApplParseResult{};
     OutResult.Errors.Reset();
 
+    UE_LOG(ApplCompilerLog, Warning, TEXT("[DBG] CompileAndRun called. Source length=%d"), Source.Len());
+    UE_LOG(ApplCompilerLog, Warning, TEXT("[DBG] RobotInterface is %s"), RobotInterface ? TEXT("SET") : TEXT("NULL"));
+
     ApplParseResult parseResult;
     std::string utf8In(TCHAR_TO_UTF8(*Source));
 
     // clear queue from previous run
     if(RobotInterface && RobotInterface->RobotManager){
+        UE_LOG(ApplCompilerLog, Warning, TEXT("[DBG] Calling ClearQueue on RobotManager"));
         RobotInterface->RobotManager->ClearQueue();
+    }
+    else{
+        UE_LOG(ApplCompilerLog, Error, TEXT("[DBG] ClearQueue SKIPPED — RobotInterface=%s, RobotManager=%s"),
+            RobotInterface ? TEXT("set") : TEXT("NULL"),
+            (RobotInterface && RobotInterface->RobotManager) ? TEXT("set") : TEXT("NULL"));
     }
 
     /**
      * Component Dispatch (lambda)
-     *  - captures RobotInterface (UObject ptr) but type is std::function (can be passed into ApplLang safely) 
+     *  - captures RobotInterface (UObject ptr) but type is std::function (can be passed into ApplLang safely)
      */
-    
+
     ComponentCallFn handler = nullptr;
     if(RobotInterface){
         URobotComponentInterface* iface = RobotInterface;
+        UE_LOG(ApplCompilerLog, Warning, TEXT("[DBG] ComponentCallFn handler created (RobotInterface is valid)"));
 
         handler = [iface](const std::string& name, const std::vector<ApplValue>& args) -> ApplValue {
             return iface->Dispatch(name, args);
         };
+    }
+    else{
+        UE_LOG(ApplCompilerLog, Error, TEXT("[DBG] ComponentCallFn handler is NULL — RobotInterface not set"));
     }
 
     try{

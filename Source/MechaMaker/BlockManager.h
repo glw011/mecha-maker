@@ -29,7 +29,8 @@
  *   17=VAR_REF,
  *   18=ARR_BLK,
  *   19=AUG_ASSIGN_BLK,
- *   20=INCR_BLK
+ *   20=INCR_BLK,
+ *   21=COMPFNCALL_BLK
  */
 
 UCLASS()

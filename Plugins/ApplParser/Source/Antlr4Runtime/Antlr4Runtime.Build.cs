@@ -11,7 +11,7 @@ public class Antlr4Runtime : ModuleRules{
     bUseRTTI = true;
     bEnableExceptions = true;
 
-    // Match your project standard (UE 5.7 uses C++20 in many configs)
+    // UE 5.7 standard C++ config
     CppStandard = CppStandardVersion.Cpp20;
 
     // antlr runtime source don't order included .h files correctly so unreal whines

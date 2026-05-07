@@ -17,6 +17,7 @@ class MainBlock{
     bool reorderBlock(int blockId, int referenceBlockId, bool insertBefore);
     bool compileProgram(std::string* failMsgOut, std::string* progStrOut);
     std::string getProgramStr();
+    void invalidateCache();
 
   private:
     bool isCompiled;

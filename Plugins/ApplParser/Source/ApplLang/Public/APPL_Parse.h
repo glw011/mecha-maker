@@ -265,7 +265,7 @@ public:
     std::vector<antlr4::tree::TerminalNode *> SC();
     antlr4::tree::TerminalNode* SC(size_t i);
     ExprContext *expr();
-    IteratnContext *iteratn();
+    OperatnContext *operatn();
     antlr4::tree::TerminalNode *RPAREN();
     CblkContext *cblk();
 

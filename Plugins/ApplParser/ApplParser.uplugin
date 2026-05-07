@@ -1,7 +1,7 @@
 {
 	"FileVersion": 3,
 	"Version": 1,
-	"VersionName": "v0.5",
+	"VersionName": "v1.0",
 	"FriendlyName": "ApplParser",
 	"Description": "",
 	"Category": "Other",
@@ -11,7 +11,7 @@
 	"MarketplaceURL": "",
 	"SupportURL": "",
 	"CanContainContent": false,
-	"IsBetaVersion": true,
+	"IsBetaVersion": false,
 	"IsExperimentalVersion": true,
 	"Installed": false,
 	"Modules": [
@@ -29,6 +29,12 @@
 			"Name": "ApplParser",
 			"Type": "Runtime",
 			"LoadingPhase": "Default"
+		}
+	],
+	"Plugins": [
+		{
+			"Name": "Movement",
+			"Enabled": true
 		}
 	]
 }

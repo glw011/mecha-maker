@@ -4,10 +4,6 @@
 #include "Misc/Paths.h"
 #include "JsonObjectConverter.h"
 
-// Just to check and see if Movement can be called without cast
-#include "BaseMovement.h"           
-#include "GameFramework/Character.h"  
-
 static FString GetFilePath()
 {
     return FPaths::ProjectSavedDir() + "SaveData.json";
@@ -52,13 +48,3 @@ TArray<FSaveData> USaveManager::LoadAllSaves()
     return SavedBlocks.Saves;
 }
 
-// Just to check and see if Movement can be called without cast
-void USaveManager::TestMove(ACharacter* Character)
-{
-    UBaseMovement* MoveComp = Character->FindComponentByClass<UBaseMovement>();
-
-    if(MoveComp)
-    {
-        MoveComp->StartMove(100, 100, 3, 1000, 10);
-    }
-}

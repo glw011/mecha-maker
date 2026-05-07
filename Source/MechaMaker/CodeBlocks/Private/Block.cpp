@@ -67,6 +67,8 @@ Block::~Block(){
 // ---- Accessors ----
 
 int Block::getId(){return this->id;}
+int Block::getSlotCount(){return this->SlotCount;}
+void Block::resetIdCounter(){ nxtId = 0; }
 CodeBlocks::BlockType Block::getType(){return this->BType;}
 
 BlockSlot* Block::getSlot(int slotPos){
@@ -280,6 +282,21 @@ std::string Block::getContentStr(){
         userInputVals.size() > 1 ? userInputVals[1] : "++"
       );
       break;
+
+    case CodeBlocks::BlockType::COMPFNCALL_BLK:{
+      std::string fnName = userInputVals.empty() ? "" : userInputVals[0];
+      if(SlotCount == 0){
+        fContStr = stmtContStr(fnName + "()");
+      } else {
+        std::string argStr = "(";
+        for(int i = 0; i < SlotCount; i++){
+          if(i > 0) argStr += ", ";
+          argStr += Slots[i].getBlock()->getContentStr();
+        }
+        fContStr = stmtContStr(fnName + argStr + ")");
+      }
+      break;
+    }
 
     default:
       fContStr = "ERROR: Unhandled block type, id=" + std::to_string(id);

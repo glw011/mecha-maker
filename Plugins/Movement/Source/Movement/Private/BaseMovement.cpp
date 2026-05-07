@@ -1,275 +1,170 @@
 #include "BaseMovement.h"
-#include "GameFramework/Character.h"
-#include "GameFramework/CharacterMovementComponent.h"
-
-#include "Components/SkeletalMeshComponent.h"
 #include "Components/PrimitiveComponent.h"
-#include "Components/BoxComponent.h"
-#include "Components/SceneComponent.h"
-#include "Components/MeshComponent.h"
+
+#define DEBUG false
+
+DEFINE_LOG_CATEGORY_STATIC(BaseMovementLog, Log, All);
 
 
-UBaseMovement::UBaseMovement()
-{
+UBaseMovement::UBaseMovement(){
     PrimaryComponentTick.bCanEverTick = true;
-    bIsMoving = false;
-    bIsMovingArm = false;
-    bIsOpenClaw = false;
-    bIsCloseClaw = false;
-    GrabCollider = CreateDefaultSubobject<UBoxComponent>(TEXT("GrabCollider"));
-    
-    // DELETE THIS IF STILL NOT SHOW UP
-    ClawRightPivot = CreateDefaultSubobject<USceneComponent>(TEXT("ClawRightPivot"));
+
+    // NOT creating GrabCollider here since UBoxComponent is scene component & created/attached
+    // in owning actor (ARobotPawnBase > RoboRob) within Unreal
 }
 
-void UBaseMovement::BeginPlay()
-{
+void UBaseMovement::BeginPlay(){
     Super::BeginPlay();
 
-    Character = Cast<ACharacter>(GetOwner());
+    RobotPawn = Cast<ARobotPawnBase>(GetOwner());
 
-    TArray<USkeletalMeshComponent*> Meshes;
-    Character->GetComponents<USkeletalMeshComponent>(Meshes);
-
-    // DELETE THIS IF STILL NOT SHOW UP
-    TArray<UMeshComponent*> RegMesh;
-    Character->GetComponents<UMeshComponent>(RegMesh);
-
-    for (auto* Mesh : Meshes)
-    {
-        // CHANGE THIS WHEN CLAW GETS MADE
-        if (Mesh->GetName() == "SKM_Arm") ArmMesh = Mesh;
-        else if (Mesh->GetName() == "Claw_Right") ClawMeshRight = Mesh;
-        else if (Mesh->GetName() == "Claw_Left") ClawMeshLeft = Mesh; 
+    if(DEBUG){
+        UE_LOG(BaseMovementLog, Warning, TEXT("[DBG] BaseMovement BeginPlay: RobotPawn is %s (owner class: %s)"),
+            RobotPawn ? TEXT("VALID") : TEXT("NULL"),
+            GetOwner() ? *GetOwner()->GetClass()->GetName() : TEXT("(no owner)"));
     }
 
-    // DELETE THIS IF STILL NOT SHOW UP
-    for (auto* Mesh : RegMesh)
-    {
-        if (Mesh->GetName() == "ClawGuide") ClawGuide = Mesh;
-    }
+    if(GrabCollider){
 
-    // DELETE THIS IF STILL NOT SHOW UP
-    if (ClawRightPivot && ClawGuide) 
-    {
-        ClawRightPivot->AttachToComponent(
-            ClawGuide,
-            FAttachmentTransformRules::SnapToTargetNotIncludingScale,
-            FName("Claw_Right")
-        );
-    }
-
-    // DELETE THIS IF STILL NOT SHOW UP
-    if (ClawMeshRight && ClawRightPivot)
-    {
-        ClawMeshRight->AttachToComponent(
-            ClawRightPivot,
-            FAttachmentTransformRules::KeepRelativeTransform
-        );
-        ClawMeshRight->SetRelativeLocation(FVector(-0.3f,7.f,2.f));
-    }
-
-    if(GrabCollider && ArmMesh)
-    {
-        // CHANGE THIS WHEN CLAW GETS MADE
-        GrabCollider->AttachToComponent(ArmMesh, 
-            FAttachmentTransformRules::SnapToTargetNotIncludingScale,
-            FName("Claw_Right"));
+        if(DEBUG) UE_LOG(BaseMovementLog, Warning, TEXT("[DBG] BaseMovement BeginPlay: GrabCollider found, binding overlap events"));
 
         GrabCollider->OnComponentBeginOverlap.AddDynamic(this, &UBaseMovement::OnGrabOverlap);
         GrabCollider->OnComponentEndOverlap.AddDynamic(this, &UBaseMovement::OnGrabEndOverlap);
-
         GrabCollider->SetCollisionEnabled(ECollisionEnabled::QueryOnly);
         GrabCollider->SetGenerateOverlapEvents(true);
         GrabCollider->SetCollisionResponseToAllChannels(ECR_Overlap);
-        UE_LOG(LogTemp, Warning, TEXT("FORCED COLLISION SETTINGS"));
-
-        // SET PICKUP AREA
-        GrabCollider->SetBoxExtent(FVector(30.f,30.f,30.f));
-        GrabCollider->SetRelativeLocation(FVector(-15.f, 0.f, 0.f));
-    }
-
-    // DEBUGGING
-    if (!GrabCollider)
-    {
-        UE_LOG(LogTemp, Error, TEXT("GrabCollider is NULL"));
-    }
-    else
-    {
-        UE_LOG(LogTemp, Warning, TEXT("GrabCollider is FOUND"));
-        UE_LOG(LogTemp, Warning, TEXT("Collision Enabled: %d"), (int32)GrabCollider->GetCollisionEnabled());
-        UE_LOG(LogTemp, Warning, TEXT("Generate Overlap: %d"), GrabCollider->GetGenerateOverlapEvents());
+        GrabCollider->SetBoxExtent(FVector(30.f, 30.f, 30.f));
     }
 }
 
-void UBaseMovement::StartMove(float FlLeftMotor, float FlRightMotor, float FlDuration, float FlSpeed, float FlSize)
-{
-
-    Character = Cast<ACharacter>(GetOwner());
-
-    if (!Character) return;
-
-    Character->GetCharacterMovement()->MaxWalkSpeed = FlSpeed;
-
-    LeftMotor = FlLeftMotor;
-    RightMotor = FlRightMotor;
-    Duration = FlDuration;
-    Speed = FlSpeed;
-
-    CurrentTime = 0.f;
-
-    AngularSpeed = ((LeftMotor - RightMotor) / 100) * (Speed / FlSize);
-
-    bIsMoving = true;
-}
-
-void UBaseMovement::StartArmMove(float FlArmSpeed, float FlArmDuration)
-{
-    ArmSpeed = FlArmSpeed;
-
-    ArmDuration = FlArmDuration;
-    ArmTime = 0.f;
-
-    Character = Cast<ACharacter>(GetOwner());
-
-    bIsMovingArm = true;
-}
-
-void UBaseMovement::StartClawMove(int32 InDir, float FlClawDuration)
-{
-    ClawDuration = FlClawDuration;
-    ClawTime = 0.f;
-
-    Character = Cast<ACharacter>(GetOwner());
-    
-    if (InDir == 1) {
-        bIsOpenClaw = true;
-    }
-
-    else {
-        bIsCloseClaw = true;
-    }
-}
-
-void UBaseMovement::TickComponent(float DeltaTime, ELevelTick TickType, FActorComponentTickFunction* ThisTickFunction)
-{
+void UBaseMovement::TickComponent(float DeltaTime, ELevelTick TickType, FActorComponentTickFunction* ThisTickFunction){
     Super::TickComponent(DeltaTime, TickType, ThisTickFunction);
-    
 
-    if (bIsMoving)
-    {
-        CurrentTime += DeltaTime;
-        ExecuteMovement(DeltaTime);
-
-        if (CurrentTime >= Duration)
-            bIsMoving = false;
-    
+    // Avoids flooding log during DEBUG
+    static int32 BMTickCount = 0;
+    if(DEBUG && BMTickCount < 3){
+        UE_LOG(BaseMovementLog, Warning,
+            TEXT("[DBG] BaseMovement Tick #%d: RobotPawn=%s bMoving=%s bTurning=%s"),
+            BMTickCount,
+            RobotPawn ? TEXT("valid") : TEXT("NULL"),
+            bMoving   ? TEXT("true")  : TEXT("false"),
+            bTurning  ? TEXT("true")  : TEXT("false"));
+        ++BMTickCount;
     }
 
-    if (bIsMovingArm)
-    {
-        ArmTime += DeltaTime;
-        ExecuteArmMovement(DeltaTime);
-
-        if (ArmTime >= ArmDuration)
-            bIsMovingArm = false;
+    if(!RobotPawn){
+        static bool bBMNullLogged = false;
+        if(DEBUG && !bBMNullLogged){
+            UE_LOG(BaseMovementLog, Error, TEXT("[DBG] BaseMovement Tick: RobotPawn NULL every frame, movement blocked"));
+            bBMNullLogged = true;
+        }
+        return;
     }
 
-    if (bIsOpenClaw)
-    {
-        ClawTime += DeltaTime;
-        ExecuteOpenClaw(DeltaTime);
+    // ---- Execute Active Move Command ----
+    if(bMoving){
+        float Remaining = RobotPawn->TargetMoveDistance - RobotPawn->DistanceTraveled;
+        float Step = FMath::Min(MoveSpeed * DeltaTime, Remaining);
 
-        if (ClawTime >= ClawDuration){
-            bIsOpenClaw = false;
-            ReleaseGrab();
+        FVector NewLoc = RobotPawn->GetActorLocation() + RobotPawn->GetActorForwardVector() * MoveSign * Step;
+        RobotPawn->SetActorLocation(NewLoc);
+        RobotPawn->DistanceTraveled += Step;
+
+        if(RobotPawn->DistanceTraveled >= RobotPawn->TargetMoveDistance){
+            RobotPawn->DistanceTraveled = RobotPawn->TargetMoveDistance;
+            bMoving = false;
         }
     }
 
-    if (bIsCloseClaw)
-    {
-        UE_LOG(LogTemp, Warning, TEXT("Claw is closing"));
-        ClawTime += DeltaTime;
-        ExecuteCloseClaw(DeltaTime);
+    // ---- Execute Active Turn Command ----
+    if(bTurning){
+        float Remaining = RobotPawn->TargetTurnAngle - RobotPawn->AngleTurned;
+        float Step = FMath::Min(AngularSpeed * DeltaTime, Remaining);
 
-        if (ClawTime >= ClawDuration)
-        {
-            bIsCloseClaw = false;
+        FRotator NewRot = RobotPawn->GetActorRotation();
+        NewRot.Yaw += TurnSign * Step;
+        RobotPawn->SetActorRotation(NewRot);
+        RobotPawn->AngleTurned += Step;
+
+        if(RobotPawn->AngleTurned >= RobotPawn->TargetTurnAngle){
+            RobotPawn->AngleTurned = RobotPawn->TargetTurnAngle;
+            bTurning = false;
         }
     }
+}
 
-    if(bIsCloseClaw && OverlappingObject) 
-    {
-        TryGrab();
+// ---- Command Execution Functions ----
+
+void UBaseMovement::MoveRob(float Distance){
+    if(DEBUG) UE_LOG(BaseMovementLog, Warning, TEXT("[DBG] MoveRob called: Distance=%.2f RobotPawn=%s"), Distance, RobotPawn ? TEXT("valid") : TEXT("NULL"));
+    if(!RobotPawn) return;
+    MoveSign = (Distance >= 0.f) ? 1.f : -1.f;
+    bMoving = true;
+    if(DEBUG) UE_LOG(BaseMovementLog, Warning, TEXT("[DBG] MoveRob: bMoving set to true, MoveSign=%.1f"), MoveSign);
+}
+
+void UBaseMovement::TurnRob(float Degrees){
+    if(DEBUG) UE_LOG(BaseMovementLog, Warning, TEXT("[DBG] TurnRob called: Degrees=%.2f RobotPawn=%s"), Degrees, RobotPawn ? TEXT("valid") : TEXT("NULL"));
+    if(!RobotPawn) return;
+    TurnSign = (Degrees >= 0.f) ? -1.f : 1.f;  // oops, CW/CCW are reversed so inverting sign here to correct
+    bTurning = true;
+    if(DEBUG) UE_LOG(BaseMovementLog, Warning, TEXT("[DBG] TurnRob: bTurning set to true, TurnSign=%.1f"), TurnSign);
+}
+
+void UBaseMovement::Claw_Arm(float Alpha){
+    if(!RobotPawn) return;
+    if(RobotPawn->AttachedComponent != 1){
+        if(DEBUG) UE_LOG(LogTemp, Warning, TEXT("Claw_Arm: Claw not attached (AttachedComponent=%d)"), RobotPawn->AttachedComponent);
+        return;
     }
-
-
+    RobotPawn->TargetArmAlpha = FMath::Clamp(Alpha, 0.f, 1.f);
 }
 
-void UBaseMovement::ExecuteMovement(float DeltaTime)
-{
-
-    FVector Forward = Character->GetActorForwardVector();
-
-    float MoveSpeed = (((LeftMotor + RightMotor) * 0.5f)/ 100);
-    Character->AddMovementInput(Forward, MoveSpeed);
-
-    float Alpha = CurrentTime / Duration;
-    Alpha = FMath::Clamp(Alpha, 0.f, 1.f);
-
-    FRotator CurrentRot = Character->GetActorRotation();
-    CurrentRot.Yaw += AngularSpeed * DeltaTime;
-
-    Character->SetActorRotation(CurrentRot);
-
+void UBaseMovement::Claw_Claw(float Alpha){
+    if(!RobotPawn) return;
+    if(RobotPawn->AttachedComponent != 1){
+        if(DEBUG) UE_LOG(LogTemp, Warning, TEXT("Claw_Claw: Claw not attached (AttachedComponent=%d)"), RobotPawn->AttachedComponent);
+        return;
+    }
+    // when closing and a grabbable is in the zone, stop at GrabClampAlpha instead of fully closed
+    float EffectiveAlpha = (Alpha <= 0.f && RobotPawn->bHasGrabbableTarget) ? RobotPawn->GrabClampAlpha : Alpha;
+    RobotPawn->TargetClawAlpha = FMath::Clamp(EffectiveAlpha, 0.f, 1.f);
 }
 
-void UBaseMovement::ExecuteArmMovement(float DeltaTime)
-{
-    ArmCurrent += ArmSpeed * DeltaTime;
-    ArmCurrent = FMath::Clamp(ArmCurrent, -100.f, 100.f);
-
-    if(!ArmMesh) return;
-
-    FRotator NewRot = FRotator(0.f, -90.f, ArmCurrent);
-    ArmMesh->SetRelativeRotation(NewRot);
-
+void UBaseMovement::Lift_Arm(float Alpha){
+    if(!RobotPawn) return;
+    if(RobotPawn->AttachedComponent != 2){
+        if(DEBUG) UE_LOG(LogTemp, Warning, TEXT("Lift_Arm: Lift not attached (AttachedComponent=%d)"), RobotPawn->AttachedComponent);
+        return;
+    }
+    RobotPawn->TargetArmAlpha = FMath::Clamp(Alpha, 0.f, 1.f);
 }
 
-void UBaseMovement::ExecuteOpenClaw(float DeltaTime)
-{
-    ClawCurrentRight += 30 * DeltaTime;
-    ClawCurrentRight = FMath::Clamp(ClawCurrentRight, -50.f, 20.f);
-
-    ClawCurrentLeft -= 30 * DeltaTime;
-    ClawCurrentLeft = FMath::Clamp(ClawCurrentLeft, -50.f, 20.f);
-
-    if (!ClawMeshRight || !ClawMeshLeft) return;
-
-    FRotator NewRotRight = FRotator(0.f, ClawCurrentRight, 0.f);
-    ClawMeshRight->SetRelativeRotation(NewRotRight);
-
-    FRotator NewRotLeft = FRotator(0.f, ClawCurrentLeft, 0.f);
-    ClawMeshLeft->SetRelativeRotation(NewRotLeft);
+void UBaseMovement::Lift_Claw(float Alpha){
+    if(!RobotPawn) return;
+    if(RobotPawn->AttachedComponent != 2){
+        if(DEBUG) UE_LOG(LogTemp, Warning, TEXT("Lift_Claw: Lift not attached (AttachedComponent=%d)"), RobotPawn->AttachedComponent);
+        return;
+    }
+    float EffectiveAlpha = (Alpha <= 0.f && RobotPawn->bHasGrabbableTarget) ? RobotPawn->GrabClampAlpha : Alpha;
+    RobotPawn->TargetClawAlpha = FMath::Clamp(EffectiveAlpha, 0.f, 1.f);
 }
 
-void UBaseMovement::ExecuteCloseClaw(float DeltaTime)
-{
-    ClawCurrentRight -= 30 * DeltaTime;
-    ClawCurrentRight = FMath::Clamp(ClawCurrentRight, -50.f, 20.f);
-
-    ClawCurrentLeft += 30 * DeltaTime;
-    ClawCurrentLeft = FMath::Clamp(ClawCurrentLeft, -50.f, 20.f);
-
-    if (!ClawMeshRight || !ClawMeshLeft) return;
-
-    FRotator NewRotRight = FRotator(0.f, ClawCurrentRight, 0.f);
-    ClawMeshRight->SetRelativeRotation(NewRotRight);
-
-    FRotator NewRotLeft = FRotator(0.f, ClawCurrentLeft, 0.f);
-    ClawMeshLeft->SetRelativeRotation(NewRotLeft);
-
+void UBaseMovement::StopMovement(){
+    bMoving = false;
+    bTurning = false;
 }
+
+void UBaseMovement::SetMoveSpeed(float InSpeed){
+    if(bMoving || bTurning) return;
+
+    if(InSpeed > 1.f && InSpeed < 400.f){
+        MoveSpeed = InSpeed;
+        AngularSpeed = 0.1f * InSpeed;
+    }
+}
+
+// ---- Grab interaction ----
 
 void UBaseMovement::OnGrabOverlap(
     UPrimitiveComponent* OverlappedComp,
@@ -279,11 +174,9 @@ void UBaseMovement::OnGrabOverlap(
     bool bFromSweep,
     const FHitResult& SweepResult)
 {
-    if (OtherActor && OtherActor != Character)
-    {
-        UE_LOG(LogTemp, Warning, TEXT("OVERLAP TRIGGERED"));
+    if(OtherActor && OtherActor != RobotPawn){
         OverlappingObject = OtherActor;
-        UE_LOG(LogTemp, Warning, TEXT("Root: %s"), *OverlappingObject->GetRootComponent()->GetName());
+        if(DEBUG) UE_LOG(LogTemp, Warning, TEXT("UBaseMovement: grab overlap: %s"), *OtherActor->GetName());
     }
 }
 
@@ -293,56 +186,45 @@ void UBaseMovement::OnGrabEndOverlap(
     UPrimitiveComponent* OtherComp,
     int32 OtherBodyIndex)
 {
-    if (OtherActor == OverlappingObject)
-    {
-        if (!bIsCloseClaw && !bIsMovingArm) 
-        {
-            UE_LOG(LogTemp, Warning, TEXT("OVERLAP ENDED"))
-            OverlappingObject = nullptr;
-        }
+    if(OtherActor == OverlappingObject){
+        OverlappingObject = nullptr;
+        if(DEBUG) UE_LOG(LogTemp, Warning, TEXT("UBaseMovement: grab overlap ended"));
     }
 }
 
-void UBaseMovement::TryGrab()
-{
-    UE_LOG(LogTemp, Warning, TEXT("Try grab RUNNING"));
-    if (!OverlappingObject) return;
+void UBaseMovement::TryGrab(){
+    if(!OverlappingObject) return;
 
     UPrimitiveComponent* Comp = Cast<UPrimitiveComponent>(OverlappingObject->GetRootComponent());
-    UE_LOG(LogTemp, Warning, TEXT("Root: %s"), *OverlappingObject->GetRootComponent()->GetName());
-    if (!Comp) return;
+    if(!Comp) return;
 
-    Comp->SetCollisionEnabled(ECollisionEnabled::NoCollision);
     Comp->SetSimulatePhysics(false);
     Comp->SetEnableGravity(false);
+    Comp->SetCollisionEnabled(ECollisionEnabled::NoCollision);
 
-    // CHANGE THIS WHEN CLAW GETS MADE
-    OverlappingObject->AttachToComponent(
-        ClawMeshRight,
-        FAttachmentTransformRules::SnapToTargetNotIncludingScale,
-        FName("Catcher")
+    // Attach to pawn root 
+    // TODO: update socket/component once claw mesh is finalised
+    OverlappingObject->AttachToActor(
+        RobotPawn,
+        FAttachmentTransformRules::KeepWorldTransform
     );
 
-    UE_LOG(LogTemp, Warning, TEXT("GRABBED OBJECT"));
-    
+    if(DEBUG) UE_LOG(LogTemp, Warning, TEXT("UBaseMovement: grabbed %s"), *OverlappingObject->GetName());
 }
 
-void UBaseMovement::ReleaseGrab() 
-{
-    if (!OverlappingObject) return;
+void UBaseMovement::ReleaseGrab(){
+    if(!OverlappingObject) return;
 
     UPrimitiveComponent* Comp = Cast<UPrimitiveComponent>(OverlappingObject->GetRootComponent());
-
-    if (!Comp) return;
 
     OverlappingObject->DetachFromActor(FDetachmentTransformRules::KeepWorldTransform);
 
-    Comp->SetCollisionEnabled(ECollisionEnabled::QueryAndPhysics);
-    Comp->SetSimulatePhysics(true);
-    Comp->SetEnableGravity(true);
+    if(Comp){
+        Comp->SetCollisionEnabled(ECollisionEnabled::QueryAndPhysics);
+        Comp->SetSimulatePhysics(true);
+        Comp->SetEnableGravity(true);
+    }
 
+    if(DEBUG) UE_LOG(LogTemp, Warning, TEXT("UBaseMovement: released grab"));
     OverlappingObject = nullptr;
-
-    UE_LOG(LogTemp, Warning, TEXT("RELEASED OBJECT"));
-
 }

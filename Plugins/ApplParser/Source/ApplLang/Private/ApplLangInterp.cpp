@@ -3,6 +3,7 @@
 #include <stdexcept>
 #include <sstream>
 #include <cassert>
+#include <algorithm>
 
 
 void ApplLangInterp::pushScope(){scopeStack_.emplace_back();}
@@ -374,7 +375,7 @@ std::any ApplLangInterp::visitWhile_loop(APPL_Parse::While_loopContext* ctx){
     return {};
 }
 
-// for_loop : KW_FOR LPAREN assign SC expr SC iteratn RPAREN cblk
+// for_loop : KW_FOR LPAREN assign SC expr SC operatn RPAREN cblk
 std::any ApplLangInterp::visitFor_loop(APPL_Parse::For_loopContext* ctx){
     pushScope();
     try{
@@ -387,11 +388,11 @@ std::any ApplLangInterp::visitFor_loop(APPL_Parse::For_loopContext* ctx){
             }
 
             execCblk(ctx->cblk());
-            visitIteratn(ctx->iteratn());
+            visitOperatn(ctx->operatn());
         }
     }
     catch(...){
-        popScope(); 
+        popScope();
         throw;
     }
 
@@ -441,8 +442,6 @@ std::any ApplLangInterp::visitUnary_oprtn(APPL_Parse::Unary_oprtnContext* ctx){
     return visitPrefx_unary_oprtn(ctx->prefx_unary_oprtn());
 }
 
-// TODO: RE-EXAMINE IMPLEMENT ONCE NEXT GRAMMAR VERSION CHANGES 'iteratn' TO 'operatn' IN 'for_loop' DEF
-//     - don't think it would effect anything here but leaving note for myself just in case 
 // iteratn : factor INCR | factor DECR
 std::any ApplLangInterp::visitIteratn(APPL_Parse::IteratnContext* ctx){
     if(!ctx->factor()->ID()){
@@ -453,7 +452,6 @@ std::any ApplLangInterp::visitIteratn(APPL_Parse::IteratnContext* ctx){
     ApplValue curr = lookupVar(name);
     ApplValue result = curr; // returned value
 
-    // TODO: NEEDS TO ALLOW ALL OPS OTHER THAN INCR DECR
     if (ctx->INCR()){
         assignVar(name, curr.isInt() ? ApplValue(curr.ival + 1) : ApplValue(curr.dval + 1.0));
     }
@@ -516,35 +514,49 @@ std::any ApplLangInterp::visitLogic_or_expr(APPL_Parse::Logic_or_exprContext* ct
     for(size_t i = 1; i < clauses.size(); ++i){
         // break on true clause if/when found
         if(result.toBool()) break;
-
         result = valueFrom(visitLogic_and_expr(clauses[i]));
     }
-    return ApplValue(result.toBool());
+
+    if(clauses.size() > 1) return ApplValue(result.toBool());
+    return result;
 }
 
 // logic_and_expr : comparison_expr ( ( KW_AND | LGCL_AND ) comparison_expr )*
 std::any ApplLangInterp::visitLogic_and_expr(APPL_Parse::Logic_and_exprContext* ctx){
     const auto clauses = ctx->comparison_expr();
     ApplValue result = valueFrom(visitComparison_expr(clauses[0]));
-    for (size_t i = 1; i < clauses.size(); ++i){
+    for(size_t i = 1; i < clauses.size(); ++i){
         // break on false clause if/when found
-        if (!result.toBool()) break;
-
+        if(!result.toBool()) break;
         result = valueFrom(visitComparison_expr(clauses[i]));
     }
-    return ApplValue(result.toBool());
+    // Same guard as visitLogic_or_expr — only coerce when AND operators were present.
+    if(clauses.size() > 1) return ApplValue(result.toBool());
+    return result;
 }
 
 // comparison_expr : add_expr ( ( LT | LTE | GT | GTE | EQUAL | NOT_EQUAL ) add_expr )*
 std::any ApplLangInterp::visitComparison_expr(APPL_Parse::Comparison_exprContext* ctx){
-    // children alternate operand/operator: (i.e. child[0] = add_expr,  child[1] = op token,  child[2] = add_expr, ...)
     const auto operands = ctx->add_expr();
     ApplValue lhs = valueFrom(visitAdd_expr(operands[0]));
 
-    for (size_t i = 1; i < operands.size(); ++i){
+    if(operands.size() <= 1) return lhs;
+
+    std::vector<std::pair<size_t, std::string>> ops;
+    auto collect = [&](std::vector<antlr4::tree::TerminalNode*> nodes, const std::string& text){
+        for(auto* n : nodes) ops.push_back({n->getSymbol()->getTokenIndex(), text});
+    };
+    collect(ctx->LT(), "<");
+    collect(ctx->LTE(), "<=");
+    collect(ctx->GT(), ">");
+    collect(ctx->GTE(), ">=");
+    collect(ctx->EQUAL(), "==");
+    collect(ctx->NOT_EQUAL(),"!=");
+    std::sort(ops.begin(), ops.end());
+
+    for(size_t i = 1; i < operands.size(); ++i){
         ApplValue rhs = valueFrom(visitAdd_expr(operands[i]));
-        // operator token is at child index (2*i)-1
-        std::string op = childOpText(ctx, 2*i - 1);
+        std::string op = (i-1 < ops.size()) ? ops[i-1].second : "";
         lhs = applyCompareFn(op, lhs, rhs);
     }
     return lhs;
@@ -555,9 +567,19 @@ std::any ApplLangInterp::visitAdd_expr(APPL_Parse::Add_exprContext* ctx){
     const auto terms = ctx->mult_expr();
     ApplValue result = valueFrom(visitMult_expr(terms[0]));
 
+    if(terms.size() <= 1) return result;
+
+    std::vector<std::pair<size_t, std::string>> ops;
+    auto collect = [&](std::vector<antlr4::tree::TerminalNode*> nodes, const std::string& text){
+        for(auto* n : nodes) ops.push_back({n->getSymbol()->getTokenIndex(), text});
+    };
+    collect(ctx->ADD(), "+");
+    collect(ctx->SUB(), "-");
+    std::sort(ops.begin(), ops.end());
+
     for(size_t i = 1; i < terms.size(); ++i){
         ApplValue rhs = valueFrom(visitMult_expr(terms[i]));
-        std::string op = childOpText(ctx, 2*i - 1);
+        std::string op = (i-1 < ops.size()) ? ops[i-1].second : "";
         result = applyArith(op, result, rhs);
     }
     return result;
@@ -568,9 +590,21 @@ std::any ApplLangInterp::visitMult_expr(APPL_Parse::Mult_exprContext* ctx){
     const auto factors = ctx->pow_expr();
     ApplValue result = valueFrom(visitPow_expr(factors[0]));
 
+    if(factors.size() <= 1) return result;
+
+    std::vector<std::pair<size_t, std::string>> ops;
+    auto collect = [&](std::vector<antlr4::tree::TerminalNode*> nodes, const std::string& text){
+        for(auto* n : nodes) ops.push_back({n->getSymbol()->getTokenIndex(), text});
+    };
+    collect(ctx->MUL(), "*");
+    collect(ctx->DIV(), "/");
+    collect(ctx->INT_DIV(), "//");
+    collect(ctx->MOD(), "%");
+    std::sort(ops.begin(), ops.end());
+
     for(size_t i = 1; i < factors.size(); ++i){
         ApplValue rhs = valueFrom(visitPow_expr(factors[i]));
-        std::string op = childOpText(ctx, 2*i - 1);
+        std::string op = (i-1 < ops.size()) ? ops[i-1].second : "";
         result = applyArith(op, result, rhs);
     }
     return result;
@@ -599,7 +633,6 @@ std::any ApplLangInterp::visitFactor(APPL_Parse::FactorContext* ctx){
     return lookupVar(ctx->ID()->getText());
 }
 
-// TODO: HANDLE COMPONENT FUNCTIONS??
 // fun_call : ID LPAREN ( arg_list )? RPAREN
 std::any ApplLangInterp::visitFun_call(APPL_Parse::Fun_callContext* ctx){
     const std::string name = ctx->ID()->getText();
@@ -642,7 +675,6 @@ std::any ApplLangInterp::visitFun_call(APPL_Parse::Fun_callContext* ctx){
         return returnVal;
     }
 
-    // TODO: component function call handler implement
     if(componentCallHandler){
         return componentCallHandler(name, args);
     }
