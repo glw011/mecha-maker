@@ -1,6 +1,7 @@
 #include "RobotPawnBase.h"
 #include "BaseMovement.h"
 #include "GameFramework/CharacterMovementComponent.h"
+#include "Components/CapsuleComponent.h"
 
 
 ARobotPawnBase::ARobotPawnBase(){
@@ -15,6 +16,16 @@ ARobotPawnBase::ARobotPawnBase(){
         CMC->bOrientRotationToMovement    = false;
         CMC->bUseControllerDesiredRotation = false;
     }
+
+    // CapsuleComponent is the root — its center IS the actor origin.
+    // CMC places the capsule bottom on the floor, so the actor origin sits
+    // HalfHeight units above the floor at spawn. Offset the mesh down by the
+    // same amount so the wheel contact point aligns with the floor surface.
+    // NOTE: in the BP viewport the mesh will appear below the preview grid by
+    // this amount — that is expected and correct for ACharacter floor alignment.
+    const float CapsuleHalfHeight = 5.0f;
+    GetCapsuleComponent()->InitCapsuleSize(GetCapsuleComponent()->GetUnscaledCapsuleRadius(), CapsuleHalfHeight);
+    GetMesh()->SetRelativeLocation(FVector(0.f, 0.f, -CapsuleHalfHeight));
 }
 
 void ARobotPawnBase::TryGrab_Implementation(){
